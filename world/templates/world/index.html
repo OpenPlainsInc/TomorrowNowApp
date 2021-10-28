@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Nearby Countries</title>
+    </head>
+<body>
+    <h1>Nearby Countries</h1>
+    {% if countries %}
+    <ul>
+    {% for country in countries %}
+        <li>
+        {{ country.name }}: {{country.distance}}
+        </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>

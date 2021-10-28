@@ -1,0 +1,43 @@
+version: "3.9"
+   
+services:
+  
+  db:
+    image: postgis/postgis
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+      # - pg_tileserv_db:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+   
+#   grassapi:
+#     image: mundialis/actinia-core
+# pg_tileserv:
+#   image: pramsey/pg_tileserv:latest-alpine-3.12
+#   build:
+#     context: ../..
+#     dockerfile: Dockerfile.alpine
+#     args:
+#       VERSION: latest-alpine-3.12
+#   container_name: pg_tileserv
+#   env_file:
+#     - pg_tileserv.env
+#   depends_on:
+#     - db
+#   ports:
+#     - 7800:7800
+
+  web:
+    build: .
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+   
