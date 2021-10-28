@@ -1,4 +1,4 @@
-# TomorrowNowAPI
+# TomorrowNowAPP
 
 (Django Docker Docs)[https://docs.docker.com/samples/django/]
 
