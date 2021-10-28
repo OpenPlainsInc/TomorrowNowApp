@@ -31,7 +31,7 @@ services:
 #   ports:
 #     - 7800:7800
 
-  web:
+  api:
     build: .
     command: bash -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
@@ -40,4 +40,19 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    command: npm start
+    volumes:
+      - /code/node_modules
+      - ./webapp/:/code
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    
+
    
