@@ -118,4 +118,4 @@ GitHub.sublime-settings
 .DS_Store
 
 # Node 
-webapp/node_modules
+node_modules
