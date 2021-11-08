@@ -1,0 +1,15 @@
+/* @import "node_modules/ol/ol.css"; */
+
+.map-container {
+  margin: 0;
+  height: 500px;
+  width: 500px;
+  font-family: sans-serif;
+  background: #04041b;
+}
+
+/* .map-container{
+    height: 100vh;
+    width: 100%;
+    background-color: blue;
+  } */

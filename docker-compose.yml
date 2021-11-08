@@ -14,8 +14,32 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
    
-#   grassapi:
-#     image: mundialis/actinia-core
+  actinia-core:
+    image: mundialis/actinia-core:g78-latest-alpine
+    volumes:
+      - ./actinia-core-data/grassdb:/actinia_core/grassdb:Z
+      - ./actinia-core-data/userdata:/actinia_core/userdata
+    ports:
+      - "8088:8088"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:5.0.4-alpine
+    volumes:
+      - ./redis_data:/data
+    environment:
+      - REDIS_PASS_FILE=/data/config/.redis
+    command: [
+      "sh", "-c",
+      '
+      docker-entrypoint.sh
+      "/data/config/redis.conf"
+      --requirepass "$$(cat $$REDIS_PASS_FILE)"
+      '
+    ]
+    ports:
+        - "6379:6379"
 # pg_tileserv:
 #   image: pramsey/pg_tileserv:latest-alpine-3.12
 #   build:

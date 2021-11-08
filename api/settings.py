@@ -128,7 +128,14 @@ DATABASES = {
     }
 }
 
-
+# These are development values only never push to prod server.
+ACTINIA = {
+    #actinia-user create -r superadmin -u django-api -w c@kna663A -g api-super
+    'user': 'django-api',
+    'password': 'c@kna663A',
+    'group': 'api-super',
+    'role': 'superadmin'
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
