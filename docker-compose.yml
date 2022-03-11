@@ -1,11 +1,11 @@
-version: "3.9"
+version: "3.8"
    
 services:
   
   db:
-    image: postgis/postgis
+    image: postgis/postgis:13-3.2-alpine
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./data/db:/var/lib/postgresql/data:Z
       # - pg_tileserv_db:/var/lib/postgresql/data
     ports:
       - "5431:5432"
@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=postgres
    
   actinia-core:
-    image: mundialis/actinia-core:g78-latest-alpine
+    image: mundialis/actinia-core:3.1.2
     volumes:
       - ./actinia-core-data/grassdb:/actinia_core/grassdb:Z
       - ./actinia-core-data/userdata:/actinia_core/userdata
@@ -40,6 +40,10 @@ services:
     ]
     ports:
         - "6379:6379"
+
+  # redis-gui:
+  #   image: redislabs/redisinsight:1.11.1
+
 # pg_tileserv:
 #   image: pramsey/pg_tileserv:latest-alpine-3.12
 #   build:
@@ -57,11 +61,11 @@ services:
 
   api:
     build: .
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py runserver 0.0.0.0:8005"
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8005:8005"
     depends_on:
       - db
   
@@ -71,7 +75,7 @@ services:
       dockerfile: Dockerfile
     command: npm start
     volumes:
-      - /code/node_modules
+      # - /code/node_modules
       - ./webapp/:/code
     ports:
       - "3000:3000"
