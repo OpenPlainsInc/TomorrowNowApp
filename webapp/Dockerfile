@@ -10,7 +10,7 @@ WORKDIR /code
 
 # Copies package.json and package-lock.json to Docker environment
 COPY package*.json ./
-
+RUN mkdir -p /code/node_modules/.cache
 RUN npm install
 RUN npm install -g react-scripts
 

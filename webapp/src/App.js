@@ -25,10 +25,14 @@ class App extends Component {
 
     async componentDidMount() {
       try {
-        const res = await fetch('http://localhost:8000/world/countries/');
+        const res = await fetch('http://localhost:8005/world/countries/');
         const todoList = await res.json();
         console.log("TODO:", todoList.results.features)
         const todoListFeatures = todoList.results.features
+
+        const res2 = await fetch('http://localhost:8005/world/info/');
+        const info = await res2.json();
+        console.log("Info:", info)
         
 
         // let countries = new VectorLayer({

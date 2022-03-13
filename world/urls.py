@@ -25,5 +25,6 @@ urlpatterns = [
 #    path('', include(router.urls)),
    path('map', views.mapview, name="Map"),
    path('countries/', views.WorldAPIView.as_view(), name='countires'),
-   path('population/', views.WorldAPIViewCustom.as_view(), name='population')   
+   path('population/', views.WorldAPIViewCustom.as_view(), name='population'),
+   path('info/', views.AcpInfo, name='info')
 ]

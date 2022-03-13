@@ -85,7 +85,8 @@ if DEBUG:
     INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:8000',
+    'http://localhost:8005',
+    'http://actinia-core:8088',
     'http://localhost:3000'
 ]
 
@@ -134,7 +135,15 @@ ACTINIA = {
     'user': 'django-api',
     'password': 'c@kna663A',
     'group': 'api-super',
-    'role': 'superadmin'
+    'role': 'superadmin',
+    'HOST': 'actinia-core',
+    'PORT': 8088,
+    'ACTINIA_VERSION': 'v3',
+    'ACTINIA_BASEURL': 'actinia-core:8088',
+    'ACTINIA_URL': 'ACTINIA_BASEURL' + "/api/" + 'ACTINIA_VERSION',
+    # 'ACTINIA_AUTH' = HTTPBasicAuth("actinia-gdi", "actinia-gdi")
+    'LOCATION': 'nc_spm_08',
+    'MAPSET': 'PERMANENT'
 }
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
