@@ -23,6 +23,7 @@ from django.urls import include, path
 # router.register(r'countries', views.WorldView, 'worldboarders')  
 
 urlpatterns = [
+    path('savana/', include('savana.urls')),
     path('world/', include('world.urls')),
     path('grassapp/', include('grassapp.urls')),
     path('admin/', admin.site.urls),

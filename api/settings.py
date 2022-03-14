@@ -138,12 +138,14 @@ ACTINIA = {
     'role': 'superadmin',
     'HOST': 'actinia-core',
     'PORT': 8088,
+    'ACTINIA_USER': 'actinia-gdi',
+    'ACTINIA_PASSWORD': 'actinia-gdi',
     'ACTINIA_VERSION': 'v3',
     'ACTINIA_BASEURL': 'actinia-core:8088',
-    'ACTINIA_URL': 'ACTINIA_BASEURL' + "/api/" + 'ACTINIA_VERSION',
+ 
     # 'ACTINIA_AUTH' = HTTPBasicAuth("actinia-gdi", "actinia-gdi")
-    'LOCATION': 'nc_spm_08',
-    'MAPSET': 'PERMANENT'
+    'ACTINIA_LOCATION': 'nc_spm_08',
+    'ACTINIA_MAPSET': 'PERMANENT'
 }
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
