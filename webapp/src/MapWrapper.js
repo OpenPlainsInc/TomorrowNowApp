@@ -1,21 +1,38 @@
 // react
 import React, { useState, useEffect, useRef } from 'react';
 import "./MapWrapper.css";
+import 'ol/ol.css';
 
 // openlayers
 import Map from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
+import Stamen from 'ol/source/Stamen';
+
+import OGCMapTile from 'ol/source/OGCMapTile';
+
 import VectorLayer from 'ol/layer/Vector'
-import VectorSource from 'ol/source/Vector'
+import {OSM, Vector as VectorSource} from 'ol/source';
+
+import MVT from 'ol/format/MVT.js';
+import VectorTileLayer from 'ol/layer/VectorTile.js';
+import VectorTileSource from 'ol/source/VectorTile.js';
 import XYZ from 'ol/source/XYZ'
 import GeoJSON from 'ol/format/GeoJSON';
+import {Fill, Icon, Stroke, Style, Text} from 'ol/style.js';
 
-import {transform} from 'ol/proj'
+import {transform, fromLonLat} from 'ol/proj'
 import {toStringXY} from 'ol/coordinate';
 
-function MapWrapper(props) {
 
+// Styles for the mapbox-streets-v6 vector tile data set. Loosely based on
+// http://a.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6.json
+
+
+// const MAPBOX = "pk.eyJ1IjoiY3R3aGl0ZSIsImEiOiJjbDBvbTFhNjkxcnJyM2luNXlkOGo3bjExIn0.z6mg-Hr39KpxI42WqcmwMg"
+
+function MapWrapper(props) {
+  
   // set intial state
   const [ map, setMap ] = useState()
   const [ featuresLayer, setFeaturesLayer ] = useState()
@@ -37,30 +54,52 @@ function MapWrapper(props) {
       source: new VectorSource()
     })
 
+    // const osm = new TileLayer({
+    //   source: new OSM(),
+    // });
+
+    const watercolor =  new TileLayer({
+      source: new Stamen({
+        layer: 'watercolor',
+      }),
+    })
+
+    const terrain =  new TileLayer({
+      source: new Stamen({
+        layer: 'terrain-labels',
+      }),
+    })
+
     // create map
     const initialMap = new Map({
       target: mapElement.current,
       layers: [
-        
-        // USGS Topo
+        // https://openlayers.org/en/latest/examples/ogc-map-tiles.html
         new TileLayer({
-          source: new XYZ({
-            url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
-          })
+          source: new OGCMapTile({
+            url: 'https://maps.ecere.com/ogcapi/collections/blueMarble/map/tiles/WebMercatorQuad',
+          }),
         }),
-
-        // Google Maps Terrain
-        /* new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
-          })
-        }), */
-
+       watercolor,
+       terrain,
+        // new VectorTileLayer({
+        //   declutter: true,
+        //   source: new VectorTileSource({
+        //     attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
+        //       '© <a href="https://www.openstreetmap.org/copyright">' +
+        //       'OpenStreetMap contributors</a>',
+        //     format: new MVT(),
+        //     url: 'https://{a-d}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v8/' +
+        //         '{z}/{x}/{y}.vector.pbf?access_token=' + MAPBOX
+        //   }),
+        //   style: createMapboxStreetsV6Style(Style, Fill, Stroke, Icon, Text)
+        // }),
+        // osm,
         initalFeaturesLayer
         
       ],
       view: new View({
-        projection: 'EPSG:4326',
+        projection: 'EPSG:3857', // 4326
         center: [0, 0],
         zoom: 2
       }),
@@ -88,14 +127,14 @@ function MapWrapper(props) {
         console.log("use effect: True", props.features)
         let features = new GeoJSON().readFeatures(props.features)
       // set features to map
-    //   console.log("Map2", map);
+      // console.log("Map2", map);
       featuresLayer.setSource(
         new VectorSource({
           features: features // make sure features is an array
         })
       )
 
-      // fit map to feature extent (with 100px of padding)
+      // // fit map to feature extent (with 100px of padding)
       map.getView().fit(featuresLayer.getSource().getExtent(), map.getSize(), {
        padding: [100,100,100,100]
       })

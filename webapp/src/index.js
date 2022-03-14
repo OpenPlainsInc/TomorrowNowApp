@@ -1,12 +1,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Route, Routes, Switch } from "react-router-dom";
 import './index.css';
 import App from './App';
+import World from './routes/world';
+import Country from './routes/country'
+import Dashboard from './routes/dashboard';
+
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />}>
+
+      <Route path="world/:unId" element={<Country /> } />
+      <Route path="world" element={<World />}></Route>
+
+      <Route path="dashboard" element={<Dashboard />} />
+      <Route
+        path="*"
+        element={
+          <main style={{ padding: "1rem" }}>
+            <p>There's nothing here!</p>
+          </main>
+        }
+      />
+      </Route>
+    </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );

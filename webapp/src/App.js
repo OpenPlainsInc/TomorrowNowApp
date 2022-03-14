@@ -1,12 +1,6 @@
 import React, { Component } from "react"
-// import GeoJSON from 'ol/format/GeoJSON';
-// import Map from 'ol/Map';
-// import VectorLayer from 'ol/layer/Vector';
-// import VectorSource from 'ol/source/Vector';
-// import View from 'ol/View';
-// import XYZ from 'ol/source/XYZ'
-// import TileLayer from 'ol/layer/Tile'
 import MapWrapper from './MapWrapper';
+import {Outlet, Link } from "react-router-dom";
 
 class App extends Component {
   constructor(props) {
@@ -23,52 +17,30 @@ class App extends Component {
       };
   }
 
-    async componentDidMount() {
-      try {
-        const res = await fetch('http://localhost:8005/world/countries/');
-        const todoList = await res.json();
-        console.log("TODO:", todoList.results.features)
-        const todoListFeatures = todoList.results.features
+    // async componentDidMount() {
+    //   try {
+    //     const res = await fetch('http://localhost:8005/world/countries/');
+    //     const todoList = await res.json();
+    //     console.log("TODO:", todoList.results.features)
+    //     const todoListFeatures = todoList.results.features
 
-        const res2 = await fetch('http://localhost:8005/world/info/');
-        const info = await res2.json();
-        console.log("Info:", info)
+    //     const res2 = await fetch('http://localhost:8005/world/info/');
+    //     const info = await res2.json();
+    //     console.log("Info:", info)
         
-
-        // let countries = new VectorLayer({
-        //   source: new VectorSource({
-        //     format: new GeoJSON()
-        //   }) //.addFeatures(todoListFeatures)
-        // })
-
-        // // USGS Topo
-        // const usgstop = new TileLayer({
-        //   source: new XYZ({
-        //     url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
-        //   })
-        // });
-
-        // const MainMap = new Map({
-        //   target: 'map-container',
-        //   layers: [countries, usgstop],
-        //   view: new View({
-        //     center: [0, 0],
-        //     zoom: 2,
-        //   })
-        // });
-        this.setState({
-          todoList: todoListFeatures,
-          // mainMap: MainMap
-        });
+    //     this.setState({
+    //       todoList: todoListFeatures,
+    //       // mainMap: MainMap
+    //     });
         
-      } catch (e) {
-        console.log(e);
-    }
-    }
+    //   } catch (e) {
+    //     console.log(e);
+    // }
+    // }
     renderItems = () => {
       const { viewCompleted } = this.state;
       const newItems = this.state.todoList;
-      // this.state.mainMap.updateSize()
+    
       console.log("Render Items", this.state)
       return newItems.map(item => (
         <li 
@@ -86,6 +58,7 @@ class App extends Component {
               {item.properties.name} <br></br>
               Population: {item.properties.pop2005} <br></br>
               Area: {item.properties.area} <br></br>
+              <Link to={`/country/${item.id}`}> {item.properties.name} </Link>
             </span>
            
         </li>
@@ -100,14 +73,19 @@ class App extends Component {
            <div className="col-md-6 col-sm-10 mx-auto p-0">
            <div className="card p-3">
                <ul className="list-group list-group-flush">
-                 {this.renderItems()}
+                 {/* {this.renderItems()} */}
                  
               </ul>
               
             </div>
           </div>
          </div>
-         
+         <nav>
+         <Link to="/">Home</Link> | {" "}
+          <Link to="/world">World</Link> | {" "}
+          <Link to="/dashboard">Dashboard</Link>
+         </nav>
+         <Outlet />
        </main>
       
       )
