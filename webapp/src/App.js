@@ -17,26 +17,7 @@ class App extends Component {
       };
   }
 
-    // async componentDidMount() {
-    //   try {
-    //     const res = await fetch('http://localhost:8005/world/countries/');
-    //     const todoList = await res.json();
-    //     console.log("TODO:", todoList.results.features)
-    //     const todoListFeatures = todoList.results.features
-
-    //     const res2 = await fetch('http://localhost:8005/world/info/');
-    //     const info = await res2.json();
-    //     console.log("Info:", info)
-        
-    //     this.setState({
-    //       todoList: todoListFeatures,
-    //       // mainMap: MainMap
-    //     });
-        
-    //   } catch (e) {
-    //     console.log(e);
-    // }
-    // }
+   
     renderItems = () => {
       const { viewCompleted } = this.state;
       const newItems = this.state.todoList;
@@ -83,6 +64,7 @@ class App extends Component {
          <nav>
          <Link to="/">Home</Link> | {" "}
           <Link to="/world">World</Link> | {" "}
+          <Link to="/board">Board</Link> | {" "}
           <Link to="/dashboard">Dashboard</Link>
          </nav>
          <Outlet />

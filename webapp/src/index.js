@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Routes, Switch } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+// import './App.css';
 import './index.css';
 import App from './App';
 import World from './routes/world';
 import Country from './routes/country'
 import Dashboard from './routes/dashboard';
+import Board from './routes/Board';
+
 
 import reportWebVitals from './reportWebVitals';
 
@@ -14,7 +18,7 @@ ReactDOM.render(
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
-
+      <Route path="board" element={<Board /> } />
       <Route path="world/:unId" element={<Country /> } />
       <Route path="world" element={<World />}></Route>
 

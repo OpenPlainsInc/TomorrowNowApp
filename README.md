@@ -37,3 +37,14 @@ python manage.py shell
 ```
 python manage.py test <appname>
 ```
+
+
+## Install new NPM modules
+
+<https://www.docker.com/blog/keep-nodejs-rockin-in-docker/>
+
+```bash
+
+docker-compose run webapp npm install
+
+```
