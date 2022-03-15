@@ -1,0 +1,61 @@
+// /* CSS HEX */
+// --mantis: #7ac74fff;
+// --pistachio: #a1cf6bff;
+// --green-yellow-crayola: #d5d887ff;
+// --buff: #e0c879ff;
+// --terra-cotta: #e87461ff;
+
+// /* CSS HSL */
+// --mantis: hsla(98, 52%, 55%, 1);
+// --pistachio: hsla(88, 51%, 62%, 1);
+// --green-yellow-crayola: hsla(62, 51%, 69%, 1);
+// --buff: hsla(46, 62%, 68%, 1);
+// --terra-cotta: hsla(8, 75%, 65%, 1);
+
+
+// https://www.color-hex.com/color-palette/36240
+// https://coolors.co/7ac74f-a1cf6b-d5d887-e0c879-e87461
+
+
+/* SCSS HEX */
+$mantis: #7ac74fff;
+$pistachio: #a1cf6bff;
+$green-yellow-crayola: #d5d887ff;
+$buff: #e0c879ff;
+$terra-cotta: #e87461ff;
+
+/* SCSS HSL */
+$mantis: hsla(98, 52%, 55%, 1);
+$pistachio: hsla(88, 51%, 62%, 1);
+$green-yellow-crayola: hsla(62, 51%, 69%, 1);
+$buff: hsla(46, 62%, 68%, 1);
+$terra-cotta: hsla(8, 75%, 65%, 1);
+
+/* SCSS RGB */
+$mantis: rgba(122, 199, 79, 1);
+$pistachio: rgba(161, 207, 107, 1);
+$green-yellow-crayola: rgba(213, 216, 135, 1);
+$buff: rgba(224, 200, 121, 1);
+$terra-cotta: rgba(232, 116, 97, 1);
+
+/* SCSS Gradient */
+$gradient-top: linear-gradient(0deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-right: linear-gradient(90deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-bottom: linear-gradient(180deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-left: linear-gradient(270deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-top-right: linear-gradient(45deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-bottom-right: linear-gradient(135deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-top-left: linear-gradient(225deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-bottom-left: linear-gradient(315deg, #7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+$gradient-radial: radial-gradient(#7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
+
+$theme-colors: (
+    "primary": $terra-cotta,
+    "info": tomato,
+    "danger": teal
+);
+
+
+body { padding-top: 65px; }
+
+@import "~bootstrap/scss/bootstrap";

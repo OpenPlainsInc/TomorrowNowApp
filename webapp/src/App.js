@@ -1,6 +1,11 @@
 import React, { Component } from "react"
 import MapWrapper from './MapWrapper';
-import {Outlet, Link } from "react-router-dom";
+import {Outlet, Link} from "react-router-dom";
+import {LinkContainer} from 'react-router-bootstrap'
+import Container from "react-bootstrap/Container"
+import Navbar from "react-bootstrap/Navbar"
+import Nav from "react-bootstrap/Nav"
+
 
 class App extends Component {
   constructor(props) {
@@ -48,27 +53,35 @@ class App extends Component {
 
     render() {
       return (
-        <main className="content">
+        // <main className="content">
             
-         <div className="row">
-           <div className="col-md-6 col-sm-10 mx-auto p-0">
-           <div className="card p-3">
-               <ul className="list-group list-group-flush">
-                 {/* {this.renderItems()} */}
-                 
-              </ul>
-              
-            </div>
-          </div>
-         </div>
-         <nav>
-         <Link to="/">Home</Link> | {" "}
-          <Link to="/world">World</Link> | {" "}
-          <Link to="/board">Board</Link> | {" "}
-          <Link to="/dashboard">Dashboard</Link>
-         </nav>
-         <Outlet />
-       </main>
+         
+        <Container fluid>
+         <Navbar bg="primary" variant="dark" fixed="top">
+         <Container fluid>
+          <Navbar.Brand>TomorrowNow</Navbar.Brand>
+          <Nav className="me-auto">
+            <LinkContainer to="/">
+              <Nav.Link>Home</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/game">
+              <Nav.Link>Game</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/world">
+              <Nav.Link>World</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/board">
+              <Nav.Link>Board</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/dashboard">
+              <Nav.Link>Dashboard</Nav.Link>
+            </LinkContainer>
+          </Nav>
+          </Container>
+        </Navbar>
+        <Outlet />
+        </Container>
+      //  </main>
       
       )
     }

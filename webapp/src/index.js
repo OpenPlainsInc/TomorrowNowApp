@@ -1,15 +1,15 @@
+/* The following line can be included in your src/index.js or App.js file */
+import './App.scss';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Routes, Switch } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import './App.css';
-import './index.css';
 import App from './App';
 import World from './routes/world';
 import Country from './routes/country'
 import Dashboard from './routes/dashboard';
 import Board from './routes/Board';
-
+import Game from './routes/Game';
 
 import reportWebVitals from './reportWebVitals';
 
@@ -18,6 +18,8 @@ ReactDOM.render(
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
+      <Route path="game" element={<Game />}></Route>
+
       <Route path="board" element={<Board /> } />
       <Route path="world/:unId" element={<Country /> } />
       <Route path="world" element={<World />}></Route>

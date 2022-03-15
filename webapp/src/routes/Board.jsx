@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {Outlet, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
@@ -9,6 +9,8 @@ import Button from "react-bootstrap/Button"
 
 const RasterCardImage = ({raster}) => {
     const [image, setImage] = React.useState(null);
+    const mountedRef = useRef(true)
+
     useEffect(() => {
         let isMounted = true; 
         async function fetchImage(raster_name) {
@@ -26,10 +28,16 @@ const RasterCardImage = ({raster}) => {
               } catch (e) {
                 console.log(e);
             }
-            return () => { isMounted = false }
+            
           }
           fetchImage(raster)
       },[raster])
+
+      useEffect(() => {
+        return () => { 
+          mountedRef.current = false
+        }
+      }, [])
 
       return (
         <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} />
@@ -120,7 +128,8 @@ const Board = (props) => {
                                         { `Mapset: ${processChainList[0][1].inputs.mapset}`}
                                         {rasterImages.filter(img => img.raster_name === raster).imgurl || "Sup"}
                                     </Card.Text>
-                                    <Card.Link href="#">View Metadata</Card.Link>
+                                    <Card.Link href="#">Map</Card.Link>
+                                    <Card.Link href="#">Metadata</Card.Link>
                                     </Card.Body>
                                 </Card>
                             </Col>
@@ -133,14 +142,9 @@ const Board = (props) => {
   
         return (
             <Container fluid>
+                <Row>
                 {rasters ? renderRasters(rasters): []}
-                {rasterImages.length}
-            <nav>
-            <Link to="/">Home</Link> | {" "}
-            <Link to="/world">World</Link> | {" "}
-            <Link to="/dashboard">Dashboard</Link>
-           </nav>
-           <Outlet />
+                </Row>
             </Container>
         
         )
