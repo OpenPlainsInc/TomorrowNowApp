@@ -8,6 +8,8 @@ import Button from "react-bootstrap/Button"
 import Spinner from "react-bootstrap/Spinner"
 import FormControl from "react-bootstrap/FormControl"
 import InputGroup from "react-bootstrap/InputGroup"
+import {LinkContainer} from 'react-router-bootstrap'
+
 
 const RasterCardImage = ({raster}) => {
     const [image, setImage] = useState(null)
@@ -147,7 +149,10 @@ const Board = (props) => {
                                         { `Mapset: ${processChainList[0][1].inputs.mapset}`}
                                     </Card.Text>
                                     <Card.Link href="#">Map</Card.Link>
-                                    <Card.Link href="#">Metadata</Card.Link>
+                                    <LinkContainer to={`/board/${raster}`}> 
+                                        <Card.Link >Metadata</Card.Link>
+                                    </LinkContainer>
+                                    
                                     </Card.Body>
                                 </Card>
                             </Col>

@@ -1,5 +1,5 @@
 // react
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import 'ol/ol.css';
 
 // openlayers
@@ -92,7 +92,7 @@ const MapEditer = ({drawTypes = ["Point", "LineString", "Polygon", "Circle"]}) =
            
         }
 
-    },[map,featureType])
+    },[map,featureType, draw, snap, drawVectorSource, drawTypes])
 
     return (
         <Dropdown onSelect={changeFeatureType}>
@@ -102,7 +102,7 @@ const MapEditer = ({drawTypes = ["Point", "LineString", "Polygon", "Circle"]}) =
 
         <Dropdown.Menu > 
             {drawTypes.map(t => {
-                return(<Dropdown.Item onClick={(e) => {console.log(`Dropdown ${t} Click Event`)}} eventKey={t} active={isActive(t)}>{t}</Dropdown.Item>)
+                return(<Dropdown.Item key={t} onClick={(e) => {console.log(`Dropdown ${t} Click Event`)}} eventKey={t} active={isActive(t)}>{t}</Dropdown.Item>)
             })}
         </Dropdown.Menu>
         </Dropdown>

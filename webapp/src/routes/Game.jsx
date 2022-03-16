@@ -7,10 +7,8 @@ import Map from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import Stamen from 'ol/source/Stamen';
+import OSM from 'ol/source/OSM'
 
-
-
-import {OSM, Vector as VectorSource} from 'ol/source';
 import MapContext from '../components/MapContext';
 import MapEditer from '../components/MapEditer';
 
@@ -18,7 +16,6 @@ import MapEditer from '../components/MapEditer';
 const Game = ({ children, zoom, center }) => {
     
     const [map, setMap] = useState(null)
-    const [drawSource, setDrawSource] = useState(null)
     const mapElement = useRef()
 
     useEffect(() => {
@@ -43,7 +40,8 @@ const Game = ({ children, zoom, center }) => {
             layers: [
               // https://openlayers.org/en/latest/examples/ogc-map-tiles.html
              watercolor,
-             terrain
+             terrain,
+            //  osm
             ],
             view: new View({
               projection: 'EPSG:4326', // 4326 //EPSG:3857

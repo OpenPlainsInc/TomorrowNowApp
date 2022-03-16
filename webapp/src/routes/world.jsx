@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import MapWrapper from '../MapWrapper';
-import {Outlet, Link, NavLink } from "react-router-dom";
+import {Outlet, NavLink } from "react-router-dom";
 
 const World = () => {
 
@@ -13,8 +13,6 @@ const World = () => {
                 const data = await res.json();
                 console.log("response:", data.results.features)
                 const countriesData = data.results.features
-                // const res2 = await fetch('http://localhost:8005/world/info/');
-                // const info = await res2.json();
                 setCountries(countriesData)
                 
               } catch (e) {
@@ -60,11 +58,7 @@ const World = () => {
               </div>
             </div>
            </div>
-           <nav>
-            <Link to="/">Home</Link> | {" "}
-            <Link to="/world">World</Link> | {" "}
-            <Link to="/dashboard">Dashboard</Link>
-           </nav>
+          
            <Outlet />
          </main>
         

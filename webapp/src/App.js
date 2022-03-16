@@ -24,7 +24,6 @@ class App extends Component {
 
    
     renderItems = () => {
-      const { viewCompleted } = this.state;
       const newItems = this.state.todoList;
     
       console.log("Render Items", this.state)
