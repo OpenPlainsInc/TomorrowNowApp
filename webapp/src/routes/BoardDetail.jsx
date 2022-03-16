@@ -164,6 +164,14 @@ const BoardDetail = (props) => {
                             <td>Total Cells</td>
                             <td>{info.cells}</td>
                         </tr>
+                        <tr>
+                            <td>NS Resolution</td>
+                            <td>{info.nsres}</td>
+                        </tr>
+                        <tr>
+                            <td>EW Resolution</td>
+                            <td>{info.ewres}</td>
+                        </tr>
                     </tbody>
                     </Table>
                     </Col>

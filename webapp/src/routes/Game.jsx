@@ -10,8 +10,8 @@ import Stamen from 'ol/source/Stamen';
 import OSM from 'ol/source/OSM'
 import GeoTIFF from 'ol/source/GeoTIFF';
 import WebGLTileLayer from 'ol/layer/WebGLTile';
-import MapContext from '../components/MapContext';
-import MapEditer from '../components/MapEditer';
+import MapContext from '../components/OpenLayers/MapContext';
+import MapEditer from '../components/OpenLayers/MapEditer';
 
 
 const Game = ({ children, zoom, center }) => {
@@ -57,22 +57,6 @@ const Game = ({ children, zoom, center }) => {
         };
         const grassLayer = new WebGLTileLayer({
           style: falseColor,
-          // style: {
-          //   variables: {
-          //     red:2000,
-          //     redMax:3000, 
-          //     green:2000,
-          //     greenMax:3000, 
-          //     blue: 2000,
-          //     blueMax:3000},
-          //   color: [
-          //     'array',
-          //     ['/', ['band', ['var', 'red']], ['var', 'redMax']],
-          //     ['/', ['band', ['var', 'green']], ['var', 'greenMax']],
-          //     ['/', ['band', ['var', 'blue']], ['var', 'blueMax']],
-          //     1,
-          //   ],
-          // },
           source: new GeoTIFF({
             normalize: false,
             sources: [
@@ -86,7 +70,6 @@ const Game = ({ children, zoom, center }) => {
         const initialMap = new Map({
             target: mapElement.current,
             layers: [
-              // https://openlayers.org/en/latest/examples/ogc-map-tiles.html
              watercolor,
              terrain,
             //  osm
