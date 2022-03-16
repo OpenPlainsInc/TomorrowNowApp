@@ -8,25 +8,17 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import Stamen from 'ol/source/Stamen';
 
-import OGCMapTile from 'ol/source/OGCMapTile';
 
-import VectorLayer from 'ol/layer/Vector'
+
 import {OSM, Vector as VectorSource} from 'ol/source';
-
-import MVT from 'ol/format/MVT.js';
-import VectorTileLayer from 'ol/layer/VectorTile.js';
-import VectorTileSource from 'ol/source/VectorTile.js';
-import XYZ from 'ol/source/XYZ'
-import GeoJSON from 'ol/format/GeoJSON';
-import {Fill, Icon, Stroke, Style, Text} from 'ol/style.js';
-
-import {transform, fromLonLat} from 'ol/proj'
-import {toStringXY} from 'ol/coordinate';
+import MapContext from '../components/MapContext';
+import MapEditer from '../components/MapEditer';
 
 
-const World = () => {
-
+const Game = ({ children, zoom, center }) => {
+    
     const [map, setMap] = useState(null)
+    const [drawSource, setDrawSource] = useState(null)
     const mapElement = useRef()
 
     useEffect(() => {
@@ -60,23 +52,22 @@ const World = () => {
             }),
             controls: []
           })
-      
-          // set map onclick handler
-        //   initialMap.on('click', handleMapClick)
-      
+
           // save map and vector layer references to state
           console.log("initialMap", initialMap)
           setMap(initialMap)
-
-
-
+         
       }, [])
   
         return (
-         <div ref={mapElement} className="map-fullscreen"></div>
+        <MapContext.Provider value={{map}}>
+         <div ref={mapElement} className="map-fullscreen">
+             <MapEditer drawTypes={['Point','Polygon','Circle']}></MapEditer>
+         </div>
+         </MapContext.Provider>
         )
  
   }
 
 
-export default World
+export default Game

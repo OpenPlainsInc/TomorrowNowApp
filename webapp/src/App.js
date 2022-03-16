@@ -56,7 +56,7 @@ class App extends Component {
         // <main className="content">
             
          
-        <Container fluid>
+        <Container fluid className="bg-light text-dark">
          <Navbar bg="primary" variant="dark" fixed="top">
          <Container fluid>
           <Navbar.Brand>TomorrowNow</Navbar.Brand>

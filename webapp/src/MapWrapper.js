@@ -54,21 +54,16 @@ function MapWrapper(props) {
       source: new VectorSource()
     })
 
-    // const osm = new TileLayer({
-    //   source: new OSM(),
-    // });
+    const osm = new TileLayer({
+      source: new OSM(),
+    });
 
-    const watercolor =  new TileLayer({
-      source: new Stamen({
-        layer: 'watercolor',
-      }),
-    })
-
-    const terrain =  new TileLayer({
-      source: new Stamen({
-        layer: 'terrain-labels',
-      }),
-    })
+   
+    // const terrain =  new TileLayer({
+    //   source: new Stamen({
+    //     layer: 'terrain-labels',
+    //   }),
+    // })
 
     // create map
     const initialMap = new Map({
@@ -80,8 +75,7 @@ function MapWrapper(props) {
             url: 'https://maps.ecere.com/ogcapi/collections/blueMarble/map/tiles/WebMercatorQuad',
           }),
         }),
-       watercolor,
-       terrain,
+       osm,
         // new VectorTileLayer({
         //   declutter: true,
         //   source: new VectorTileSource({
@@ -99,7 +93,7 @@ function MapWrapper(props) {
         
       ],
       view: new View({
-        projection: 'EPSG:3857', // 4326
+        projection: 'EPSG:4326', // 4326
         center: [0, 0],
         zoom: 2
       }),

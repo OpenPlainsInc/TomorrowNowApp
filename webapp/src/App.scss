@@ -13,9 +13,9 @@
 // --terra-cotta: hsla(8, 75%, 65%, 1);
 
 
-// https://www.color-hex.com/color-palette/36240
-// https://coolors.co/7ac74f-a1cf6b-d5d887-e0c879-e87461
 
+// https://coolors.co/7ac74f-a1cf6b-d5d887-e0c879-e87461
+// @import "~bootstrap/scss/bootstrap";
 
 /* SCSS HEX */
 $mantis: #7ac74fff;
@@ -23,6 +23,18 @@ $pistachio: #a1cf6bff;
 $green-yellow-crayola: #d5d887ff;
 $buff: #e0c879ff;
 $terra-cotta: #e87461ff;
+
+// Savana Pallete
+// https://www.color-hex.com/color-palette/36240
+$savan-primary: #657e96;
+// $primary-light:
+// $primary-dark:
+$savan-secondary: #d07944;
+// $secondary-light:
+// $secondary-dark:
+$savan-orange: #d49441;
+$savan-tan: #f0e3ce;
+$savan-brown: #a76a3a;
 
 /* SCSS HSL */
 $mantis: hsla(98, 52%, 55%, 1);
@@ -50,12 +62,18 @@ $gradient-bottom-left: linear-gradient(315deg, #7ac74fff, #a1cf6bff, #d5d887ff, 
 $gradient-radial: radial-gradient(#7ac74fff, #a1cf6bff, #d5d887ff, #e0c879ff, #e87461ff);
 
 $theme-colors: (
-    "primary": $terra-cotta,
+    "primary": $savan-primary,
+    "secondary": $savan-secondary,
     "info": tomato,
-    "danger": teal
+    "danger": teal,
+    "success": $savan-orange,
+    "warning": $buff,
+    "light": $savan-tan,
+    "dark": rgb(0, 0, 0)
+   
 );
 
-
-body { padding-top: 65px; }
-
+// html {background-color: $savan-tan}
+body { padding-top: 50px; }
+// #index {background-color: $savan-tan}
 @import "~bootstrap/scss/bootstrap";

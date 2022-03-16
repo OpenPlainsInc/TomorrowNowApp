@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, Fragment} from "react"
 import {Outlet, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Card from "react-bootstrap/Card"
 import Button from "react-bootstrap/Button"
-
+import Spinner from "react-bootstrap/Spinner"
+import FormControl from "react-bootstrap/FormControl"
+import InputGroup from "react-bootstrap/InputGroup"
 
 const RasterCardImage = ({raster}) => {
-    const [image, setImage] = React.useState(null);
+    const [image, setImage] = useState(null)
+    const [loading, setLoading] = useState(true)
     const mountedRef = useRef(true)
 
     useEffect(() => {
@@ -24,7 +27,8 @@ const RasterCardImage = ({raster}) => {
                 data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
                 const rasterImage = data.response
                 setImage(rasterImage)
-                // return rasterImage
+               
+                setLoading(false)
               } catch (e) {
                 console.log(e);
             }
@@ -39,8 +43,18 @@ const RasterCardImage = ({raster}) => {
         }
       }, [])
 
+     
       return (
-        <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} />
+        <Fragment >
+            {
+                loading ? 
+                <Spinner as="span" animation="border" role="status" variant="secondary" className="bg-dark text-light" >
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+                :
+                <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} className="bg-dark text-light"/>
+            }
+        </Fragment>
       )
 
 };
@@ -49,7 +63,9 @@ const RasterCardImage = ({raster}) => {
 const Board = (props) => {
     const [rasters, setRasters] = useState([])
     const [processChainList, setProcessChainList] = useState([])
-    const [rasterImages, setRasterImages] = useState([])
+    const [filter, setFilter] = useState(null)
+    const [filteredRasters, setFilteredRasters]  = useState([])
+    const [chunks, setChunks]  = useState([])
 
 
     useEffect(() => {
@@ -74,45 +90,48 @@ const Board = (props) => {
         fetchRasters()
       }, [])
 
-      useEffect(() => {
-        let isMounted = true; 
-        async function fetchImage(raster_name) {
-            try {
-                // let queryParams = {un: params.unId}
-                let url = new URL(`http://localhost:8005/savana/r/renderpng/${raster_name}/PERMANENT`)
-                // url.search = new URLSearchParams(queryParams).toString();
-                const res = await fetch(url);
-                const data = await res.json();
-                console.log("response:", data)
-                data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
-                const rasterImage = data.response
-                setRasterImages([rasterImage].concat(rasterImages))
-                // return rasterImage
-              } catch (e) {
-                console.log(e);
-            }
-            return () => { isMounted = false }
-          }
-          console.log("Loaded Rasters: ", rasters)
-          rasters.map(r => fetchImage(r))
+
+      useEffect(()=> {
+        setFilteredRasters(rasters.filter(f => f.includes(filter) || filter === ""))
+        console.log("Set Filter", filteredRasters)
+        let _chunks = filteredRasters.length > 0 ? sliceIntoChunks(filteredRasters,4) : sliceIntoChunks(rasters,4)
+        setChunks(_chunks)
+        console.log("Set Filter chunks", chunks)
+
       },[rasters])
 
-     
 
-      const sliceIntoChunks = (arr, chunkSize) => {
+      const sliceIntoChunks = (arr) => {
+        const chunkSize = 4
         const res = [];
         for (let i = 0; i < arr.length; i += chunkSize) {
-            const chunk = arr.slice(i, i + chunkSize);
-            res.push(chunk);
+            const _chunk = arr.slice(i, i + chunkSize);
+            res.push(_chunk);
         }
         return res;
       }
+
+      const filterData = (e) => {
+        const keyword = e.target.value;
+        setFilter(keyword)
+        setFilteredRasters(rasters.filter(f => f.includes(filter) || filter === ""))
+        // .map(sliceIntoChunks)
+        let _chunks = filteredRasters.length > 0 ? sliceIntoChunks(filteredRasters) : sliceIntoChunks(rasters)
+        setChunks(_chunks)
+      }
+
+      useEffect(()=>{
+        
+      },[rasters])
      
 
       const renderRasters = (rasters) => {
-          let chunks = sliceIntoChunks(rasters,4)
+        //   setFilteredRasters(rasters.filter(f => f.includes(filter) || filter === ""))
+
           console.log("renderRasters:",chunks )
-          return chunks.map(rowdata => {
+          console.log("renderRasters Filter:",filter )
+          console.log("renderRasters Filter:",filteredRasters)
+           return chunks.map(rowdata => {
             return(
                 <Row key={rowdata.join()} className="d-flex flex-row bd-highlight mb-2">
                     {rowdata.map(raster => {
@@ -126,7 +145,6 @@ const Board = (props) => {
                                     <Card.Subtitle className="mb-4 text-muted">Data Type : {processChainList[0][1].inputs.type}</Card.Subtitle>
                                     <Card.Text>
                                         { `Mapset: ${processChainList[0][1].inputs.mapset}`}
-                                        {rasterImages.filter(img => img.raster_name === raster).imgurl || "Sup"}
                                     </Card.Text>
                                     <Card.Link href="#">Map</Card.Link>
                                     <Card.Link href="#">Metadata</Card.Link>
@@ -141,7 +159,18 @@ const Board = (props) => {
       };
   
         return (
-            <Container fluid>
+            <Container fluid className="bg-light text-dark">
+                <Row>
+                 <InputGroup className="mb-3">
+                    <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
+                    <FormControl
+                    placeholder="Search Data"
+                    aria-label="Search"
+                    aria-describedby="basic-addon1"
+                    onChange={filterData}
+                    />
+                </InputGroup>
+                </Row>
                 <Row>
                 {rasters ? renderRasters(rasters): []}
                 </Row>
