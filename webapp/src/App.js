@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-import MapWrapper from './MapWrapper';
-import {Outlet, Link} from "react-router-dom";
+import {Outlet} from "react-router-dom";
 import {LinkContainer} from 'react-router-bootstrap'
 import Container from "react-bootstrap/Container"
 import Navbar from "react-bootstrap/Navbar"
@@ -23,32 +22,32 @@ class App extends Component {
   }
 
    
-    renderItems = () => {
-      const newItems = this.state.todoList;
+    // renderItems = () => {
+    //   const newItems = this.state.todoList;
     
-      console.log("Render Items", this.state)
-      return newItems.map(item => (
-        <li 
-          key={item.id}
-          className="list-group-item d-flex justify-content-between align-items-center"
-        >
-           <MapWrapper key={item.id} className="map-container" features={item} />
-          <span 
-            className={`todo-title mr-2 ${
-              this.state.viewCompleted ? "completed-todo" : ""
-            }`}
-            title={item.properties.area}
-            >
+    //   console.log("Render Items", this.state)
+    //   return newItems.map(item => (
+    //     <li 
+    //       key={item.id}
+    //       className="list-group-item d-flex justify-content-between align-items-center"
+    //     >
+    //        <MapWrapper key={item.id} className="map-container" features={item} />
+    //       <span 
+    //         className={`todo-title mr-2 ${
+    //           this.state.viewCompleted ? "completed-todo" : ""
+    //         }`}
+    //         title={item.properties.area}
+    //         >
               
-              {item.properties.name} <br></br>
-              Population: {item.properties.pop2005} <br></br>
-              Area: {item.properties.area} <br></br>
-              <Link to={`/country/${item.id}`}> {item.properties.name} </Link>
-            </span>
+    //           {item.properties.name} <br></br>
+    //           Population: {item.properties.pop2005} <br></br>
+    //           Area: {item.properties.area} <br></br>
+    //           <Link to={`/country/${item.id}`}> {item.properties.name} </Link>
+    //         </span>
            
-        </li>
-      ));
-    };
+    //     </li>
+    //   ));
+    // };
 
     render() {
       return (

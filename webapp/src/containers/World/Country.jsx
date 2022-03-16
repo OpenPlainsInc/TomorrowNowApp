@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import MapWrapper from '../MapWrapper';
+import MapWrapper from '../../components/MapWrapper';
 import {Outlet, Link, useParams, useLocation } from "react-router-dom";
 
 const Country = (props) => {
@@ -43,11 +43,6 @@ const Country = (props) => {
               </div>
             </div>
            </div>
-           <nav>
-            <Link to="/">Home</Link> | {" "}
-            <Link to="/world">World</Link> | {" "}
-            <Link to="/dashboard">Dashboard</Link>
-           </nav>
            <Outlet />
          </main>
         

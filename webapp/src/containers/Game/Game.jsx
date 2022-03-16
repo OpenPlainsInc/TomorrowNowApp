@@ -10,8 +10,8 @@ import Stamen from 'ol/source/Stamen';
 import OSM from 'ol/source/OSM'
 import GeoTIFF from 'ol/source/GeoTIFF';
 import WebGLTileLayer from 'ol/layer/WebGLTile';
-import MapContext from '../components/OpenLayers/MapContext';
-import MapEditer from '../components/OpenLayers/MapEditer';
+import MapContext from '../../components/OpenLayers/MapContext'
+import MapEditer from '../../components/OpenLayers/MapEditer';
 
 
 const Game = ({ children, zoom, center }) => {

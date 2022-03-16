@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import MapWrapper from '../MapWrapper';
+import MapWrapper from '../../components/MapWrapper';
 import {Outlet, NavLink } from "react-router-dom";
 
 const World = () => {

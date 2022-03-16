@@ -1,19 +1,19 @@
 import { useContext, useEffect } from "react";
 import MapContext from "../MapContext";
-import GeoTIFF from 'ol/source/GeoTIFF';
-import WebGLTileLayer from 'ol/layer/WebGLTile';
-const TileLayer = ({ source, style, zIndex = 0 }) => {
+import OLWebGLTileLayer from 'ol/layer/WebGLTile';
+const WebGLTileLayer = ({ layerName, source, style, zIndex = 0 }) => {
   const { map } = useContext(MapContext); 
   useEffect(() => {
     if (!map) return;
     
-    let tileLayer = new WebGLTileLayer({
+    let tileLayer = new OLWebGLTileLayer({
       source,
       style,
       zIndex,
     });
     map.addLayer(tileLayer);
     tileLayer.setZIndex(zIndex);
+    tileLayer.set('name', layerName)
     return () => {
       if (map) {
         map.removeLayer(tileLayer);
@@ -22,4 +22,4 @@ const TileLayer = ({ source, style, zIndex = 0 }) => {
   }, [map]);
   return null;
 };
-export default TileLayer;
+export default WebGLTileLayer;
