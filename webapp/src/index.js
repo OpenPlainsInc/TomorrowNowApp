@@ -19,12 +19,13 @@ ReactDOM.render(
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
-      <Route path="game" element={<Game />} />
-      <Route path="board" element={<Board /> } />
-      <Route path="board/:rasterId" element={<BoardDetail /> } />
-      <Route path="world/:unId" element={<Country /> } />
-      <Route path="world" element={<World />} /> 
-      <Route path="dashboard" element={<Dashboard />} />
+        <Route path="game" element={<Game />} />
+        <Route path="board" element={<Board /> } />
+        <Route path="board/:rasterId" element={<BoardDetail /> } />
+        <Route path="world/:unId" element={<Country /> } />
+        <Route path="world" element={<World />} /> 
+        <Route path="dashboard" element={<Dashboard />} />
+     
       <Route
         path="*"
         element={
