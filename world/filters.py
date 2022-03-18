@@ -10,4 +10,5 @@ class WorldPopulationFilter(django_filters.FilterSet):
 
     class Meta:
         model = WorldBorder
+        ordering = ['name']
         fields = ['pop2005','area','name', 'region', 'subregion', 'un']

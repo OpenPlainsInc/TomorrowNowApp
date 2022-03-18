@@ -1,4 +1,7 @@
 from django.contrib.gis.db import models
+import logging
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class WorldBorder(models.Model):
     # Regular Django fields corresponding to the attributes in the
@@ -27,7 +30,12 @@ class WorldBorder(models.Model):
         """
         Population per km2
         """
-        return float(self.pop2005 / float(self.area/ 1e6))
+        pop_density = None
+        try:
+           pop_density = float(self.pop2005 / float(self.area/ 1e6))
+        except ZeroDivisionError:
+            logger.warning(f"Zero Division Error: Country: {self.name}, Population: {self.pop2005}, Area: {self.area}")
+        return pop_density
 
 # class Elevation(models.Model):
 #     name = models.CharField(max_length=100)

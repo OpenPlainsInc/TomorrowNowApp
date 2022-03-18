@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers  
+from django.views.decorators.cache import cache_page
 
 
 from . import views
@@ -24,7 +25,7 @@ urlpatterns = [
    path('', views.CountryListView.as_view()),
 #    path('', include(router.urls)),
    path('map', views.mapview, name="Map"),
-   path('countries/', views.WorldAPIView.as_view(), name='countires'),
-   path('population/', views.WorldAPIViewCustom.as_view(), name='population'),
-   path('info/', views.AcpInfo, name='info')
+   path('countries/', cache_page(60 * 15)(views.WorldAPIView.as_view()), name='countires'),
+   path('population/', cache_page(60 * 15)(views.WorldAPIViewCustom.as_view()), name='population'),
+   
 ]
