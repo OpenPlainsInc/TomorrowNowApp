@@ -41,6 +41,23 @@ services:
     ports:
         - "6379:6379"
 
+  django-redis-cache:
+    image: redis:5.0.4-alpine
+    volumes:
+      - ./django_redis_cache:/data
+    environment:
+      - REDIS_PASS_FILE=/data/config/.redis
+    command: [
+      "sh", "-c",
+      '
+      docker-entrypoint.sh
+      "/data/config/redis.conf"
+      --requirepass "$$(cat $$REDIS_PASS_FILE)"
+      '
+    ]
+    ports:
+        - "6370:6370"
+
   # redis-gui:
   #   image: redislabs/redisinsight:1.11.1
 
@@ -69,6 +86,7 @@ services:
     depends_on:
       - db
       - actinia-core
+      - django-redis-cache
   
   webapp:
     build:

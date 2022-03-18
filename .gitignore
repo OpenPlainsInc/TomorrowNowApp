@@ -122,3 +122,9 @@ node_modules
 
 # Actinia
 # actinia-core-data
+
+# Google Cloud
+gcp_keys
+
+# Django Redis Cache
+django_redis_cache/dump.rdb
