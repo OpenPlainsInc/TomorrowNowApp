@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: actinia.py                                                         #
+# Filename: gcs_bucket_cors.py                                                 #
 # Project: TomorrowNow                                                         #
-# File Created: Monday March 14th 2022                                         #
+# File Created: Friday March 18th 2022                                         #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Mar 20 2022                                               #
+# Last Modified: Fri Mar 18 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,30 +30,45 @@
 #                                                                              #
 ###############################################################################
 
+# https://cloud.google.com/storage/docs/configuring-cors#storage_cors_configuration-python
+from google.cloud import storage
 
-from django.conf import settings
-from requests.auth import HTTPBasicAuth
-import json
-import os
-from django.contrib.gis.gdal import DataSource
 
-ACTINIA_SETTINGS = settings.ACTINIA
+def cors_configuration(bucket_name):
+    """Set a bucket's CORS policies configuration."""
+    # bucket_name = "your-bucket-name"
 
-def print_as_json(data):
-    return json.dumps(data)
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    bucket.cors = [
+        {
+            "origin": ["*"],
+            "responseHeader": [
+                "Content-Type",
+                "x-goog-resumable"],
+            "method": ['GET'],
+            "maxAgeSeconds": 3600
+        }
+    ]
+    bucket.patch()
 
-def auth():
-    print(ACTINIA_SETTINGS)
-    auth = HTTPBasicAuth(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
-    return auth
+    print("Set CORS policies for bucket {} is {}".format(bucket.name, bucket.cors))
+    return bucket
 
-def baseUrl():
-    ACTINIA_URL = os.path.join('http://',ACTINIA_SETTINGS['ACTINIA_BASEURL'], 'api', ACTINIA_SETTINGS['ACTINIA_VERSION'])
-    print(ACTINIA_URL)
-    return ACTINIA_URL
+def remove_cors_configuration(bucket_name):
+    """Remove a bucket's CORS policies configuration."""
+    # bucket_name = "your-bucket-name"
 
-def location():
-    return ACTINIA_SETTINGS['ACTINIA_LOCATION']
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    bucket.cors = []
+    bucket.patch()
 
-def currentUser():
-    return ACTINIA_SETTINGS['ACTINIA_USER']
+    print("Remove CORS policies for bucket {}.".format(bucket.name))
+    return bucket
+
+def main():
+    cors_configuration('tomorrownow-actinia-dev')
+
+if __name__ == "__main__":
+    main()

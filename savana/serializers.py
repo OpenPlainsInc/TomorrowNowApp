@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: actinia.py                                                         #
+# Filename: serializers.py                                                     #
 # Project: TomorrowNow                                                         #
-# File Created: Monday March 14th 2022                                         #
+# File Created: Friday March 18th 2022                                         #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Mar 20 2022                                               #
+# Last Modified: Fri Mar 18 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,30 +30,10 @@
 #                                                                              #
 ###############################################################################
 
+# from rest_framework import serializers
+# from .models import Question
 
-from django.conf import settings
-from requests.auth import HTTPBasicAuth
-import json
-import os
-from django.contrib.gis.gdal import DataSource
-
-ACTINIA_SETTINGS = settings.ACTINIA
-
-def print_as_json(data):
-    return json.dumps(data)
-
-def auth():
-    print(ACTINIA_SETTINGS)
-    auth = HTTPBasicAuth(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
-    return auth
-
-def baseUrl():
-    ACTINIA_URL = os.path.join('http://',ACTINIA_SETTINGS['ACTINIA_BASEURL'], 'api', ACTINIA_SETTINGS['ACTINIA_VERSION'])
-    print(ACTINIA_URL)
-    return ACTINIA_URL
-
-def location():
-    return ACTINIA_SETTINGS['ACTINIA_LOCATION']
-
-def currentUser():
-    return ACTINIA_SETTINGS['ACTINIA_USER']
+# class QuestionSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Question
+#         fields = '__all__'

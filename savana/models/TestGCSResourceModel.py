@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: actinia.py                                                         #
+# Filename: TestGCSResourceModel.py                                            #
 # Project: TomorrowNow                                                         #
 # File Created: Monday March 14th 2022                                         #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Mar 20 2022                                               #
+# Last Modified: Fri Mar 18 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -31,29 +31,45 @@
 ###############################################################################
 
 
-from django.conf import settings
-from requests.auth import HTTPBasicAuth
-import json
-import os
-from django.contrib.gis.gdal import DataSource
+from django.db import models
+from django.core.files.storage import default_storage
+import datetime
+from django.contrib import admin
+from django.utils import timezone
 
-ACTINIA_SETTINGS = settings.ACTINIA
+class TestGCSResourceModel(models.Model):
+    user_id = models.CharField(max_length=250)
+    resource_id = models.CharField(max_length=250, primary_key=True)
+    geotiff_result = models.ImageField(upload_to="geotiff_results")
 
-def print_as_json(data):
-    return json.dumps(data)
 
-def auth():
-    print(ACTINIA_SETTINGS)
-    auth = HTTPBasicAuth(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
-    return auth
 
-def baseUrl():
-    ACTINIA_URL = os.path.join('http://',ACTINIA_SETTINGS['ACTINIA_BASEURL'], 'api', ACTINIA_SETTINGS['ACTINIA_VERSION'])
-    print(ACTINIA_URL)
-    return ACTINIA_URL
+# class Question(models.Model):
+#     """
+#     """
+    
+#     question_text = models.CharField(max_length=200)
+#     pub_date = models.DateTimeField('date published')
 
-def location():
-    return ACTINIA_SETTINGS['ACTINIA_LOCATION']
+#     def __str__(self):
+#         return self.question_text
 
-def currentUser():
-    return ACTINIA_SETTINGS['ACTINIA_USER']
+#     @admin.display(
+#         boolean=True,
+#         ordering='pub_date',
+#         description='Published recently?',
+#     )
+#     def was_published_recently(self):
+#         now = timezone.now()
+#         return now - datetime.timedelta(days=1) <= self.pub_date <= now
+
+
+# class Choice(models.Model):
+#     """
+#     """
+#     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+#     choice_text = models.CharField(max_length=200)
+#     votes = models.IntegerField(default=0)
+
+#     def __str__(self):
+#         return self.choice_text

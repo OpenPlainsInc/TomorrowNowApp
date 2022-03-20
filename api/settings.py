@@ -1,3 +1,36 @@
+###############################################################################
+# Filename: settings.py                                                        #
+# Project: TomorrowNow                                                         #
+# File Created: Friday March 4th 2022                                          #
+# Author: Corey White (smortopahri@gmail.com)                                  #
+# Maintainer: Corey White                                                      #
+# -----                                                                        #
+# Last Modified: Fri Mar 18 2022                                               #
+# Modified By: Corey White                                                     #
+# -----                                                                        #
+# License: GPLv3                                                               #
+#                                                                              #
+# Copyright (c) 2022 TomorrowNow                                               #
+#                                                                              #
+# TomorrowNow is an open-source geospatial participartory modeling platform    #
+# to enable stakeholder engagment in socio-environmental decision-makeing.     #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU General Public License as published by         #
+# the Free Software Foundation, either version 3 of the License, or            #
+# (at your option) any later version.                                          #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# You should have received a copy of the GNU General Public License            #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+#                                                                              #
+###############################################################################
+
+
 """
 Django settings for api project.
 
@@ -59,7 +92,8 @@ INSTALLED_APPS = [
     # 'guardian',
     'django_filters',
     'django_extensions',
-    'debug_toolbar'
+    'debug_toolbar',
+    'channels'
 ]
 
 REST_FRAMEWORK = {
@@ -274,7 +308,7 @@ STATIC_URL = '/static/'
 
 # Google Cloud Storage Settings
 # https://django-storages.readthedocs.io/en/latest/backends/gcloud.html
-
+# https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-gcloud
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_BUCKET_NAME = env('GS_BUCKET_NAME')
 GS_PROJECT_ID = env('GS_PROJECT_ID')
@@ -286,3 +320,6 @@ STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Channels
+ASGI_APPLICATION = "api.asgi.application"

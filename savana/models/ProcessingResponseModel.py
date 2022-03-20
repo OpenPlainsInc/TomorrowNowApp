@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: actinia.py                                                         #
+# Filename: ProcessingResponseModel.py                                         #
 # Project: TomorrowNow                                                         #
-# File Created: Monday March 14th 2022                                         #
+# File Created: Friday March 18th 2022                                         #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Mar 20 2022                                               #
+# Last Modified: Fri Mar 18 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -29,31 +29,36 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 #                                                                              #
 ###############################################################################
+from django.db import models
+from django.core.files.storage import default_storage
+# Create your models here.
 
+def status_default():
+    return {}
 
-from django.conf import settings
-from requests.auth import HTTPBasicAuth
-import json
-import os
-from django.contrib.gis.gdal import DataSource
+class ProcessingResponseModel(models.Model):
+    """This is the base class for ALL response models.
+    This class or its derivatives must be used in all responses that run
+    GRASS modules or Unix programs. Derivatives only differ in the
+    *process_result* schema.
 
-ACTINIA_SETTINGS = settings.ACTINIA
-
-def print_as_json(data):
-    return json.dumps(data)
-
-def auth():
-    print(ACTINIA_SETTINGS)
-    auth = HTTPBasicAuth(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
-    return auth
-
-def baseUrl():
-    ACTINIA_URL = os.path.join('http://',ACTINIA_SETTINGS['ACTINIA_BASEURL'], 'api', ACTINIA_SETTINGS['ACTINIA_VERSION'])
-    print(ACTINIA_URL)
-    return ACTINIA_URL
-
-def location():
-    return ACTINIA_SETTINGS['ACTINIA_LOCATION']
-
-def currentUser():
-    return ACTINIA_SETTINGS['ACTINIA_USER']
+    required = ['status', 'user_id', 'resource_id', 'timestamp', 'datetime',
+                'accept_timestamp', 'accept_datetime', 'message']
+    """
+    
+    status = models.CharField(max_length=50) # The status of the response (Probably and Enum)
+    user_id = models.CharField(max_length=250) # The id of the user that issued a request
+    resource_id = models.CharField(max_length=250) # The unique resource id
+    # process_log = []  ProcessLogModel  # A list of ProcessLogModels
+    # process_chain_list [] GrassModule # The list of GRASS modules that were used in the processing
+    process_results = models.JSONField("process_results", default=dict) # An arbitrary class that stores the processing results
+    # progress =  ProgressInfoModel
+    message = models.CharField(max_length=50) # Message for the user, maybe status, finished or error message
+    accept_timestamp= models.DecimalField(max_digits=19, decimal_places=6) # The acceptance timestamp of the response in human readable format
+    # 'exception': ExceptionTracebackModel,
+    accept_datetime = models.CharField(max_length=250) # The acceptance timestamp of the response in human readable format
+    timestamp = models.DecimalField(max_digits=19, decimal_places=6) # The current timestamp in seconds of the response
+    time_delta = models.DecimalField(max_digits=19, decimal_places=6) # The delta of the processing in seconds
+    datetime = models.CharField(max_length=250) # The current timestamp of the response in human readable format
+    # urls = UrlModel,
+    # api_info = ApiInfoModel
