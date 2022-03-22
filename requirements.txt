@@ -13,3 +13,5 @@ redis>=4.0
 hiredis>=2.0
 requests>=2.27
 django-storages[google]>=1.12
+pillow>=9.0
+channels>=3.0
