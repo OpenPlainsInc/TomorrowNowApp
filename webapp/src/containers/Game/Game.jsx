@@ -60,9 +60,18 @@ const Game = ({ children, zoom, center }) => {
           source: new GeoTIFF({
             normalize: false,
             sources: [
-              {
-                url: 'https://s2downloads.eox.at/demo/EOxCloudless/2020/rgbnir/s2cloudless2020-16bits_sinlge-file_z0-4.tif',
-              },
+              // {
+              //   url: 'https://storage.googleapis.com/storage/v1/b/tomorrownow-actinia-dev/o/boundary_county_500m.tif'
+              // },
+              // {
+              //   url: 'https://storage.googleapis.com/download/storage/v1/b/tomorrownow-actinia-dev/o/dem_10m_mosaic_cog.tif?alt=media'
+              // }
+              // {
+              //   url: 'https://tomorrownow-actinia-dev.storage.googleapis.com/boundary_county_500m.tif'
+              // },
+              // {
+              //   url: 'https://storage.googleapis.com/tomorrownow-actinia-dev/boundary_county_500m.tif'
+              // },
             ],
           }),
         });

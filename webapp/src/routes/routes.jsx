@@ -1,10 +1,10 @@
-
 import {Route} from "react-router-dom";
 import App from "../App"
 import GameRoutes from "./GameRoutes";
 import BoardRoutes from "./BoardRoutes"
 import DashboardRoutes from "./DashboardRoutes";
 import WorldRoutes from "./WorldRoutes"
+
 const routes = (
     <Route path="/" element={<App />}>
         {GameRoutes}

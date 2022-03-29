@@ -26,16 +26,16 @@ Creates or updates models and store changes as a migration
 
 ```bash
 # Create migrations
-python manage.py makemigrations <appname>
+docker-compose run python manage.py makemigrations <appname>
 
 # Apply changes to database
-python manage.py migrate
+docker-compose run api python manage.py migrate
 ```
 
-## Open Python shell to interact with Django API
+## View Django urls
 
 ```bash
-python manage.py shell
+docker-compose run api python manage.py show_urls
 ```
 
 ## Testing

@@ -128,3 +128,10 @@ gcp_keys
 
 # Django Redis Cache
 django_redis_cache/dump.rdb
+
+# PyWPS
+wps/pywps/log/
+wps/pywps/pywps.cfg
+wps/nginx/log/
+wps/nginx/conf.d/default.conf
+wps/*~

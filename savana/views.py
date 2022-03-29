@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Mar 18 2022                                               #
+# Last Modified: Mon Mar 28 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -55,19 +55,22 @@ from .utils import actinia as acp
 def csrf(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
+
 def ping(request):
     return JsonResponse({'result': 'OK'})
 
+
 def resourceStatus(user_id, resource_id):
-      url = f"{acp.baseUrl()}/resources/{user_id}/{resource_id}"
-      r = requests.get(url, auth=acp.auth())
-      data = r.json()
-      print(f"resourceStatus: {r.status_code}")
-      if r.status_code == 200:
-            if data['status'] == 'finished':
-                 return data['urls']['resources']
-            else:
-                  return resourceStatus(user_id, resource_id)
+    url = f"{acp.baseUrl()}/resources/{user_id}/{resource_id}"
+    r = requests.get(url, auth=acp.auth())
+    data = r.json()
+    print(f"resourceStatus: {r.status_code}")
+    if r.status_code == 200:
+        if data['status'] == 'finished':
+            print(f"Finished Resource: {data}")
+            return data['urls']['resources']
+        else:
+            return resourceStatus(user_id, resource_id)
 
 
 # Create your views here.
@@ -82,6 +85,7 @@ def gList(request):
     print(f"Request URL: {url}")
     print(r)
     return JsonResponse({"response": r.json()}, safe=False)
+
 
 def rRenderImage(request, raster_name, mapset_name):
     """
@@ -99,6 +103,7 @@ def rRenderImage(request, raster_name, mapset_name):
         decode = base64.b64encode(r.content).decode('utf-8')
         return JsonResponse({"response": {"imagedata": decode, "raster_name": raster_name}}, safe=False)
 
+
 def rInfo(request, raster_name, mapset_name):
     """
     Get raster info using r.info
@@ -114,32 +119,45 @@ def rInfo(request, raster_name, mapset_name):
     print(f"Request URL: {url}")
     return JsonResponse({"response": r.json()}, safe=False)
 
+
 # @csrf_exempt
 def rGeoTiff(request, raster_name, mapset_name):
-      """
-      Get GeoTiff of an existing raster map layer
-      Actinia Route
-      POST /locations/{location_name}/mapsets/{mapset_name}/raster_layers/{raster_name}/geotiff_async
-      """
+    """
+    Get GeoTiff of an existing raster map layer
+    Actinia Route
+    POST /locations/{location_name}/mapsets/{mapset_name}/raster_layers/{raster_name}/geotiff_async
+    """
 
-      url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/" \
-          f"{mapset_name}/raster_layers/{raster_name}/geotiff_async"
+    url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/" \
+        f"{mapset_name}/raster_layers/{raster_name}/geotiff_async"
 
-      r = requests.post(url, auth=acp.auth())
+    r = requests.post(url, auth=acp.auth())
 
-      userId = acp.currentUser()
-      if r.status_code == 200:
-            resource_id = r.json()['resource_id']
-            source = resourceStatus(userId, resource_id)
-            newurl = source[0]
-            print(f"Image URL: {newurl}")
-            # r2 = requests.get(newurl, auth=acp.auth())
-            # print(f"Request Image Response: {r2}")
-            # storage_object = TestGCSResourceModel(user_id=userId, resource_id=resource_id)
-            # decode = base64.b64encode(r2.content).decode('utf-8')
-            # storage_object.geotiff_result.save(f"{userId}_{resource_id}_{raster_name}",  ContentFile(decode))
-            # print("Saved to Google Cloud Storage")
-            # print(storage_object.geotiff_result.storage)
-            return JsonResponse({"response": {"imagedata": newurl}}, safe=False)
-      
+    userId = acp.currentUser()
+    if r.status_code == 200:
+        jsonResponse = r.json()
+        print(f"Response: {r.json()}")
+        # acp.waitForResource(jsonResponse)
 
+        # Uncommit this chunk
+        resource_id = jsonResponse['resource_id']
+        # source = resourceStatus(userId, resource_id)
+        # newurl = source[0]
+        # print(f"Image URL: {newurl}")
+
+        viewResponse = {
+            "response": {
+                # "imagedata": newurl,
+                "resourceId": resource_id,
+                "status": jsonResponse["status"]
+            }
+        }
+
+        # r2 = requests.get(newurl, auth=acp.auth())
+        # print(f"Request Image Response: {r2}")
+        # storage_object = TestGCSResourceModel(user_id=userId, resource_id=resource_id)
+        # decode = base64.b64encode(r2.content).decode('utf-8')
+        # storage_object.geotiff_result.save(f"{userId}_{resource_id}_{raster_name}",  ContentFile(decode))
+        # print("Saved to Google Cloud Storage")
+        # print(storage_object.geotiff_result.storage)
+        return JsonResponse(viewResponse, safe=False)

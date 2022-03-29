@@ -19,7 +19,7 @@ const WebGLTileLayer = ({ layerName, source, style, zIndex = 0 }) => {
         map.removeLayer(tileLayer);
       }
     };
-  }, [map]);
+  }, [map, source, style, zIndex = 0]);
   return null;
 };
 export default WebGLTileLayer;

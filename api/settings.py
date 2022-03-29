@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Mar 18 2022                                               #
+# Last Modified: Mon Mar 28 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -47,8 +47,6 @@ from pathlib import Path
 import environ
 import os
 
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,6 +74,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'world.apps.WorldConfig',
     'grassapp.apps.GrassappConfig',
     'savana.apps.SavanaConfig',
@@ -92,8 +91,7 @@ INSTALLED_APPS = [
     # 'guardian',
     'django_filters',
     'django_extensions',
-    'debug_toolbar',
-    'channels'
+    'debug_toolbar'
 ]
 
 REST_FRAMEWORK = {
@@ -139,9 +137,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 # CORS_ORIGIN_ALLOW_ALL = True
 
-
-
-# CORS_ALLOWED_ORIGIN_REGEXES are regular expressions that match domains 
+# CORS_ALLOWED_ORIGIN_REGEXES are regular expressions that match domains
 # that can make requests. This setting is especially useful if you have many domains.
 # CORS_ALLOWED_ORIGIN_REGEXES = [
 # r"^https://\w+\.domain\.com$",
@@ -149,8 +145,8 @@ CORS_ALLOWED_ORIGINS = [
 # r"^http://\w+\actinia-core\:8088$",
 # ]
 
-# The CORS_URLS_REGEX setting restricts which URLs the server will 
-# send CORS headers to. It’s useful, for example, when you just want 
+# The CORS_URLS_REGEX setting restricts which URLs the server will
+# send CORS headers to. It’s useful, for example, when you just want
 # to send headers on part of your site. Here’s an example:
 # CORS_URLS_REGEX = r'^/api/.*$'
 
@@ -176,22 +172,22 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-# CORS_EXPOSE_HEADERS is a list of headers exposed to the browser. 
+# CORS_EXPOSE_HEADERS is a list of headers exposed to the browser.
 # The default is an empty array.
 CORS_EXPOSE_HEADERS = []
 
 # Defines the time in seconds a browswer can cache a header response to a
 # preflight request. Deafualts to 86,400 (one day)
-CORS_PREFLIGHT_MAX_AGE = 86400 
+CORS_PREFLIGHT_MAX_AGE = 86400
 
-# CORS_ALLOW_CREDENTIALS is a true or false value. So, its value determines whether the server 
+# CORS_ALLOW_CREDENTIALS is a true or false value. So, its value determines whether the server
 # allows cookies in the cross-site HTTP requests.
-CORS_ALLOW_CREDENTIALS=True
+CORS_ALLOW_CREDENTIALS = True
 
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000'
-    ]
+]
 
 
 ROOT_URLCONF = 'api.urls'
@@ -236,6 +232,7 @@ DATABASES = {
 # CACHES
 # https://django-redis-cache.readthedocs.io/en/latest/intro_quick_start.html
 # https://docs.djangoproject.com/en/4.0/topics/cache/
+# Running in Redis database 10
 CACHES = {
     #  'default': {
     #     'BACKEND': 'redis_cache.RedisCache',
@@ -322,4 +319,21 @@ STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Channels
+# Running in Redis database 5
 ASGI_APPLICATION = "api.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        # 'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [f'redis://{env("REDIS_USER")}:{env("REDIS_PASSWORD")}@django-redis-cache:6370/5'],
+        },
+    },
+}
+
+# Celery
+# Running in Databases 0 and 1
+CELERY_BROKER_URL = f'redis://{env("REDIS_USER")}:{env("REDIS_PASSWORD")}@django-redis-cache:6370/0'
+CELERY_RESULT_BACKEND = f'redis://{env("REDIS_USER")}:{env("REDIS_PASSWORD")}@django-redis-cache:6370/1'
+
+# CELERY_TIMEZONE = "America/New_York"

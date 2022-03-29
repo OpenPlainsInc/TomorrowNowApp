@@ -3,7 +3,7 @@ import './App.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Routes } from "react-router-dom";
 import approutes from './routes/routes'
 
 import reportWebVitals from './reportWebVitals';

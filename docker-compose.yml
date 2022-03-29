@@ -1,4 +1,11 @@
 version: "3.8"
+
+# https://stackoverflow.com/questions/44284484/docker-compose-share-named-volume-between-multiple-containers
+# x-services-volume:
+#   &services-volume
+#   type: bind
+#   source: ./actinia-core-data/resources
+#   target: ./actinia_core/resources
    
 services:
   
@@ -19,6 +26,7 @@ services:
     volumes:
       - ./actinia-core-data/grassdb:/actinia_core/grassdb:Z
       - ./actinia-core-data/userdata:/actinia_core/userdata
+      # - *services-volume
     ports:
       - "8088:8088"
     depends_on:
@@ -58,9 +66,6 @@ services:
     ports:
         - "6370:6370"
 
-  # redis-gui:
-  #   image: redislabs/redisinsight:1.11.1
-
 # pg_tileserv:
 #   image: pramsey/pg_tileserv:latest-alpine-3.12
 #   build:
@@ -87,6 +92,21 @@ services:
       - db
       - actinia-core
       - django-redis-cache
+
+  celery_worker:
+    build:
+      context: .
+      # dockerfile: ./Dockerfile
+    # image: django_celery_example_celery_worker
+    command: celery -A api.celery worker --loglevel=INFO
+    volumes:
+      - .:/code
+    env_file:
+      - ./api/.env
+    depends_on:
+      - redis
+      - db
+      - api
   
   webapp:
     build:
@@ -100,6 +120,60 @@ services:
       - "3000:3000"
     depends_on:
       - api
-    
+  
+  terracotta:
+    build:
+      context: ./terracotta
+      dockerfile: Dockerfile
+    volumes:
+      - ./terracotta/data:/app/data
+      # - <<: *services-volume
+      #   target: ./app/data
+    ports:
+      - 5000:5000
+      - 5001:5001
+        
+  titiler:
+    build:
+      context: ./titiler
+      dockerfile: Dockerfile
+    ports:
+      - 7000:7000
 
-   
+  wireshark:
+    image: lscr.io/linuxserver/wireshark
+    container_name: wireshark
+    cap_add:
+      - NET_ADMIN
+    network_mode: bridge
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    # volumes:
+    #   - /path/to/config:/config
+    ports:
+      #HOST:CONTAINER
+      - 3050:3000
+    restart: unless-stopped
+
+
+  # wps:
+  #   restart: always
+  #   build:
+  #     context: ./wps
+  #     dockerfile: Dockerfile
+  #   image: gh_wps
+  #   container_name: gh_wps_1
+  #   volumes:
+  #     - ./nginx/conf.d:/etc/nginx/conf.d/
+  #     - ./nginx/log:/var/log/nginx/
+  #     - ./pywps:/opt/pywps/
+  #     - ./pywps/log:/var/log/pywps/
+  #     - /data/grassdata/geoharmonizer_aq_wps:/data/grassdata/aq_location
+  #   ports:
+  #     - 8088:8088
+  #   environment:
+  #     - NGINX_HTTP=http
+  #     - NGINX_HOST=localhost
+  #     - NGINX_PORT=8088
