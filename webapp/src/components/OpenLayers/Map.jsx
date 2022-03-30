@@ -33,7 +33,7 @@ const Map = ({ children, zoom, center, projection='EPSG:4326', altView=null }) =
     if (!map && !altView){
       return
     } else {
-      map.setView(altView)
+      map.setView(altView.getView())
       map.getView().setZoom(9)
       console.log("altView", altView)
       console.log("map + view", map.getView())

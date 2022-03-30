@@ -4,13 +4,14 @@ import OLWebGLTileLayer from 'ol/layer/WebGLTile';
 const WebGLTileLayer = ({ layerName, source, style, zIndex = 0 }) => {
   const { map } = useContext(MapContext); 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !source) return;
     
     let tileLayer = new OLWebGLTileLayer({
       source,
       style,
       zIndex,
     });
+    map.setView(source.getView())
     map.addLayer(tileLayer);
     tileLayer.setZIndex(zIndex);
     tileLayer.set('name', layerName)

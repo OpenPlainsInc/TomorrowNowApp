@@ -175,17 +175,7 @@ const BoardMap = (props) => {
         fetchRasters()
       }, [])
 
-    //   useEffect(() => {
-    //     if(source) {
-    //         console.log("Source:", source)
-    //         source.getView().then(v => {
-    //             console.log("View:",v)
-               
-    //         })
-    //         setView(source.getView())
-           
-    //     } 
-    //   }, [source])
+
       useEffect(() => {
         if (lastMessage !== null) {
           setMessageHistory((prev) => prev.concat(lastMessage));
@@ -225,14 +215,16 @@ const BoardMap = (props) => {
         if (lastJsonMessage) {
             let data = lastJsonMessage
             setStatus(data.message)
-            
 
-            function removeHttp(url) {
-                    return url.replace(/^https?:\/\/actinia-core/, 'localhost');
-                }
-               
-            const rastersData = `http://actinia-gdi:actinia-gdi@${removeHttp(data.resources[0])}`
-            let sourceOptions = {sources: [{url: rastersData}]}
+            const rastersData = `${API_HOST}/r/resource/${params.rasterId}/stream/${data.resource_id}/`
+            let sourceOptions = {
+                sources: [{url: rastersData}], 
+                allowFullFile: true, 
+                forceXHR: false, 
+                normalize: true,
+                convertToRGB: true
+            }
+            console.log("COG Url: ", rastersData)
             let tmpSource = GeoTIFFSource(sourceOptions)
             setSource(tmpSource)
         }
@@ -246,21 +238,21 @@ const BoardMap = (props) => {
             <Container>
                 <h1>Connection Status: {connectionStatus}</h1>
                 <h1>{resourceId}: {status}</h1>
-                {/* <h3>{lastMessage.data}</h3> */}
-                {/* <h1>Last Message: {lastJsonMessage}</h1> */}
-                <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3857' >
+                {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3857' > */}
+                {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3358' > */}
+
                 {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:32636' > */}
-                {/* <Map  center={fromLonLat(center)} zoom={zoom} altView={view}> */}
+                <Map  center={fromLonLat(center)} zoom={zoom} altView={source}>
 
                     <Layers>
                         <TileLayer source={osm()}></TileLayer>
-                        <TileLayer source={source}></TileLayer>
-                       
                         {/* <TileLayer source={source}></TileLayer> */}
-                        {/* <WebGLTileLayer 
+                       
+                        <TileLayer source={source}></TileLayer>
+                        <WebGLTileLayer 
                             layerName={params.rasterId}
                             source={source}>
-                        </WebGLTileLayer> */}
+                        </WebGLTileLayer>
                                           
 
 
@@ -270,7 +262,7 @@ const BoardMap = (props) => {
                         <FullScreenControl />
                         <ZoomSliderControl />
                     </Controls>
-                    {/* <Reprojection epsg='3857'></Reprojection> */}
+                    <Reprojection epsg='3857'></Reprojection>
                     {/* <Reprojection epsg='32636'></Reprojection> */}
                     
                 </Map>

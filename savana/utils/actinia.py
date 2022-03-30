@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Mar 28 2022                                               #
+# Last Modified: Tue Mar 29 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -54,7 +54,7 @@ def auth():
 
 
 def baseUrl():
-    ACTINIA_URL = os.path.join('http://',ACTINIA_SETTINGS['ACTINIA_BASEURL'], 'api', ACTINIA_SETTINGS['ACTINIA_VERSION'])
+    ACTINIA_URL = os.path.join('http://', ACTINIA_SETTINGS['ACTINIA_BASEURL'], 'api', ACTINIA_SETTINGS['ACTINIA_VERSION'])
     # print(ACTINIA_URL)
     return ACTINIA_URL
 
@@ -99,7 +99,6 @@ def resourceStatus(user_id, resource_id):
             return resourceStatus(user_id, resource_id)
 
 from asgiref.sync import async_to_sync
-
 
 
 def asyncResourceStatus(user_id, resource_id):

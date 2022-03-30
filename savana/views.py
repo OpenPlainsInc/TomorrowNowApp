@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Mar 28 2022                                               #
+# Last Modified: Tue Mar 29 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,12 +30,13 @@
 #                                                                              #
 ###############################################################################
 
-
+import os
 from django.core.serializers import serialize
 from django.http.response import Http404
 from django.shortcuts import render
 from django.http import FileResponse
 from django.http import JsonResponse
+from django.http import StreamingHttpResponse, FileResponse, HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
 from django.contrib.gis.geos import GEOSGeometry
@@ -133,17 +134,10 @@ def rGeoTiff(request, raster_name, mapset_name):
 
     r = requests.post(url, auth=acp.auth())
 
-    userId = acp.currentUser()
     if r.status_code == 200:
         jsonResponse = r.json()
         print(f"Response: {r.json()}")
-        # acp.waitForResource(jsonResponse)
-
-        # Uncommit this chunk
         resource_id = jsonResponse['resource_id']
-        # source = resourceStatus(userId, resource_id)
-        # newurl = source[0]
-        # print(f"Image URL: {newurl}")
 
         viewResponse = {
             "response": {
@@ -161,3 +155,27 @@ def rGeoTiff(request, raster_name, mapset_name):
         # print("Saved to Google Cloud Storage")
         # print(storage_object.geotiff_result.storage)
         return JsonResponse(viewResponse, safe=False)
+
+# @csrf_exempt
+def streamCOG(request, raster_name, resource_id):
+    print("StreamCOG: ", request)
+
+    resource_owner = acp.currentUser()
+    print("Resource Owner: ", resource_owner)
+    # resource_id = 'resource_id-8960473e-b818-428d-a356-509f3a78ab3c'
+    file_name = f'{raster_name}.tif'
+    resource_location = os.path.join('actinia-core-data', 'resources', resource_owner, resource_id, file_name)
+    print("Resource Location: ", resource_location)
+    try:
+        file = open(resource_location, 'rb')
+    
+        # response = FileResponse(file)
+        response = HttpResponse(content_type="image/tiff; application=geotiff; profile=cloud-optimized")
+        response.headers['Content-Disposition'] = 'attachment; filename={}'.format(file_name)
+        response.write(file.read())
+
+    except IOError:
+        response = JsonResponse({'error': 'File not exist'})
+
+    return response
+# /code/actinia-core-data/resources/actinia-gdi#

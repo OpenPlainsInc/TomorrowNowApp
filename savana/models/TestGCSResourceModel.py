@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Mar 18 2022                                               #
+# Last Modified: Tue Mar 29 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -31,16 +31,36 @@
 ###############################################################################
 
 
+from multiprocessing.pool import TERMINATE
 from django.db import models
 from django.core.files.storage import default_storage
 import datetime
 from django.contrib import admin
 from django.utils import timezone
 
+
+COG_CONTENT_TYPE = "image/tiff; application=geotiff; profile=cloud-optimized"
+# default_storage.
+
+
+class ActiniaResourceStatus(models.TextChoices):
+    ACPECTED = "AC", "accepted"
+    RUNNING = "RN", "running"
+    FINISHED = "FN", "finished"
+    TERMINATED = "TM", "terminated"
+    ERROR = "ER", "error"
+
+
 class TestGCSResourceModel(models.Model):
     user_id = models.CharField(max_length=250)
     resource_id = models.CharField(max_length=250, primary_key=True)
     geotiff_result = models.ImageField(upload_to="geotiff_results")
+    status = models.CharField(
+        max_length=2,
+        choices=ActiniaResourceStatus.choices,
+        default=ActiniaResourceStatus.ACPECTED
+    )
+
 
 
 

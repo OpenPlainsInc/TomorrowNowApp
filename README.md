@@ -38,6 +38,12 @@ docker-compose run api python manage.py migrate
 docker-compose run api python manage.py show_urls
 ```
 
+## Start Django Shell
+
+```bash
+docker-compose run api python manage.py shell
+```
+
 ## Testing
 
 ```bash
