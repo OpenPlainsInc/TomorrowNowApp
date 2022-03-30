@@ -1,11 +1,11 @@
 /*
- * Filename: Board.jsx
+ * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/containers/Board/Board.jsx
  * Project: TomorrowNow
  * File Created: Wednesday March 16th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Mar 18 2022
+ * Last Modified: We/03/yyyy 03:nn:59
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -200,8 +200,8 @@ const Board = (props) => {
         return (
             <Container fluid className="bg-light text-dark">
                 <Row>
-                 <InputGroup className="mb-3">
-                    <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
+                 <InputGroup className="mb-3" style={{marginTop: 20}}>
+                    <InputGroup.Text id="basic-addon1"><i class="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
                     <FormControl
                     placeholder="Search Data"
                     aria-label="Search"

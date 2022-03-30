@@ -5,7 +5,7 @@ import Container from "react-bootstrap/Container"
 import Navbar from "react-bootstrap/Navbar"
 import Nav from "react-bootstrap/Nav"
 
-
+// import Jumbotron from 'react-bootstrap/Jumbotron'
 class App extends Component {
   constructor(props) {
     super(props);
@@ -21,45 +21,17 @@ class App extends Component {
       };
   }
 
-   
-    // renderItems = () => {
-    //   const newItems = this.state.todoList;
-    
-    //   console.log("Render Items", this.state)
-    //   return newItems.map(item => (
-    //     <li 
-    //       key={item.id}
-    //       className="list-group-item d-flex justify-content-between align-items-center"
-    //     >
-    //        <MapWrapper key={item.id} className="map-container" features={item} />
-    //       <span 
-    //         className={`todo-title mr-2 ${
-    //           this.state.viewCompleted ? "completed-todo" : ""
-    //         }`}
-    //         title={item.properties.area}
-    //         >
-              
-    //           {item.properties.name} <br></br>
-    //           Population: {item.properties.pop2005} <br></br>
-    //           Area: {item.properties.area} <br></br>
-    //           <Link to={`/country/${item.id}`}> {item.properties.name} </Link>
-    //         </span>
-           
-    //     </li>
-    //   ));
-    // };
-
     render() {
       return (
         // <main className="content">
             
-         
+         <main>
         <Container fluid className="bg-light text-dark">
          <Navbar bg="primary" variant="dark" fixed="top">
          <Container fluid>
           <Navbar.Brand>TomorrowNow</Navbar.Brand>
           <Nav className="me-auto">
-            <LinkContainer to="/">
+            <LinkContainer to="/home">
               <Nav.Link>Home</Nav.Link>
             </LinkContainer>
             <LinkContainer to="/game">
@@ -75,12 +47,23 @@ class App extends Component {
               <Nav.Link>Dashboard</Nav.Link>
             </LinkContainer>
           </Nav>
+
+          <Nav className="justify-content-end" activeKey="/home">
+            <LinkContainer to="/login">
+              <Nav.Link>Login</Nav.Link>
+            </LinkContainer>
+          </Nav>
           </Container>
         </Navbar>
-        <Outlet />
+
+       
+       
         </Container>
-      //  </main>
-      
+       
+        {/* <HomeContainer></HomeContainer> */}
+        <Outlet />
+      </main>
+
       )
     }
   }

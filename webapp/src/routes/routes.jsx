@@ -4,9 +4,10 @@ import GameRoutes from "./GameRoutes";
 import BoardRoutes from "./BoardRoutes"
 import DashboardRoutes from "./DashboardRoutes";
 import WorldRoutes from "./WorldRoutes"
-
+import HomeRoutres from "./HomeRoutes";
 const routes = (
     <Route path="/" element={<App />}>
+        {HomeRoutres}
         {GameRoutes}
         {BoardRoutes}
         {WorldRoutes}

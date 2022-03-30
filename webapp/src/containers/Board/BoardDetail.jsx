@@ -4,10 +4,14 @@ import {useParams, useLocation } from "react-router-dom";
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
-import Card from "react-bootstrap/Card"
+import Breadcrumb from "react-bootstrap/Breadcrumb"
 import Spinner from "react-bootstrap/Spinner"
 import Table from "react-bootstrap/Table"
 import Image from "react-bootstrap/Image"
+import {LinkContainer} from 'react-router-bootstrap'
+import Button from "react-bootstrap/Button"
+import Card from "react-bootstrap/Card"
+
 
 const RasterImage = ({raster}) => {
     const [image, setImage] = useState(null)
@@ -52,7 +56,7 @@ const RasterImage = ({raster}) => {
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
                 :
-                <Image as="img" fluid={true} src={image ? image.imgurl : ""} className="bg-dark text-light"/>
+                <Image as="img" fluid={true} src={image ? image.imgurl : ""} className="bg-dark text-light"></Image>
             }
         </Fragment>
       )
@@ -78,12 +82,16 @@ const BoardDetail = (props) => {
                 const data = await res.json();
                 console.log("response:", data)
                 const rastersData = data.response.process_results
-               let newRst = Object.entries(rastersData).forEach(([k, v]) => {
-                    let newVal = v.replace(/""/g, "")
-                    return {k : newVal}
+                let updateObject = {}
+                Object.entries(rastersData).map(([k, v]) => {
+                    console.log("Value", v.split('"').filter(b=> b).pop())
+                    let newVal = v.replace(/\"/g, '').toString()
+                    updateObject[k] = newVal
                 })
-                console.log("rastersData:",newRst, rastersData)
-                if (isMounted) setInfo(rastersData)
+                console.log("rastersData:", updateObject)
+
+                console.log("newRst:",updateObject)
+                if (isMounted) setInfo(updateObject)
               } catch (e) {
                 console.log(e);
             }
@@ -96,9 +104,86 @@ const BoardDetail = (props) => {
   
         return (
             <Container fluid className="bg-light text-dark">
-                <Row><h1>{info.map}</h1></Row>
+                <Breadcrumb style={{paddingTop: 20}}>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>Board</Breadcrumb.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>{info.location}</Breadcrumb.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>{info.mapset}</Breadcrumb.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>{info.map}</Breadcrumb.Item>
+                    </LinkContainer>
+                </Breadcrumb>
+                {/* <Row><h1>{info.map}</h1></Row> */}
                 <Row md={2}>
                     <Col>
+                        <Row>
+                            <Card className="bg-dark text-white">
+                                {/* <Card.Img src="holder.js/100px270" alt="Card image" /> */}
+                                <RasterImage raster={params.rasterId} />
+
+                                <Card.ImgOverlay>
+                                    <Card.Body  style={{ backgroundColor: 'rgba(30, 30, 30, 0.4)' }}>
+                                    <Card.Title><h1>{info.map}</h1></Card.Title>
+                                    <Card.Text>
+                                    {info.title}
+                                    </Card.Text>
+                                    <Card.Text>Last updated {info.date}</Card.Text>
+                                    <LinkContainer to={`/board/map/${params.rasterId}`}>
+                                        <Button variant="outline-secondary" size="lg" className="align-self-end">View Map</Button>
+                                    </LinkContainer> 
+                                    </Card.Body>
+                                </Card.ImgOverlay>
+                            </Card>
+                        </Row>
+                        <Row>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Creation Details</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Date</td>
+                                        <td>{info.date}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Creator</td>
+                                        <td>{info.creator}</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                        </Row>
+                        <Row>
+                            <Table striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            <th>Sources</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{info.source1}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{info.source2}</td>
+                                        </tr>
+                                    </tbody>
+                            </Table>
+                        </Row>
+                    
+                    </Col>
+
+                    
+                    <Col>
+                    <Row>
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
@@ -109,11 +194,16 @@ const BoardDetail = (props) => {
                             <tbody>
                                 <tr>
                                     <td>Mapset</td>
-                                    <td>{info.datatype}</td>
+                                    <td>{info.mapset}</td>
                                 </tr>
+                                
                                 <tr>
                                     <td>Location</td>
                                     <td>{info.location}</td>
+                                </tr>
+                                <tr>
+                                    <td>Datatype</td>
+                                    <td>{info.datatype}</td>
                                 </tr>
                                 <tr>
                                     <td>Database</td>
@@ -129,17 +219,12 @@ const BoardDetail = (props) => {
                                 </tr>
                     </tbody>
                     </Table>
-                    </Col>
-                    <Col>
-                        <RasterImage raster={params.rasterId} />
-                    </Col>
-                </Row>
-                <Row md={2}>
-                    <Col>
+                    </Row>
+                    <Row>
                     <Table striped bordered hover>
                     <thead>
                         <tr>
-                            <th>Details</th>
+                            <th>Info</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -174,9 +259,86 @@ const BoardDetail = (props) => {
                         </tr>
                     </tbody>
                     </Table>
-                    </Col>
-                    <Col>
+                    </Row>
+                    <Row>
                     <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>Projection</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>EPSG: {info.epsg}</td>
+                            </tr>
+                    </tbody>
+                    </Table>
+                    </Row>
+                    <Row>
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>Bounds</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>N = {info.north}</td>
+                                <td>S = {info.south}</td>
+                            </tr>
+                            <tr>
+                                <td>E = {info.east}</td>
+                                <td>W = {info.west}</td>
+                            </tr>
+                            <tr>
+                                <td>Range of Data</td>
+                                <td>{info.min} - {info.max}</td>
+                            </tr>
+                    </tbody>
+                    </Table>
+                    </Row>
+                    
+                    <Row>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Data Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{info.description}</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                            </Row>
+                            <Row>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Category Details</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Number of Categories</td>
+                                        <td>{info.ncats}</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                        
+                    </Row>
+                   
+                    
+                    </Col>
+                    
+                </Row>
+                <Row md={2}>
+                    <Col>
+                    {/* <Table striped bordered hover>
                             <thead>
                                 <tr>
                                     <th>Creation Details</th>
@@ -194,6 +356,25 @@ const BoardDetail = (props) => {
                                 </tr>
                     </tbody>
                     </Table>
+                    
+                    <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>Sources</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{info.source1}</td>
+                                </tr>
+                                <tr>
+                                    <td>{info.source2}</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </Col>
+                    <Col>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -219,75 +400,31 @@ const BoardDetail = (props) => {
                                     <td>{info.ncats}</td>
                                 </tr>
                     </tbody>
-                    </Table>
+                    </Table> */}
+                  
                     </Col>
                 </Row>
-                <Row>
-                    Projection: {}
-                </Row>
-                <Row md={2}>
+                
+                <Row md={1}>
                     
                     <Col>
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th>Bounds</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>N = {info.north}</td>
-                                <td>S = {info.south}</td>
-                            </tr>
-                            <tr>
-                                <td>E = {info.east}</td>
-                                <td>W = {info.west}</td>
-                            </tr>
-                            <tr>
-                                <td>Range of Data</td>
-                                <td>{info.min} - {info.max}</td>
-                            </tr>
-                    </tbody>
-                    </Table>
-                    </Col>
-                    <Col>
-                        <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>Sources</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{info.source1}</td>
-                                </tr>
-                                <tr>
-                                    <td>{info.source2}</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                    <Table striped bordered hover>
+                    <Table striped bordered hover responsive size="sm" 
+                    
+                    className="overflow-hidden"
+                    >
                             <thead>
                                 <tr>
                                     <th>Comments</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{info.comments}</td>
-                                    <td></td>
+                                    <td><code style={{overflowY:'hidden'}}>{info.comments}</code></td>
                                 </tr>
                             </tbody>
                         </Table>
-                    
                     </Col>
+                    
                 </Row>
               
             </Container>

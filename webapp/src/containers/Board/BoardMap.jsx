@@ -74,7 +74,7 @@ const BoardMap = (props) => {
                     method: "GET",
                     // headers: {
                     //     'X-CSRFToken': await getCsrfToken()
-                    // },
+                    // },Home
                     // credentials: 'include'
                 });
                 const data = await res.json();
