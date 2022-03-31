@@ -12,7 +12,11 @@ import GeoTIFF from 'ol/source/GeoTIFF';
 import WebGLTileLayer from 'ol/layer/WebGLTile';
 import MapContext from '../../components/OpenLayers/MapContext'
 import MapEditer from '../../components/OpenLayers/MapEditer';
-
+import XYZ from 'ol/source/XYZ';
+import TileWMS from 'ol/source/TileWMS';
+import nlcdSource from '../../components/OpenLayers/Sources/nlcd';
+import ned3DepSource from '../../components/OpenLayers/Sources/ned3dep';
+import naipSource from '../../components/OpenLayers/Sources/naip';
 
 const Game = ({ children, zoom, center }) => {
     
@@ -20,9 +24,7 @@ const Game = ({ children, zoom, center }) => {
     const mapElement = useRef()
 
     useEffect(() => {
-        const osm = new TileLayer({
-            source: new OSM(),
-        });
+        
 
         const watercolor =  new TileLayer({
             source: new Stamen({
@@ -35,6 +37,72 @@ const Game = ({ children, zoom, center }) => {
             layer: 'terrain-labels',
             })
         })
+       
+        const tileJson = {
+          "tilejson": "2.2.0",
+          "version": "1.0.0",
+          "scheme": "xyz",
+          "tiles": [
+            "http://localhost:7000/cog/tiles/WebMercatorQuad/{z}/{x}/{y}@1x.webp?url=https%3A%2F%2Fstorage.googleapis.com%2Ftomorrownow-actinia-dev%2Fdem_10m_mosaic_cog.tif&bidx=1&expression=b1%2Fb2&unscale=false&resampling=bilinear&rescale=0%2C2000&rescale=0%2C1000&rescale=0%2C10000&colormap_name=terrain&return_mask=true"
+          ],
+          "minzoom": 8,
+          "maxzoom": 14,
+          "bounds": [
+            -80.13177442636383,
+            35.462158792878206,
+            -78.26815748980388,
+            36.55237003528649
+          ],
+          "center": [
+            -79.19996595808385,
+            36.00726441408235,
+            8
+          ]
+        }
+
+        const xyzLayer = new TileLayer({
+          source: new XYZ({
+            // url: "http://localhost:7000/cog/tiles/WebMercatorQuad/{z}/{x}/{y}@1x.png?url=https%3A%2F%2Fstorage.googleapis.com%2Ftomorrownow-actinia-dev%2Fdem_10m_mosaic_cog.tif&bidx=1&expression=b1%2Fb2&unscale=false&resampling=bilinear&rescale=0%2C2000&rescale=0%2C1000&rescale=0%2C10000&colormap_name=terrain&return_mask=true",
+            url: 'http://localhost:7000/cog/tiles/{z}/{x}/{y}?scale=1&TileMatrixSetId=WGS1984Quad&url=https%3A%2F%2Fstorage.googleapis.com%2Ftomorrownow-actinia-dev%2Felevation.tif&bidx=1&unscale=false&resampling=bilinear&rescale=0%2C2000&rescale=0%2C1000&rescale=0%2C10000&return_mask=true'
+
+          }),
+        })
+        // https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer
+       const depService =  new TileWMS({
+          // url: 'https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Land_Cover_L48/wms',
+          url: 'https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer',
+          params: {'LAYERS': '3DEPElevation:Hillshade Gray', 'TILED': true},
+          serverType: 'mapserver',
+          // Countries have transparency, so do not fade tiles:
+          transition: 0
+        })
+
+        const osm = new TileLayer({
+          source: new OSM(),
+          opacity: 0.5
+        });
+
+        const depLayer =  new TileLayer({
+          // extent: [-13884991, 2870341, -7455066, 6338219],
+            source: ned3DepSource({layer: 'Hillshade Elevation Gray'}),
+            opacity: 0.4
+        })
+
+       const nlcdLayer =  new TileLayer({
+          // extent: [-13884991, 2870341, -7455066, 6338219],
+            source: nlcdSource(),
+            opacity: 0.4 // Opac
+        })
+
+        const naipLayer =  new TileLayer({
+          // extent: [-13884991, 2870341, -7455066, 6338219],
+            source: naipSource(),
+            opacity: 1.0 //Full color
+        })
+
+      
+
+        
 
         const max = 3000;
         function normalize(value) {
@@ -55,40 +123,53 @@ const Game = ({ children, zoom, center }) => {
           color: ['array', nir, red, green, 1],
           gamma: 1.1,
         };
-        const grassLayer = new WebGLTileLayer({
-          style: falseColor,
-          source: new GeoTIFF({
-            normalize: false,
-            sources: [
-              // {
-              //   url: 'https://storage.googleapis.com/storage/v1/b/tomorrownow-actinia-dev/o/boundary_county_500m.tif'
-              // },
-              // {
-              //   url: 'https://storage.googleapis.com/download/storage/v1/b/tomorrownow-actinia-dev/o/dem_10m_mosaic_cog.tif?alt=media'
-              // }
-              // {
-              //   url: 'https://tomorrownow-actinia-dev.storage.googleapis.com/boundary_county_500m.tif'
-              // },
-              // {
-              //   url: 'https://storage.googleapis.com/tomorrownow-actinia-dev/boundary_county_500m.tif'
-              // },
-            ],
-          }),
-        });
+        // const grassLayer = new WebGLTileLayer({
+        //   style: falseColor,
+        //   source: new GeoTIFF({
+        //     normalize: false,
+        //     sources: [
+        //       // {
+        //       //   url: 'https://storage.googleapis.com/storage/v1/b/tomorrownow-actinia-dev/o/boundary_county_500m.tif'
+        //       // },
+        //       // {
+        //       //   url: 'https://storage.googleapis.com/download/storage/v1/b/tomorrownow-actinia-dev/o/dem_10m_mosaic_cog.tif?alt=media'
+        //       // }
+        //       // {
+        //       //   url: 'https://tomorrownow-actinia-dev.storage.googleapis.com/boundary_county_500m.tif'
+        //       // },
+        //       // {
+        //       //   url: 'https://storage.googleapis.com/tomorrownow-actinia-dev/boundary_county_500m.tif'
+        //       // },
+        //     ],
+        //   }),
+        // });
 
         const initialMap = new Map({
             target: mapElement.current,
             layers: [
-             watercolor,
-             terrain,
-            //  osm
-            grassLayer
+            //  watercolor,
+            //  terrain,
+            
+              nlcdLayer,
+              // naipLayer,
+              depLayer,
+             
+              osm,
+            // grassLayer,
+              // xyzLayer
             ],
             view: new View({
               projection: 'EPSG:4326', // 4326 //EPSG:3857
               center: [-78.6802,35.8408],
+              // extent: [
+              //   -80.13177442636383,
+              //   35.462158792878206,
+              //   -78.26815748980388,
+              //   36.55237003528649
+              // ],
               zoom: 11
             }),
+            
             controls: []
           })
 
