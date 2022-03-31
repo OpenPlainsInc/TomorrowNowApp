@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Mar 29 2022                                               #
+# Last Modified: Wed Mar 30 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -62,12 +62,9 @@ class TestGCSResourceModel(models.Model):
     )
 
 
-
-
 # class Question(models.Model):
 #     """
 #     """
-    
 #     question_text = models.CharField(max_length=200)
 #     pub_date = models.DateTimeField('date published')
 

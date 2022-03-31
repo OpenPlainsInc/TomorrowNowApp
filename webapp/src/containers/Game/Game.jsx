@@ -17,7 +17,9 @@ import TileWMS from 'ol/source/TileWMS';
 import nlcdSource from '../../components/OpenLayers/Sources/nlcd';
 import ned3DepSource from '../../components/OpenLayers/Sources/ned3dep';
 import naipSource from '../../components/OpenLayers/Sources/naip';
-
+import nhdPlusSource from '../../components/OpenLayers/Sources/nhdPlus'
+import ImageArcGISRest from 'ol/source/ImageArcGISRest';
+import {Image as ImageLayer} from 'ol/layer';
 const Game = ({ children, zoom, center }) => {
     
     const [map, setMap] = useState(null)
@@ -67,16 +69,7 @@ const Game = ({ children, zoom, center }) => {
 
           }),
         })
-        // https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer
-       const depService =  new TileWMS({
-          // url: 'https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Land_Cover_L48/wms',
-          url: 'https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer',
-          params: {'LAYERS': '3DEPElevation:Hillshade Gray', 'TILED': true},
-          serverType: 'mapserver',
-          // Countries have transparency, so do not fade tiles:
-          transition: 0
-        })
-
+    
         const osm = new TileLayer({
           source: new OSM(),
           opacity: 0.5
@@ -100,8 +93,35 @@ const Game = ({ children, zoom, center }) => {
             opacity: 1.0 //Full color
         })
 
-      
+        // Server was down giving a 500 error
+        const nhdPlusLayer =  new TileLayer({
+            source: nhdPlusSource(),
+            // opacity: 1.0
+        })
 
+        // const nhdPlusLayer = new ImageLayer({
+        //   source: new ImageArcGISRest({
+        //     ratio: 1,
+        //     params: {},
+        //     url: 'https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer',
+        //   }),
+        // })
+
+        // Also down... https://hydrowfs.nationalmap.gov/arcgis/rest/services/wbd/MapServer
+        // const hydroUnitLayer = new TileLayer({
+        //   source: new XYZ({
+        //     attributions:
+        //       'Tiles © <a href="https://hydrowfs.nationalmap.gov/arcgis/rest/services/wbd/MapServer">National Map</a>',
+        //     url:
+        //       'https://hydrowfs.nationalmap.gov/arcgis/rest/services/' +
+        //       'wbd/MapServer/tile/{z}/{y}/{x}',
+        //   }),
+        //   opacity: 1.0
+
+        // });
+
+      
+        
         
 
         const max = 3000;
@@ -149,12 +169,12 @@ const Game = ({ children, zoom, center }) => {
             layers: [
             //  watercolor,
             //  terrain,
-            
+              // nhdPlusLayer,
               nlcdLayer,
               // naipLayer,
               depLayer,
-             
               osm,
+              // hydroUnitLayer
             // grassLayer,
               // xyzLayer
             ],
