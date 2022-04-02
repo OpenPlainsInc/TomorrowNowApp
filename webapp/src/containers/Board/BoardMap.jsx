@@ -9,8 +9,9 @@ import WebGLTileLayer from "../../components/OpenLayers/Layers/WebGLTileLayer"
 import GeoTIFFSource from "../../components/OpenLayers/Sources/GeoTIFF"
 import osm from "../../components/OpenLayers/Sources/osm"
 import Controls from "../../components/OpenLayers/Controls/Controls";
-import FullScreenControl from "../../components/OpenLayers/Controls/FullScreenControl";
-import ZoomSliderControl from "../../components/OpenLayers/Controls/ZoomSliderControl";
+// import FullScreenControl from "../../components/OpenLayers/Controls/FullScreenControl";
+// import ZoomSliderControl from "../../components/OpenLayers/Controls/ZoomSliderControl";
+import { ScaleLineControl, ZoomSliderControl, FullScreenControl, RotateControl, EditMapControl } from "../../components/OpenLayers/Controls";
 import Reprojection from "../../components/OpenLayers/Views/Reprojection";
 import XYZ from 'ol/source/XYZ';
 import GeoTIFF from 'ol/source/GeoTIFF';
@@ -216,11 +217,11 @@ const BoardMap = (props) => {
             let data = lastJsonMessage
             setStatus(data.message)
 
-            const rastersData = `${API_HOST}/r/resource/${params.rasterId}/stream/${data.resource_id}/`
+            const rastersData = `${API_HOST}/r/resource/${params.rasterId}/stream/${data.resource_id}`
             let sourceOptions = {
                 sources: [{url: rastersData}], 
                 allowFullFile: true, 
-                forceXHR: false, 
+                forceXHR: true, 
                 normalize: true,
                 convertToRGB: true
             }
@@ -259,8 +260,11 @@ const BoardMap = (props) => {
                     </Layers>
 
                     <Controls>
-                        <FullScreenControl />
+                        {/* <FullScreenControl /> */}
                         <ZoomSliderControl />
+                        <ScaleLineControl />
+                        <RotateControl autoHide={false}/>
+                        <EditMapControl />
                     </Controls>
                     <Reprojection epsg='3857'></Reprojection>
                     {/* <Reprojection epsg='32636'></Reprojection> */}

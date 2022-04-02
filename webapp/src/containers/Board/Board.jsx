@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: We/03/yyyy 03:nn:59
+ * Last Modified: We/03/yyyy 10:nn:34
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -109,6 +109,8 @@ const Board = (props) => {
             try {
                 // let queryParams = {un: params.unId}
                 let url = new URL('http://localhost:8005/savana/g/list/')
+                // let url = new URL('http://api:8005/savana/g/list/')
+
                 // url.search = new URLSearchParams(queryParams).toString();
                 const res = await fetch(url);
                 const data = await res.json();
@@ -201,7 +203,7 @@ const Board = (props) => {
             <Container fluid className="bg-light text-dark">
                 <Row>
                  <InputGroup className="mb-3" style={{marginTop: 20}}>
-                    <InputGroup.Text id="basic-addon1"><i class="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
+                    <InputGroup.Text id="basic-addon1"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
                     <FormControl
                     placeholder="Search Data"
                     aria-label="Search"
