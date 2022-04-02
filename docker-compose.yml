@@ -6,7 +6,9 @@ version: "3.8"
 #   type: bind
 #   source: ./actinia-core-data/resources
 #   target: ./actinia_core/resources
-   
+volumes:
+   geoserver-data:
+   geo-db-data:
 services:
   
   db:
@@ -146,6 +148,7 @@ services:
     depends_on:
       - actinia-core
 
+  # Only turn on when needed
   wireshark:
     image: lscr.io/linuxserver/wireshark
     container_name: wireshark
@@ -163,28 +166,56 @@ services:
       - 3050:3000
     restart: unless-stopped
 
-
-
-  # geoserver:
-  #   image: kartoza/geoserver:${GS_VERSION}
-  #   volumes:
-  #       - geoserver-data:/opt/geoserver/data_dir
-  #   restart: on-failure
-  #   environment:
-  #     - GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR}
-  #     - GEOWEBCACHE_CACHE_DIR=${GEOWEBCACHE_CACHE_DIR}
-  #     - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_ADMIN_PASSWORD}
-  #     - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
-  #     - INITIAL_MEMORY=${INITIAL_MEMORY}
-  #     - MAXIMUM_MEMORY=${MAXIMUM_MEMORY}
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: curl --fail -s http://localhost:8080/ || exit 1
-  #     interval: 1m30s
-  #     timeout: 10s
-  #     retries: 3
+  geoserver-postgis:
+    # build:
+    #   context: ./geoserver
+    #
+    image: kartoza/postgis:14-3.1
+    volumes:
+      - geo-db-data:/var/lib/postgresql
+    ports:
+      # - ${POSTGRES_PORT}:5432
+      - 32767:5432
+    env_file:
+      - ./geoserver/.env
+    # environment:
+    #   - POSTGRES_DB=${POSTGRES_DB}
+    #   - POSTGRES_USER=${POSTGRES_USER}
+    #   - POSTGRES_PASS=${POSTGRES_PASS}
+    #   - ALLOW_IP_RANGE=${ALLOW_IP_RANGE}
+    #   - FORCE_SSL=TRUE
+    restart: on-failure
+    healthcheck:
+      test: "exit 0"
+  geoserver:
+    build:
+      context: ./geoserver
+      dockerfile: Dockerfile
+    env_file:
+      - ./geoserver/.env
+    # image: kartoza/geoserver:${GS_VERSION}
+    volumes:
+        # - ./../data/db:/opt/geoserver/data_dir
+        - geoserver-data:/opt/geoserver/data_dir
+    restart: on-failure
+    # environment:
+    #   - GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR}
+    #   - GEOWEBCACHE_CACHE_DIR=${GEOWEBCACHE_CACHE_DIR}
+    #   - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_ADMIN_PASSWORD}
+    #   - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
+    #   - INITIAL_MEMORY=${INITIAL_MEMORY}
+    #   - MAXIMUM_MEMORY=${MAXIMUM_MEMORY}
+    depends_on:
+      - geoserver-postgis
+        # condition: service_healthy
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - 8600:8080
+      - 8643:8443
 
   # nginx:
   #   image: nginx
