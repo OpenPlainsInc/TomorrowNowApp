@@ -1,11 +1,11 @@
 /*
  * Filename: index.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Monday April 4th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Apr 04 2022
+ * Last Modified: Tue Apr 05 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,14 +29,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+import grass from "./grass";
+import colorbrewer from "./colorbrewer";
+import utils from "./utils"
 
-
-import Layers from "./Layers";
-import VectorLayer from "./VectorLayer";
-import TileLayer from "./TileLayer";
-
-export {
-	Layers,
-	VectorLayer,
-	TileLayer
+const GrassColors = {
+    utils,
+    grass,
+    colorbrewer
 }
+
+export default GrassColors

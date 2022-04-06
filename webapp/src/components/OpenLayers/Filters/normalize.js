@@ -1,11 +1,11 @@
 /*
- * Filename: index.js
+ * Filename: normalize.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Tuesday April 5th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Apr 04 2022
+ * Last Modified: Tue Apr 05 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,12 +31,24 @@
  */
 
 
-import Layers from "./Layers";
-import VectorLayer from "./VectorLayer";
-import TileLayer from "./TileLayer";
+function normalize(kernel) {
+    const len = kernel.length;
+    const normal = new Array(len);
+    let i,
+      sum = 0;
+    for (i = 0; i < len; ++i) {
+      sum += kernel[i];
+    }
+    if (sum <= 0) {
+      normal.normalized = false;
+      sum = 1;
+    } else {
+      normal.normalized = true;
+    }
+    for (i = 0; i < len; ++i) {
+      normal[i] = kernel[i] / sum;
+    }
+    return normal;
+  }
 
-export {
-	Layers,
-	VectorLayer,
-	TileLayer
-}
+export default normalize

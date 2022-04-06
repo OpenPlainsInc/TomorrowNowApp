@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tu/03/yyyy 11:nn:04
+ * Last Modified: We/04/yyyy 01:nn:45
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -102,6 +102,7 @@ const Reprojection = ({epsg}) => {
           const fromLonLat = getTransform('EPSG:4326', newProj);
         
           let worldExtent = [bbox[1], bbox[2], bbox[3], bbox[0]];
+          console.log("World Extent", worldExtent)
           newProj.setWorldExtent(worldExtent);
         
           // approximate calculation of projection extent,
@@ -110,6 +111,8 @@ const Reprojection = ({epsg}) => {
             worldExtent = [bbox[1], bbox[2], bbox[3] + 360, bbox[0]];
           }
           const _extent = applyTransform(worldExtent, fromLonLat, undefined, 8);
+          console.log("Transformed World Extent", worldExtent)
+
           newProj.setExtent(_extent);
           setExtent(_extent)
           const _newView = new View({

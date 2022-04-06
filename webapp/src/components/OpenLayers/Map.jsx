@@ -5,7 +5,7 @@ import * as ol from "ol";
 
 
 
-const Map = ({ children, zoom, center, projection='EPSG:4326', altView=null }) => {
+const Map = ({ children, zoom, center, projection, altView=null }) => {
   const mapRef = useRef();
   const [map, setMap] = useState(null);
   // on component mount
@@ -34,7 +34,7 @@ const Map = ({ children, zoom, center, projection='EPSG:4326', altView=null }) =
       return
     } else {
       map.setView(altView.getView())
-      map.getView().setZoom(9)
+      // map.getView().setZoom(9)
       console.log("altView", altView)
       console.log("map + view", map.getView())
     }

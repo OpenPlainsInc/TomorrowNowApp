@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Mar 29 2022                                               #
+# Last Modified: Wed Apr 06 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -34,9 +34,8 @@ import os
 from django.core.serializers import serialize
 from django.http.response import Http404
 from django.shortcuts import render
-from django.http import FileResponse
 from django.http import JsonResponse
-from django.http import StreamingHttpResponse, FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
 from django.contrib.gis.geos import GEOSGeometry
@@ -46,7 +45,7 @@ from .models import TestGCSResourceModel
 from django.core.files.base import ContentFile
 
 # from .serializers import WorldBorderSerializer
-from rest_framework import viewsets, generics  
+from rest_framework import viewsets, generics
 import requests
 import base64
 
@@ -77,11 +76,9 @@ def resourceStatus(user_id, resource_id):
 # Create your views here.
 def gList(request):
 
-
     mapset_name = 'PERMANENT'
     url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/" \
           f"{mapset_name}/raster_layers/"
-    
     r = requests.get(url, auth=acp.auth())
     print(f"Request URL: {url}")
     print(r)
@@ -94,7 +91,7 @@ def rRenderImage(request, raster_name, mapset_name):
     Actinia Route
     GET /locations/{location_name}/mapsets/{mapset_name}/raster_layers/{raster_name}/render
     """
-    
+
     url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/" \
           f"{mapset_name}/raster_layers/{raster_name}/render"
 
@@ -115,7 +112,7 @@ def rInfo(request, raster_name, mapset_name):
     mapset_name = 'PERMANENT'
     url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/" \
           f"{mapset_name}/raster_layers/{raster_name}"
-    
+
     r = requests.get(url, auth=acp.auth())
     print(f"Request URL: {url}")
     return JsonResponse({"response": r.json()}, safe=False)
@@ -130,7 +127,7 @@ def rGeoTiff(request, raster_name, mapset_name):
     """
 
     url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/" \
-        f"{mapset_name}/raster_layers/{raster_name}/geotiff_async"
+        f"{mapset_name}/raster_layers/{raster_name}/geotiff_async_orig"
 
     r = requests.post(url, auth=acp.auth())
 
@@ -156,22 +153,20 @@ def rGeoTiff(request, raster_name, mapset_name):
         # print(storage_object.geotiff_result.storage)
         return JsonResponse(viewResponse, safe=False)
 
+
 # @csrf_exempt
 def streamCOG(request, raster_name, resource_id):
     print("StreamCOG: ", request)
 
     resource_owner = acp.currentUser()
     print("Resource Owner: ", resource_owner)
-    # resource_id = 'resource_id-8960473e-b818-428d-a356-509f3a78ab3c'
     file_name = f'{raster_name}.tif'
     resource_location = os.path.join('actinia-core-data', 'resources', resource_owner, resource_id, file_name)
     print("Resource Location: ", resource_location)
     try:
         file = open(resource_location, 'rb')
-    
-        # response = FileResponse(file)
         response = HttpResponse(content_type="image/tiff; application=geotiff; profile=cloud-optimized")
-        response.headers['Content-Disposition'] = 'attachment; filename={}'.format(file_name)
+        response.headers['Content-Disposition'] = f'attachment; filename={file_name}'
         response.write(file.read())
 
     except IOError:

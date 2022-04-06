@@ -1,7 +1,7 @@
 /*
- * Filename: index.js
+ * Filename: aspect.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Monday April 4th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,13 +30,18 @@
  * 
  */
 
+const aspect =  [
+    'interpolate',
+    ['linear'],
+    ['band', 1],
+    0, 'white',
+    1, 'yellow',
+    90, 'green',
+    180, 'cyan',
+    270, 'red',
+    360, 'yellow'
+]
 
-import Layers from "./Layers";
-import VectorLayer from "./VectorLayer";
-import TileLayer from "./TileLayer";
+export default aspect
 
-export {
-	Layers,
-	VectorLayer,
-	TileLayer
-}
+

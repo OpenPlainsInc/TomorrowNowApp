@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Mar 28 2022                                               #
+# Last Modified: Tue Apr 05 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -33,9 +33,14 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from . import tasks
 from .utils import actinia as acp
+from django.contrib.gis.gdal import GDALRaster
+import os
 
 
 class ActiniaResourceConsumer(AsyncWebsocketConsumer):
+    """
+    Listens for actinia resources status changes and send results to client
+    """
 
     async def connect(self):
         print("ActiniaResourceConsumer: Connect")
@@ -100,10 +105,24 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
             tasks.asyncResourceStatus.delay(user_id, resource_id)
         elif message == 'finished':
             resources = event['resources']
+            resource_owner = acp.currentUser()
+            print("Resource Owner: ", resource_owner)
+            file_name = resources[0].split('/')[-1]
+            resource_location = os.path.join('actinia-core-data', 'resources', resource_owner, resource_id, file_name)
+            rst = GDALRaster(resource_location, write=False)
+            print("GDAL RASTER Statistics: ", rst.bands[0].statistics())
+            raster_stats = rst.bands[0].statistics()
+            # print("GDAL RASTER Color: ", rst.bands[0].color_interp())
             await self.send(text_data=json.dumps({
                 'message': message,
                 'resource_id': resource_id,
-                'resources': resources
+                'resources': resources,
+                'statistics': {
+                    'min': raster_stats[0],
+                    'max': raster_stats[1],
+                    'mean': raster_stats[2],
+                    'median': raster_stats[3]
+                }
             }))
         else:
             # Send message to WebSocket

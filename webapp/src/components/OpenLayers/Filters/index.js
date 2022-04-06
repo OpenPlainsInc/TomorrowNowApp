@@ -1,11 +1,11 @@
 /*
  * Filename: index.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Tuesday April 5th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Apr 04 2022
+ * Last Modified: Tue Apr 05 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,14 +29,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+//https://openlayers.org/en/latest/examples/image-filter.html
+import convolve from "./convolve"
+import kernels from './kernels'
+import normalize from "./normalize"
 
-
-import Layers from "./Layers";
-import VectorLayer from "./VectorLayer";
-import TileLayer from "./TileLayer";
-
-export {
-	Layers,
-	VectorLayer,
-	TileLayer
+const filters = {
+	convolve,
+	kernels,
+    normalize
 }
+
+export default filters

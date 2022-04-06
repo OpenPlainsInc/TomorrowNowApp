@@ -18,7 +18,12 @@ import GeoTIFF from 'ol/source/GeoTIFF';
 import {sourcesFromTileGrid} from 'ol/source';
 import TileJSON from 'ol/source/TileJSON';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-
+import Form from 'react-bootstrap/Form'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import GrassColors from '../../components/OpenLayers/Colors'
+import utils from "../../components/OpenLayers/Colors/utils";
+import {OSM, TileDebug} from 'ol/source';
 
 // import proj4 from 'proj4';
 
@@ -29,12 +34,43 @@ const BoardMap = (props) => {
     const [messageHistory, setMessageHistory] = useState(['test']);
     const { sendMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(socketUrl, { share: false });
 
-    const [center, setCenter] = useState([0, 0]);
+    const [center, setCenter] = useState( [-79.19996595808385,36.00726441408235,8]);
     const [zoom, setZoom] = useState(1);
     const [source, setSource] = useState(null);
     const [view, setView] = useState(null)
     const [status, setStatus] = useState(null)
     const [resourceId, setResourceId] = useState(null)
+    const [dataRangeMin, setDataRangeMin] = useState(null)
+    const [dataRangeMax, setDataRangeMax] = useState(null)
+
+
+    const defaultColor  = GrassColors.utils.autoDetectPalette(params.rasterId)
+    const [tileStyle, setTileStyle] = useState({
+        color: GrassColors.utils.autoDetectPalette(params.rasterId),
+        exposure: ['var', 'exposure'],
+        contrast: ['var', 'contrast'],
+        saturation: ['var', 'saturation'],
+        gamma: ['var', 'gamma'],
+        // color: ['var', 'color'],
+        variables: {
+            exposure: 0,
+            contrast: 0,
+            saturation: 0,
+            gamma: 1,
+            color: defaultColor,
+            level: 0
+          }
+      })
+
+    const [exposureValue, setExposureValue] = useState(0)
+    const [contrastValue, setContrastValue] = useState(0)
+    const [saturationValue, setSaturationValue] = useState(0)
+    const [gammaValue, setGammaValue] = useState(1)
+    const [seaLevelValue, setSeaLevelValue] = useState(0)
+
+    
+    const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette(params.rasterId))
+    const [colorPal, setColorPal] = useState('earth')
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
@@ -58,7 +94,7 @@ const BoardMap = (props) => {
         return _csrfToken;
     }
 
-
+    // Request data from server
     useEffect(() => {
         let isMounted = true; 
         async function fetchRasters() {
@@ -84,6 +120,8 @@ const BoardMap = (props) => {
                 console.log("response:", data.response.status)
 
                 setResourceId(data.response.resourceId)
+
+                function oldCode() {
                 // setStatus(data.response.status)
 
                 // function removeHttp(url) {
@@ -166,7 +204,7 @@ const BoardMap = (props) => {
                 //   })
 
                 // setSource(tmpSource)
-
+                }
                 if (isMounted) setStatus(data.response.status);
               } catch (e) {
                 console.log(e);
@@ -176,13 +214,14 @@ const BoardMap = (props) => {
         fetchRasters()
       }, [])
 
-
+      // Get Websocket message history
       useEffect(() => {
         if (lastMessage !== null) {
           setMessageHistory((prev) => prev.concat(lastMessage));
         }
       }, [lastMessage, setMessageHistory]);
 
+      // Open Websocket Connention for resource
       useEffect(()=> {
         if (!resourceId || !status) return;
         console.log("Starting Websocket...")
@@ -196,6 +235,7 @@ const BoardMap = (props) => {
 
     },[source, status, resourceId])
 
+    // Send websocket status message to server
     useEffect(()=> {
         if (readyState != ReadyState.OPEN) return;
         console.log("Sending Websocket Message: ", status)
@@ -203,13 +243,14 @@ const BoardMap = (props) => {
         setMessageHistory([{message: status, resource_id: resourceId}])
     },[connectionStatus])
 
-
+    // Log last message from Websocket
     useEffect(()=> {
         if (readyState != ReadyState.OPEN) return;
         console.log("Last Websocket Message", lastMessage)
 
     },[lastMessage])
 
+    // Set source data once data is finished
     useEffect(() => {
         if (!lastJsonMessage) return;
         console.log("Last Message: ", lastJsonMessage)
@@ -218,12 +259,17 @@ const BoardMap = (props) => {
             setStatus(data.message)
 
             const rastersData = `${API_HOST}/r/resource/${params.rasterId}/stream/${data.resource_id}`
+            setDataRangeMin(data.statistics.min)
+            setDataRangeMax(data.statistics.max)
+
             let sourceOptions = {
                 sources: [{url: rastersData}], 
                 allowFullFile: true, 
                 forceXHR: true, 
-                normalize: true,
-                convertToRGB: true
+                normalize: false, // set true for imagery
+                convertToRGB: false,
+                interpolate: true, // set fault for discrete data
+                style: tileStyle
             }
             console.log("COG Url: ", rastersData)
             let tmpSource = GeoTIFFSource(sourceOptions)
@@ -231,31 +277,75 @@ const BoardMap = (props) => {
         }
     }, [lastJsonMessage]);
 
+    //Set Color Palette and Style once source is set
+    useEffect(()=> {
+        if (!source) return;
+        let colorPalette = GrassColors.utils.autoDetectPalette(params.rasterId, dataRangeMin, dataRangeMax, 15)
+        console.log("Color Palette Set: ", colorPalette)
+        setTileColor(colorPalette)
+        setTileStyle(prevState => ({
+            ...tileStyle,
+            color: colorPalette
+        }))
 
-    
-    
-      
+    },[source])
+
+    //Set TileLayer styles when range moves
+    const rangeValue = (key, value) => {
+        console.log("rangeValue: ", key, value)
+        if (key === 'exposure') setExposureValue(parseFloat(value));
+        if (key === 'contrast') setContrastValue(parseFloat(value));
+        if (key === 'saturation') setSaturationValue(parseFloat(value));
+        if (key === 'gamma') setGammaValue(parseFloat(value));
+    }
+
+    // Set the updated color palette name
+    const updateColor = (e) => {
+        if (!e || !colorPal) return;
+        console.log("updateColor: ", e.target.value)
+        setColorPal(e.target.value)
+    }
+
+    // Update the Tile Stlye with new color palette
+    useEffect(()=> {
+        if (!source || !colorPal) return;
+        let colorPalette = [
+            'interpolate',
+            ['linear'],
+            ['band', 1],
+            ...utils.getColorStops(colorPal, dataRangeMin, dataRangeMax, 15, false)
+        ]
+        setTileColor(colorPalette)
+        setTileStyle(prevState => ({
+            ...tileStyle,
+            color: colorPalette
+        }))
+    },[source,colorPal])
+    // GRASS Projection 3358
     return (
             <Container>
                 <h1>Connection Status: {connectionStatus}</h1>
                 <h1>{resourceId}: {status}</h1>
-                {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3857' > */}
-                {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3358' > */}
+                <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3857' >
+                {/* <Map center={center} zoom={zoom} projection='EPSG:3358' > */}
 
-                {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:32636' > */}
-                <Map  center={fromLonLat(center)} zoom={zoom} altView={source}>
+                {/* <Map  center={fromLonLat(center)} zoom={zoom} altView={source}> */}
+                    <Reprojection epsg='3857'></Reprojection>                  
 
                     <Layers>
+
                         <TileLayer source={osm()}></TileLayer>
-                        {/* <TileLayer source={source}></TileLayer> */}
-                       
-                        <TileLayer source={source}></TileLayer>
                         <WebGLTileLayer 
+                            gamma={gammaValue}
+                            saturation={saturationValue}
+                            contrast={contrastValue}
+                            exposure={exposureValue}
                             layerName={params.rasterId}
+                            style={tileStyle}
+                            color={tileColor}
                             source={source}>
                         </WebGLTileLayer>
-                                          
-
+                        <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
 
                     </Layers>
 
@@ -266,9 +356,8 @@ const BoardMap = (props) => {
                         <RotateControl autoHide={false}/>
                         <EditMapControl />
                     </Controls>
-                    <Reprojection epsg='3857'></Reprojection>
-                    {/* <Reprojection epsg='32636'></Reprojection> */}
-                    
+                    <Reprojection epsg='3857'></Reprojection>                  
+
                 </Map>
 
                 <ul>
@@ -276,7 +365,104 @@ const BoardMap = (props) => {
                     <span key={idx}>{message ? message.data : null}</span>
                     ))}
                 </ul>
-
+                <Form>
+                <Form.Control as="select" value={colorPal} onChange={updateColor}>
+                    {utils.defautColormaps.map((c, idx) =>{
+                            return(
+                            <option key={idx} value={c}>
+                                {c}
+                            </option>
+                            )
+                        })}
+                </Form.Control>
+            
+                    <Form.Group as={Row}>
+                        <Col xs="9">
+                        <Form.Label>Exposure</Form.Label>
+                        <Form.Range 
+                            defaultValue={exposureValue}
+                            onChange={e => rangeValue("exposure", e.target.value)}
+                            step="0.1"
+                            min="-1"
+                            max="1"
+                        />
+                        </Col>
+                        <Col xs="3">
+                        <Form.Control
+                            value={exposureValue} 
+                            onChange={e => rangeValue("exposure", e.target.value)}/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row}>
+                        <Col xs="9">
+                        <Form.Label>Contrast</Form.Label>
+                        <Form.Range 
+                            defaultValue={contrastValue}
+                            onChange={e => rangeValue("contrast", e.target.value)}
+                            step="0.1"
+                            min="-1"
+                            max="1"
+                        />
+                        </Col>
+                        <Col xs="3">
+                        <Form.Control
+                            value={contrastValue} 
+                            onChange={e => rangeValue("contrast", e.target.value)}/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row}>
+                        <Col xs="9">
+                        <Form.Label>Saturation</Form.Label>
+                        <Form.Range 
+                            defaultValue={saturationValue}
+                            onChange={e => rangeValue("saturation", e.target.value)}
+                            step="0.1"
+                            min="-1"
+                            max="1"
+                        />
+                        </Col>
+                        <Col xs="3">
+                        <Form.Control
+                            value={saturationValue} 
+                            onChange={e => rangeValue("saturation", e.target.value)}/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row}>
+                        <Col xs="9">
+                        <Form.Label>Gamma</Form.Label>
+                        <Form.Range 
+                            defaultValue={gammaValue}
+                            onChange={e => rangeValue("gamma", e.target.value)}
+                            step="0.1"
+                            // min="-1"
+                            // max="1"
+                        />
+                        </Col>
+                        <Col xs="3">
+                        <Form.Control
+                            value={gammaValue} 
+                            onChange={e => rangeValue("gamma", e.target.value)}/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row}>
+                        <Col xs="9">
+                        <Form.Label>Sea Level</Form.Label>
+                        <Form.Range 
+                            defaultValue={seaLevelValue}
+                            onChange={e => rangeValue("seaLevel", e.target.value)}
+                            step="1"
+                            min="0"
+                            max="100"
+                        />
+                        </Col>
+                        <Col xs="3">
+                        <Form.Control
+                            value={seaLevelValue} 
+                            onChange={e => rangeValue("seaLevel", e.target.value)}/>
+                        </Col>
+                    </Form.Group>
+                </Form>
+               
             </Container>
         
     )
