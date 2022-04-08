@@ -5,6 +5,7 @@ import BoardRoutes from "./BoardRoutes"
 import DashboardRoutes from "./DashboardRoutes";
 import WorldRoutes from "./WorldRoutes"
 import HomeRoutres from "./HomeRoutes";
+import SettingsRoutes from "./SettingsRoutes";
 const routes = (
     <Route path="/" element={<App />}>
         {HomeRoutres}
@@ -12,6 +13,7 @@ const routes = (
         {BoardRoutes}
         {WorldRoutes}
         {DashboardRoutes}
+        {SettingsRoutes}
         <Route path="*"
             element={
             <main style={{ padding: "1rem" }}>
