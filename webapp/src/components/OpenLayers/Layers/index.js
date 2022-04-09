@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Apr 04 2022
+ * Last Modified: Sat Apr 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,9 +34,10 @@
 import Layers from "./Layers";
 import VectorLayer from "./VectorLayer";
 import TileLayer from "./TileLayer";
-
+import GraticuleLayer from "./GraticuleLayer"
 export {
 	Layers,
 	VectorLayer,
-	TileLayer
+	TileLayer,
+	GraticuleLayer
 }

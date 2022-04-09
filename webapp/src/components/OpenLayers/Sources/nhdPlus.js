@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Mar 31 2022
+ * Last Modified: Wed Apr 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -80,7 +80,7 @@ const nhdPlusSource = (params) => {
     let defaults = {
         'layerName':'WBDHU12',
         'LAYERS': `11`, 
-        'TILED': true
+        // 'TILED': true
     }
     let updatedParams = Object.assign({}, defaults, params)
 

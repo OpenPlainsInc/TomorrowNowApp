@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Mar 30 2022
+ * Last Modified: Wed Apr 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -35,7 +35,7 @@
 // Multi-Resolution Land Characteristics (MRLC) Consortium Services
 // https://www.mrlc.gov/data-services-page
 import TileWMS from 'ol/source/TileWMS'
-
+import TileWMSSource from './TileWMS'
 const nlcdSource = (params) => {
     let yearOptions = {
         '2019':'2019',
@@ -77,14 +77,13 @@ const nlcdSource = (params) => {
     let updatedParams = Object.assign({}, defaults, params)
     console.log("NLCD Params: ", updatedParams)
     const tileWMS =  new TileWMS({
-        // url: 'https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Land_Cover_L48/wms',
         url: 'https://www.mrlc.gov/geoserver/mrlc_display/wms',
         params: updatedParams,
         serverType: 'geoserver',
-        // Countries have transparency, so do not fade tiles:
         transition: 0
-        // attributions: 
+       
       })
+      
     return tileWMS
 }
 

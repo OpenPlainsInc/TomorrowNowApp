@@ -4,7 +4,7 @@ import OLWebGLTileLayer from 'ol/layer/WebGLTile';
 // import { Layer } from "ol/layer";
 import filters from "../Filters"
 
-const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturation, gamma, color, zIndex = 0 }) => {
+const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturation, gamma, color,opacity=1, zIndex = 0 }) => {
   const { map } = useContext(MapContext); 
   const [layer, setLayer] = useState(null)
 
@@ -17,6 +17,9 @@ const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturati
 
   }
 
+
+
+
   useEffect(() => {
     if (!map || !source) return;
     
@@ -24,6 +27,7 @@ const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturati
       source,
       style,
       zIndex,
+      opacity
     });
     map.setView(source.getView())
     map.addLayer(tileLayer);
@@ -37,6 +41,11 @@ const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturati
       }
     };
   }, [map, source, style, zIndex = 0]);
+
+  useEffect(()=>{
+    if (!map || !layer) return;
+    layer.setOpacity(opacity)
+  },[opacity])
 
   useEffect(()=> {
     if (!map || !source || !style || !layer || !color) return;

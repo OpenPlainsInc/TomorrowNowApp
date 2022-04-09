@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Mar 31 2022
+ * Last Modified: Wed Apr 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -38,7 +38,7 @@ import GeoTIFFSource from "./GeoTIFF"
 import { nlcdSource as nlcd } from "./nlcd";
 import { ned3DepSource as ned3dep } from "./ned3dep";
 import { naipSource as naip } from "./naip";
-
+import VectorSource from "./VectorSource";
 
 export {
 	vector,
@@ -47,5 +47,6 @@ export {
     nlcd,
     ned3dep,
     naip,
-    GeoTIFFSource
+    GeoTIFFSource,
+    VectorSource
 };

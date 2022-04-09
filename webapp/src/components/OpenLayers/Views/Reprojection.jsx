@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: We/04/yyyy 01:nn:45
+ * Last Modified: Sa/04/yyyy 04:nn:28
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -42,65 +42,88 @@ import proj4 from 'proj4';
 
 const Reprojection = ({epsg}) => {
     const { map } = useContext(MapContext);
-    const [code, setCode] = useState('6542');  // 4326 //EPSG:3857 
+    const [projectionDetails, setProjectionDetails] = useState(null)
+    const [code, setCode] = useState(null);  // 4326 //EPSG:3857 
     const [name, setName] = useState(null);
     const [proj4def, setProj4def] = useState(null);
     const [bbox, setBbox] = useState(null);
     const [extent, setExtent] = useState(null)
     const [newView, setNewView] = useState(null);
 
+    useEffect(()=> {
+      //Do nothing on first mount
+    },[])
 
-    useEffect(()=>{
-        fetch('https://epsg.io/?format=json&q=' + epsg)
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (json) {
-            const results = json['results'];
-            if (results && results.length > 0) {
-              for (let i = 0, ii = results.length; i < ii; i++) {
-                const result = results[i];
-                if (result) {
-                  const _code = result['code'];
-                  setCode(code)
-                  const _name = result['name'];
-                  setName(_name)
-                  const _proj4def = result['proj4'];
-                  setProj4def(_proj4def)
-                  const _bbox = result['bbox'];
-                  setBbox(_bbox)
-                  if (
-                    _code &&
-                    _code.length > 0 &&
-                    _proj4def &&
-                    _proj4def.length > 0 &&
-                    _bbox &&
-                    _bbox.length === 4
-                  ) {
-                    // setProjection(code, name, proj4def, bbox);
-                    return;
+    useEffect(() => {
+      let isMounted = true; 
+      async function fetchEpsg(epsgCode) {
+          try {
+              let projDetails = {}
+              let url = new URL(`https://epsg.io/?format=json&q=${epsgCode}`)
+
+              const res = await fetch(url, {method: "GET"});
+              const data = await res.json();
+              console.log("epsg.io response:", data)
+              const results = data.results
+              console.log("results", results)
+              if (results && results.length > 0) {
+                for (let i = 0, ii = results.length; i < ii; i++) {
+                  const result = results[i];
+                  if (result) {
+                    const _code = result['code'];
+                    const _name = result['name'];
+                    const _proj4def = result['proj4'];
+                    const _bbox = result['bbox'];
+
+                    if (_code && _code.length > 0 &&
+                        _proj4def && _proj4def.length > 0 &&
+                        _bbox &&_bbox.length === 4
+                    ) {
+                      let projDetails = {
+                        code: _code,
+                        name: _name,
+                        proj4def: _proj4def,
+                        bbox: _bbox
+                      }
+                      setCode(_code)
+                      setName(_name)
+                      setProj4def(_proj4def)
+                      setBbox(_bbox)
+                    }
+
                   }
+
                 }
               }
-            }
-            return null
-            // return setProjection(null, null, null, null);
-          });
+            
 
-    },[epsg])
+              if (isMounted) setProjectionDetails(projDetails)
+            } catch (e) {
+              console.log(e);
+          }
+          return () => { isMounted = false }
+      }
+      fetchEpsg(epsg)
+    }, [epsg])
 
 
     useEffect(()=>{
-        if (!map) return;
-        
+        if (!map || !bbox || !code || !name || !proj4def) return;
+          let currentViewProjection = map.getView().getProjection()
+          console.log("Current Map View Projection:", currentViewProjection.getCode())
+          console.log(map, bbox, code, name, proj4def)
           console.log(`(${code}) ${name}`)
       
           const newProjCode = 'EPSG:' + code;
           proj4.defs(newProjCode, proj4def);
           register(proj4);
           const newProj = getProjection(newProjCode);
+          console.log("newProj", newProj)
           const fromLonLat = getTransform('EPSG:4326', newProj);
-        
+          // const fromLonLat = getTransform(currentViewProjection.getCode(), newProj);
+
+          console.log("fromLonLat", fromLonLat)
+
           let worldExtent = [bbox[1], bbox[2], bbox[3], bbox[0]];
           console.log("World Extent", worldExtent)
           newProj.setWorldExtent(worldExtent);
@@ -120,20 +143,31 @@ const Reprojection = ({epsg}) => {
           });
           setNewView(_newView)
           
-    },[bbox])
+    },[map, bbox, code, name, proj4def])
     
     useEffect(()=>{
-      if (map && extent && newView) {
+
+      if (!map || !extent || !newView) return;
+      map.on('loadend', () => {
         console.log(`Reprojecting: ${newView}`)
         console.log(`New Extent: ${extent}`)
-
         map.setView(newView);
         newView.fit(extent);
-      }
 
+        // map.un('postcompose', () => {
+        //   console.log(`Reprojecting: ${newView}`)
+        //   console.log(`New Extent: ${extent}`)
+        //   map.setView(newView);
+        //   newView.fit(extent);
+        // })
+      })
+
+      
+    
+    
     },[map, extent, newView])
 
-    return null
+    return (<div>{name}</div>)
   }
 
 

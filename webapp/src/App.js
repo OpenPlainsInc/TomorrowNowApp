@@ -48,7 +48,12 @@ class App extends Component {
             </LinkContainer>
           </Nav>
 
-          <Nav className="justify-content-end" activeKey="/home">
+          <Nav className="justify-content-end" 
+          // activeKey="/home"
+          >
+            <LinkContainer to="/settings">
+              <Nav.Link>Settings</Nav.Link>
+            </LinkContainer>
             <LinkContainer to="/login">
               <Nav.Link>Login</Nav.Link>
             </LinkContainer>

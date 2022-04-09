@@ -4,6 +4,7 @@ import {useParams} from "react-router-dom";
 import Map from "../../components/OpenLayers/Map"
 import Layers from "../../components/OpenLayers/Layers/Layers"
 import TileLayer from "../../components/OpenLayers/Layers/TileLayer"
+import GraticuleLayer from "../../components/OpenLayers/Layers/GraticuleLayer"
 import { fromLonLat } from 'ol/proj';
 import WebGLTileLayer from "../../components/OpenLayers/Layers/WebGLTileLayer"
 import GeoTIFFSource from "../../components/OpenLayers/Sources/GeoTIFF"
@@ -24,6 +25,7 @@ import Col from 'react-bootstrap/Col'
 import GrassColors from '../../components/OpenLayers/Colors'
 import utils from "../../components/OpenLayers/Colors/utils";
 import {OSM, TileDebug} from 'ol/source';
+
 
 // import proj4 from 'proj4';
 
@@ -46,7 +48,8 @@ const BoardMap = (props) => {
 
     const defaultColor  = GrassColors.utils.autoDetectPalette(params.rasterId)
     const [tileStyle, setTileStyle] = useState({
-        color: GrassColors.utils.autoDetectPalette(params.rasterId),
+        // color: GrassColors.utils.autoDetectPalette(params.rasterId),
+        color: undefined,
         exposure: ['var', 'exposure'],
         contrast: ['var', 'contrast'],
         saturation: ['var', 'saturation'],
@@ -57,7 +60,7 @@ const BoardMap = (props) => {
             contrast: 0,
             saturation: 0,
             gamma: 1,
-            color: defaultColor,
+            color: undefined,
             level: 0
           }
       })
@@ -277,18 +280,7 @@ const BoardMap = (props) => {
         }
     }, [lastJsonMessage]);
 
-    //Set Color Palette and Style once source is set
-    useEffect(()=> {
-        if (!source) return;
-        let colorPalette = GrassColors.utils.autoDetectPalette(params.rasterId, dataRangeMin, dataRangeMax, 15)
-        console.log("Color Palette Set: ", colorPalette)
-        setTileColor(colorPalette)
-        setTileStyle(prevState => ({
-            ...tileStyle,
-            color: colorPalette
-        }))
-
-    },[source])
+    
 
     //Set TileLayer styles when range moves
     const rangeValue = (key, value) => {
@@ -298,6 +290,19 @@ const BoardMap = (props) => {
         if (key === 'saturation') setSaturationValue(parseFloat(value));
         if (key === 'gamma') setGammaValue(parseFloat(value));
     }
+
+    //Set Color Palette and Style once source is set
+    useEffect(()=> {
+        if (!source || status !== 'finished') return;
+        let colorPalette = GrassColors.utils.autoDetectPalette(params.rasterId, dataRangeMin, dataRangeMax, 15)
+        console.log("Color Palette Set: ", colorPalette)
+        setTileColor(colorPalette)
+        setTileStyle(prevState => ({
+            ...tileStyle,
+            color: colorPalette
+        }))
+
+    },[source, status])
 
     // Set the updated color palette name
     const updateColor = (e) => {
@@ -326,17 +331,17 @@ const BoardMap = (props) => {
             <Container>
                 <h1>Connection Status: {connectionStatus}</h1>
                 <h1>{resourceId}: {status}</h1>
-                <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3857' >
-                {/* <Map center={center} zoom={zoom} projection='EPSG:3358' > */}
+                {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3857' > */}
+                {/* <Map  center={fromLonLat(center)} zoom={zoom} projection='EPSG:3358' > */}
 
-                {/* <Map  center={fromLonLat(center)} zoom={zoom} altView={source}> */}
-                    <Reprojection epsg='3857'></Reprojection>                  
+                <Map  center={fromLonLat(center)} zoom={zoom}>
 
                     <Layers>
 
                         <TileLayer source={osm()}></TileLayer>
                         <WebGLTileLayer 
                             gamma={gammaValue}
+                            opacity={0.5}
                             saturation={saturationValue}
                             contrast={contrastValue}
                             exposure={exposureValue}
@@ -345,19 +350,23 @@ const BoardMap = (props) => {
                             color={tileColor}
                             source={source}>
                         </WebGLTileLayer>
-                        <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
+                        {/* <TileLayer zIndex={4} source={source} ></TileLayer> */}
 
+                        <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
+                        <GraticuleLayer></GraticuleLayer>
                     </Layers>
 
                     <Controls>
-                        {/* <FullScreenControl /> */}
+                        <FullScreenControl />
                         <ZoomSliderControl />
                         <ScaleLineControl />
-                        <RotateControl autoHide={false}/>
+                        {/* <RotateControl autoHide={false}/> */}
                         <EditMapControl />
                     </Controls>
-                    <Reprojection epsg='3857'></Reprojection>                  
-
+                    {/* <Reprojection epsg='3857'></Reprojection>                   */}
+                    <Reprojection epsg='3358'></Reprojection> 
+                    {/* <Reprojection epsg='6542'></Reprojection>                   */}
+                   
                 </Map>
 
                 <ul>
