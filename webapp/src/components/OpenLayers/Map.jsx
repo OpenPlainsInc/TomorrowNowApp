@@ -8,25 +8,6 @@ import * as ol from "ol";
 const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map", altView=null}) => {
   const mapRef = useRef();
   const [map, setMap] = useState(null);
-
-  // const events = {
-  //   'change': undefined,
-  //   'change:layerGroup': undefined,
-  //   'change:size': undefined,
-  //   'change:target': undefined,
-  //   'change:view': undefined,
-  //   'click': undefined,
-  //   'dblclick': undefined,
-  //   'moveend': undefined,
-  //   'pointerdrag': undefined,
-  //   'pointermove': undefined,
-  //   'postcompose': undefined,
-  //   'postrender': undefined,
-  //   'precompose': undefined,
-  //   'propertychange': undefined,
-  //   'singleclick': undefined
-  // };
-
  
   // on component mount
   useEffect(() => {

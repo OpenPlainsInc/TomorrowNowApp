@@ -4,7 +4,20 @@ import OLWebGLTileLayer from 'ol/layer/WebGLTile';
 // import { Layer } from "ol/layer";
 import filters from "../Filters"
 
-const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturation, gamma, color,opacity=1, zIndex = 0 }) => {
+const WebGLTileLayer = ({ 
+  layerName, 
+  source, 
+  style,
+  exposure, 
+  contrast, 
+  saturation, 
+  gamma, 
+  color,
+  minZoom = undefined,
+  maxZoom = undefined,
+  opacity = 1, 
+  zIndex = 0 
+}) => {
   const { map } = useContext(MapContext); 
   const [layer, setLayer] = useState(null)
 
@@ -16,9 +29,6 @@ const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturati
     filters.convolve(e, selectedKernel)
 
   }
-
-
-
 
   useEffect(() => {
     if (!map || !source) return;
@@ -60,6 +70,19 @@ const WebGLTileLayer = ({ layerName, source, style, exposure, contrast, saturati
     // layer.on('postcompose', onPostRender)
 
   }, [layer])
+
+  // Set MinZoom
+  useEffect(() => {
+    if (!source || !layer || !minZoom) return;
+      layer.setMinZoom(minZoom)
+  }, [source, layer, minZoom])
+
+  // Set MaxZoom
+  useEffect(() => {
+    if (!source || !layer || !maxZoom) return;
+      console.log(`Current max zoom: ${layer.getMaxZoom()}, new max zoom ${maxZoom}`)
+      layer.setMaxZoom(maxZoom)
+  }, [source, layer, maxZoom])
 
   return null;
 };

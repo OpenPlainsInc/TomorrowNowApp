@@ -38,6 +38,7 @@ const BoardMap = (props) => {
 
     const [center, setCenter] = useState( [-79.19996595808385,36.00726441408235,8]);
     const [zoom, setZoom] = useState(1);
+    const [opacity, setOpacity] = useState(0.75);
     const [source, setSource] = useState(null);
     const [view, setView] = useState(null)
     const [status, setStatus] = useState(null)
@@ -289,6 +290,7 @@ const BoardMap = (props) => {
         if (key === 'contrast') setContrastValue(parseFloat(value));
         if (key === 'saturation') setSaturationValue(parseFloat(value));
         if (key === 'gamma') setGammaValue(parseFloat(value));
+        if (key === 'opacity') setOpacity(parseFloat(value));
     }
 
     //Set Color Palette and Style once source is set
@@ -341,13 +343,15 @@ const BoardMap = (props) => {
                         <TileLayer source={osm()}></TileLayer>
                         <WebGLTileLayer 
                             gamma={gammaValue}
-                            opacity={0.5}
+                            opacity={opacity}
                             saturation={saturationValue}
                             contrast={contrastValue}
                             exposure={exposureValue}
                             layerName={params.rasterId}
                             style={tileStyle}
                             color={tileColor}
+                            minZoom={0}
+                            maxZoom={16}
                             source={source}>
                         </WebGLTileLayer>
                         {/* <TileLayer zIndex={4} source={source} ></TileLayer> */}
@@ -384,6 +388,24 @@ const BoardMap = (props) => {
                             )
                         })}
                 </Form.Control>
+
+                    <Form.Group as={Row}>
+                        <Col xs="9">
+                        <Form.Label>Opacity</Form.Label>
+                        <Form.Range 
+                            defaultValue={opacity}
+                            onChange={e => rangeValue("opacity", e.target.value)}
+                            step="0.1"
+                            min="0.0"
+                            max="1.0"
+                        />
+                        </Col>
+                        <Col xs="3">
+                        <Form.Control
+                            value={opacity} 
+                            onChange={e => rangeValue("opacity", e.target.value)}/>
+                        </Col>
+                    </Form.Group>
             
                     <Form.Group as={Row}>
                         <Col xs="9">
