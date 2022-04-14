@@ -1,6 +1,6 @@
 # TomorrowNowAPP
 
-> **Disclaimer:** The TomorrowNow project is currently in an experimental phase and therefore breaking changes and project resturting will occur without notice. We recommend waiting until the first stable version is released before considering using the project in any form.
+> **Disclaimer:** The TomorrowNow project is currently in an experimental phase and therefore breaking changes and project restructuring will occur without notice. We recommend waiting until the first stable version is released before considering using the project in any form.
 
 ## Getting Started
 
@@ -19,6 +19,7 @@ Docker compose containers and client port bindings. Currently we are comparing d
 | titiler | titiler | 7000 |
 | geoserver | geoserver | 8600 |
 |geoserver-postgis|  Postgresql + PostGIS | 32767 |
+
 ### Start app
 
 ```bash
