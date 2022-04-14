@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Mar 18 2022                                               #
+# Last Modified: Wed Apr 13 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -33,3 +33,4 @@
 
 from .ProcessingResponseModel import ProcessingResponseModel
 from .TestGCSResourceModel import TestGCSResourceModel
+from .DrainRequest import DrainRequest

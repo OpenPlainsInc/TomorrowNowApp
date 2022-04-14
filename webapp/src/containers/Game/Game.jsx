@@ -64,7 +64,18 @@ const Game = ({params}) => {
         // }
     //   ]
     // }))
-
+    let _csrfToken = null;
+    const API_HOST = "http://localhost:8005/savana"
+    async function getCsrfToken() {
+      if (_csrfToken === null) {
+          const response = await fetch(`${API_HOST}/csrf/`, {
+          credentials: 'include',
+          });
+          const data = await response.json();
+          _csrfToken = data.csrfToken;
+      }
+      return _csrfToken;
+  }
     
 
     const data = [
@@ -233,7 +244,7 @@ const Game = ({params}) => {
 
         if (el.get('name') === "survey") {
           console.log(el.getSource().getFeatures().map(f=>f.getProperties()))
-         let properties =  el.getSource().getFeatures().map(f=> {
+          let properties =  el.getSource().getFeatures().map(f=> {
             return f.getProperties()
           })
 
@@ -276,10 +287,65 @@ const Game = ({params}) => {
 
 
     
+       
+      async function rDrain(coords) {
+            try {
+               
+                const csrftoken = document.cookie
+                        .split('; ')
+                        .find(row => row.startsWith('csrftoken='))
+                        .split('=')[1];
 
+                let geojson = [{
+                  point: {
+                  "type": "Point", 
+                  "coordinates": coords
+                  }
+                }]
+
+                // let geojson = {
+                //   "id": 1,
+                //   "type": "Feature",
+                //   "geometry": {
+                //       "type": "Point",
+                //       "coordinates": coords,
+                //   },
+                //   "properties": {}
+                // }
+
+                // let geojson = {
+                //   coordinate: coords.join()
+                // }
+
+                let url = new URL(`${API_HOST}/r/drain/`)
+                console.log(coords)
+                const res = await fetch(url, {
+                    method: "POST",
+                    // data: {
+                    //   coordinate: JSON.stringify({data: coords}) 
+                    // },
+                    // json: {
+                    //   coordinate: JSON.stringify({data: coords}) 
+                    // },
+                    body: JSON.stringify(geojson),
+                    headers: {
+                        // 'X-CSRFToken': await getCsrfToken()
+                        'Content-Type': 'application/json'
+                    }
+                    // credentials: 'include'
+                });
+                const data = await res.json();
+                console.log("response:", data)             
+
+              } catch (e) {
+                console.log(e);
+            }
+            return () => data
+        }
+        rDrain(e.coordinate)
       
-   
     }
+
 
     useEffect(() => {
       // 'https://storage.googleapis.com/download/storage/v1/b/tomorrownow-actinia-dev/o/dem_10m_mosaic_cog.tif?alt=media'

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Mar 29 2022                                               #
+# Last Modified: Wed Apr 13 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -134,6 +134,9 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8005',
     'http://actinia-core:8088',
     'http://localhost:3000',
+    'http://localhost:5000',
+    'http://192.168.1.242:3000',
+    'http://localhost:7000',
 ]
 # CORS_ORIGIN_ALLOW_ALL = True
 
@@ -188,7 +191,10 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000'
+    'http://192.168.1.242:3000',
+    'http://192.168.1.242:8005',
+    'http://localhost:3000',
+    'http://localhost:7000'
 ]
 
 
@@ -301,13 +307,27 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
+# https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'templates'),
+    # os.path.join(BASE_DIR, 'static'),
+    # os.path.join(BASE_DIR, "savana", "templates"),
+    os.path.join(BASE_DIR, "world", "templates"),
+    os.path.join(BASE_DIR, "grassapp", "static"),
+    os.path.join(BASE_DIR, "grassapp", "templates"),
+
+    # "/home/me/Music/TaylorSwift/",
+    # "/home/me/Videos/notNsfw/",
+]
+
+STATIC_ROOT = "/var/www/tomorrownow/"
 STATIC_URL = '/static/'
 
 # Google Cloud Storage Settings
 # https://django-storages.readthedocs.io/en/latest/backends/gcloud.html
 # https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-gcloud
+STATIC_URL = f'https://storage.googleapis.com/{env("GS_BUCKET_NAME")}/'
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_BUCKET_NAME = env('GS_BUCKET_NAME')
 GS_PROJECT_ID = env('GS_PROJECT_ID')
@@ -339,3 +359,34 @@ CELERY_BROKER_URL = f'redis://{env("REDIS_USER")}:{env("REDIS_PASSWORD")}@django
 CELERY_RESULT_BACKEND = f'redis://{env("REDIS_USER")}:{env("REDIS_PASSWORD")}@django-redis-cache:6370/1'
 
 # CELERY_TIMEZONE = "America/New_York"
+
+# Django Extension Shell Plus Settings
+SHELL_PLUS = "ipython"
+
+SHELL_PLUS_PRINT_SQL = True
+
+NOTEBOOK_ARGUMENTS = [
+    "--ip",
+    "0.0.0.0",
+    "--port",
+    "8010",
+    "--allow-root",
+    "--no-browser",
+]
+
+IPYTHON_ARGUMENTS = [
+    "--ext",
+    "django_extensions.management.notebook_extension",
+    "--debug",
+]
+
+IPYTHON_KERNEL_DISPLAY_NAME = "Django Shell-Plus"
+
+# extra things to import in notebook
+
+SHELL_PLUS_POST_IMPORTS = [
+    # ("module1.submodule", ("func1", "func2", "class1", "etc")),
+    # ("module2.submodule", ("func1", "func2", "class1", "etc"))
+]
+
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"  # only use in development

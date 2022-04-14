@@ -32,6 +32,11 @@ RUN apt-get update \
 # # ace (actinia command execution) tool
 # RUN grass --tmp-location EPSG:4326 --exec g.extension extension=ace url=https://github.com/mundialis/ace
 
+# Install Actinia Python Client
+ENV ACTINIA_CLI_VERSION="0.0.2"
+RUN wget https://github.com/mundialis/actinia-python-client/releases/download/$ACTINIA_CLI_VERSION/actinia_python_client-$ACTINIA_CLI_VERSION-py3-none-any.whl
+RUN pip install actinia_python_client-$ACTINIA_CLI_VERSION-py3-none-any.whl
+
 WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt

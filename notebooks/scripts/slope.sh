@@ -1,0 +1,2 @@
+g.region raster=dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif res=10
+r.slope.aspect elevation=dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif slope=dem_10m_slope --overwrite

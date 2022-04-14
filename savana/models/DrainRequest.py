@@ -1,7 +1,7 @@
 ###############################################################################
-# Filename: serializers.py                                                     #
+# Filename: DrainRequest.py                                                    #
 # Project: TomorrowNow                                                         #
-# File Created: Friday March 18th 2022                                         #
+# File Created: Wednesday April 13th 2022                                      #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
@@ -30,16 +30,25 @@
 #                                                                              #
 ###############################################################################
 
-from rest_framework import serializers
-from django.contrib.gis.geos import Point
-from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 
-from .models import DrainRequest
+from django.db import models
+from django.contrib.gis.db import models
+# from pygments.lexers import get_all_lexers
+# from pygments.styles import get_all_styles
+
+# LEXERS = [item for item in get_all_lexers() if item[1]]
+# LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
+# STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 
 
-class DrainRequestSerializer(GeoFeatureModelSerializer):
-    """ A class to serialize locations as GeoJSON compatible data """
+class DrainRequest(models.Model):
+    # id = models.AutoField()
+    created = models.DateTimeField(auto_now_add=True)
+    point = models.PointField()
+
+    # Returns the string representation of the model.
+    def __str__(self):
+        return self.name
+
     class Meta:
-        model = DrainRequest
-        geo_field = 'point'
-        fields = ('point')
+        ordering = ['created']

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Mar 29 2022                                               #
+# Last Modified: Wed Apr 13 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -38,9 +38,34 @@ import os
 from django.contrib.gis.gdal import DataSource
 import time
 import requests
-from channels.layers import get_channel_layer
+from functools import reduce
+# from channels.layers import get_channel_layer
+# from actinia import Actinia
+
+
+import re
+# import simplejson # should we load
+import sys
+# import grass.script as grass # should we load
+import subprocess
+# from pprint import pprint
+from typing import List, Optional
 
 ACTINIA_SETTINGS = settings.ACTINIA
+
+
+# actinia_con = Actinia(os.path.join('http://', ACTINIA_SETTINGS['ACTINIA_BASEURL']), ACTINIA_SETTINGS['ACTINIA_VERSION'])
+# print(actinia_con.get_version())
+# actinia_con.set_authentication(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
+
+
+def currentUser():
+    return ACTINIA_SETTINGS['ACTINIA_USER']
+
+
+# def authorizeUser():
+#     actinia_con.set_authentication(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
+#     return actinia_con
 
 
 def print_as_json(data):
@@ -59,32 +84,25 @@ def baseUrl():
     return ACTINIA_URL
 
 
+# def locations():
+#     locations = actinia_con.get_locations()
+#     return locations
+
+
+# def locationInfo(locations, location):
+#     info = locations[location].get_info()
+#     return info
+
+
 def location():
     return ACTINIA_SETTINGS['ACTINIA_LOCATION']
 
 
-def currentUser():
-    return ACTINIA_SETTINGS['ACTINIA_USER']
+# def mapsets(location):
+#     mapsets = location.get_mapsets()
+#     print(mapsets.keys())
+#     return mapsets
 
-
-# Bad
-# def waitForResource(jsonResponse, url=None):
-#     print(f"waitForResource: Resource {jsonResponse['resource_id']} is {jsonResponse['status']}")    # print formatted JSON
-
-#     url = url if url else f"{baseUrl()}/resources/{jsonResponse['user_id']}/{jsonResponse['resource_id']}"
-#     if jsonResponse["status"] in ("accepted", "running"):
-#         # poll the resource until status has changed
-#         request_url = jsonResponse["urls"]["status"]
-#         request = requests.get(url=request_url, auth=auth())
-#         jsonResponse = request.json()
-
-#         while jsonResponse["status"] in ("accepted", "running"):
-#             time.sleep(1)
-#             jsonResponse = request.json()
-
-
-#         print(f"Resource {jsonResponse['resource_id']} is {jsonResponse['status']}")    # print formatted JSON
-#         print_as_json(jsonResponse)
 
 def resourceStatus(user_id, resource_id):
     url = f"{baseUrl()}/resources/{user_id}/{resource_id}"
@@ -98,29 +116,100 @@ def resourceStatus(user_id, resource_id):
         else:
             return resourceStatus(user_id, resource_id)
 
-from asgiref.sync import async_to_sync
+
+def split_grass_command(grass_command: str):
+    """Split grass command at spaces exluding spaces in quotes. Additional for
+    e.g. r.mapcalc the quotes are removed from the GRASS option value if the
+    value starts and ends with quotes
+    Args:
+        grass_command: A string of a GRASS GIS command
+    Returns:
+        The splitted GRASS GIS command needed for create_actinia_process
+    """
+    SPACE_MATCHER = re.compile(r" (?=(?:[^\"']*[\"'][^\"']*[\"'])*[^\"']*$)")
+    EQUALS_MATCHER = re.compile(r"=(?=(?:[^\"']*[\"'][^\"']*[\"'])*[^\"']*$)")
+
+    tokens = SPACE_MATCHER.split(grass_command)
+    for i, token in enumerate(tokens):
+        if "=" in token and ("\'" in token or '\"' in token):
+            par, val = EQUALS_MATCHER.split(token)
+            if val.startswith(val[-1]):
+                tokens[i] = "%s=%s" % (par, val.strip('\"').strip("\'"))
+    return tokens
 
 
-def asyncResourceStatus(user_id, resource_id):
-    url = f"{baseUrl()}/resources/{user_id}/{resource_id}"
-    r = requests.get(url, auth=auth())
-    data = r.json()
-    print(f"asyncResourceStatus: {r.status_code}")
-    if r.status_code == 200:
-        channel_layer = get_channel_layer()
-        resource_name = resource_id.replace('-', '_')
-        updated_status = data['status']
-        print(f"asyncResourceStatus 200: {updated_status}: {resource_name}")
+grass_command_1 = split_grass_command("g.region raster=elevation res=3 -pa")
+grass_command_2 = split_grass_command("r.slope.aspect elevation=dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif slope=dem_10m_slope --overwrite")
+grass_commands = [grass_command_1, grass_command_2]
 
-        async_to_sync(channel_layer.group_send)(f"savana_{resource_name}", {"type": 'resource_message', "message": updated_status})
 
-        # await channel_layer.group_send(
-        #     f"savana_{resource_name}",
-        #     {"type": 'resource_message', "message": updated_status}
-        # )
+def create_actinia_process_chain(command: List[dict]) -> Optional[dict]:
 
-        if data['status'] == 'finished':
-            print(f"Finished Resource: {data}")
-            return  # data['urls']['resources']
-        else:
-            return asyncResourceStatus(user_id, resource_id)
+    PCHAIN = {
+        "version": "1",
+        "list": list()
+    }
+    PCHAIN.update({"list": command})
+
+    return PCHAIN
+
+
+def create_actinia_process(command: List[str]) -> Optional[dict]:
+    """Create an actinia command dict, that can be put into a process chain
+    Args:
+        command: The GRASS GIS command as a list of strings
+    Returns:
+        The actinia process dictionary
+    """
+
+    if not command:
+        return None
+
+    print(command)
+
+    # This should all be saved to a users request record
+    # cmd = {
+    #     "id": None,  # UserID and Timestamp or requestId
+    #     "module": None,
+    #     "inputs": []
+    # }
+
+    cmd = dict(id=command[0], module=command[0], inputs=list(), flags="")
+
+    # cmd.id = command[0]
+    # cmd["module"] = command[0]
+
+    inputs = command[1:]
+
+    # Get Flags
+    flags = ''.join(list(filter(lambda x: x.startswith('-'), inputs))).replace('-', '')
+    print(f"Params List: {flags}")
+    cmd.update({'flags': flags})
+    # Get Params
+    param_list = list(filter(lambda x: '=' in x, inputs))
+    print(f"Params List: {param_list}")
+    input_dict = []
+    for x in param_list:
+        print(x.split("="))
+        param, value = x.split("=")
+        input_dict.append(dict(param=param, value=value))
+    # input_dict = [{ param: x.split('=') for x in param_list]
+    # input_dict = dict(map(lambda x : dict(param=x.split("=")[0], value=x.split("=")[1]) , param_list))
+
+    cmd.update({'inputs': input_dict})
+
+    print(cmd)
+    return cmd
+
+
+def is_grass_command(grass_command: str):
+    """Check if the given command is a GRASS GIS command
+    Args:
+        grass_command: A string of a GRASS GIS command
+    Returns:
+        True if the command is a GRASS GIS command otherwise False
+    """
+    if grass_command.split('.')[0] in ["r", "v", "i", "t", "g", "r3"]:
+        return True
+    else:
+        return False

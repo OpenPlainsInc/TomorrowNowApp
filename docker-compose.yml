@@ -24,7 +24,7 @@ services:
       - POSTGRES_PASSWORD=postgres
    
   actinia-core:
-    image: mundialis/actinia-core:3.1.2
+    image: mundialis/actinia-core:4.0.0
     volumes:
       - ./actinia-core-data/grassdb:/actinia_core/grassdb:Z
       - ./actinia-core-data/userdata:/actinia_core/userdata
@@ -94,6 +94,7 @@ services:
 
     ports:
       - "8005:8005"
+      - "8010:8010"
     depends_on:
       - db
       - actinia-core
@@ -193,18 +194,17 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./geoserver/.env
-    # image: kartoza/geoserver:${GS_VERSION}
+    # image: kartoza/geoserver:2.20.3
     volumes:
-        # - ./../data/db:/opt/geoserver/data_dir
         - geoserver-data:/opt/geoserver/data_dir
     restart: on-failure
-    # environment:
-    #   - GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR}
-    #   - GEOWEBCACHE_CACHE_DIR=${GEOWEBCACHE_CACHE_DIR}
-    #   - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_ADMIN_PASSWORD}
-    #   - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
-    #   - INITIAL_MEMORY=${INITIAL_MEMORY}
-    #   - MAXIMUM_MEMORY=${MAXIMUM_MEMORY}
+    environment:
+      - GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
+      - GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
+      - GEOSERVER_ADMIN_PASSWORD=myawesomegeoserver
+      - GEOSERVER_ADMIN_USER=admin
+      - INITIAL_MEMORY=2G
+      - MAXIMUM_MEMORY=4G
     depends_on:
       - geoserver-postgis
         # condition: service_healthy
@@ -230,24 +230,3 @@ services:
   #     - geoserver
   #   ports:
   #     - "80:80"
-
-
-  # wps:
-  #   restart: always
-  #   build:
-  #     context: ./wps
-  #     dockerfile: Dockerfile
-  #   image: gh_wps
-  #   container_name: gh_wps_1
-  #   volumes:
-  #     - ./nginx/conf.d:/etc/nginx/conf.d/
-  #     - ./nginx/log:/var/log/nginx/
-  #     - ./pywps:/opt/pywps/
-  #     - ./pywps/log:/var/log/pywps/
-  #     - /data/grassdata/geoharmonizer_aq_wps:/data/grassdata/aq_location
-  #   ports:
-  #     - 8088:8088
-  #   environment:
-  #     - NGINX_HTTP=http
-  #     - NGINX_HOST=localhost
-  #     - NGINX_PORT=8088

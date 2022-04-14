@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 06 2022                                               #
+# Last Modified: Wed Apr 13 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,6 +30,7 @@
 #                                                                              #
 ###############################################################################
 
+import imp
 import os
 from django.core.serializers import serialize
 from django.http.response import Http404
@@ -42,10 +43,20 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.db.models.functions import Distance
 from django.middleware.csrf import get_token
 from .models import TestGCSResourceModel
+from .models import DrainRequest
+from .serializers import DrainRequestSerializer
 from django.core.files.base import ContentFile
 
 # from .serializers import WorldBorderSerializer
 from rest_framework import viewsets, generics
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.parsers import JSONParser
+from rest_framework import status
+
+from django.views.decorators.csrf import csrf_exempt
+
+
 import requests
 import base64
 
@@ -174,3 +185,29 @@ def streamCOG(request, raster_name, resource_id):
 
     return response
 # /code/actinia-core-data/resources/actinia-gdi#
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def rDrain(request):
+    """
+    r.drain
+    """
+    if request.method == 'GET':
+        # TODO
+        return JsonResponse({'route': 'GET: r.drain'})
+
+    if request.method == 'POST':
+        # body_unicode = request.body.decode('utf-8')
+        print(request.data)
+        pc1 = acp.create_actinia_process(acp.grass_command_1)
+        pc2 = acp.create_actinia_process(acp.grass_command_2)
+        pc = acp.create_actinia_process_chain([pc1, pc2])
+        serializer = DrainRequestSerializer(data=request.data)
+        # print("Body Params:", data)
+        if (serializer.is_valid()):
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+
+        return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc})

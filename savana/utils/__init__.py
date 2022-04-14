@@ -1,7 +1,7 @@
 ###############################################################################
-# Filename: serializers.py                                                     #
+# Filename: __init__.py                                                        #
 # Project: TomorrowNow                                                         #
-# File Created: Friday March 18th 2022                                         #
+# File Created: Thursday April 7th 2022                                        #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
@@ -30,16 +30,7 @@
 #                                                                              #
 ###############################################################################
 
-from rest_framework import serializers
-from django.contrib.gis.geos import Point
-from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 
-from .models import DrainRequest
-
-
-class DrainRequestSerializer(GeoFeatureModelSerializer):
-    """ A class to serialize locations as GeoJSON compatible data """
-    class Meta:
-        model = DrainRequest
-        geo_field = 'point'
-        fields = ('point')
+from .actinia import *
+# from actinia import Actinia
+# from .validate_cloud_optimized_geotiff import *
