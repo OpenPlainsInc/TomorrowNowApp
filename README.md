@@ -1,15 +1,24 @@
 # TomorrowNowAPP
 
+> **Disclaimer:** The TomorrowNow project is currently in an experimental phase and therefore breaking changes and project resturting will occur without notice. We recommend waiting until the first stable version is released before considering using the project in any form.
+
 ## Getting Started
 
-Docker compose containers and client port bindings.
+Docker compose containers and client port bindings. Currently we are comparing different cloud optimaized geotiff (cog) servers so that is why there are so many at the moment.
+
 | Service  | Description | Port |
 | -----------   | ----------- | -------- |
 | api           | Django 4.0  | 8005     |
 | actinia | Actinia 4.0 | 8088     |
 | webapp      | React       | 3000     |
 | db      | Postgresql + PostGIS | 5431 |
-
+| actinia-redis | redis | 6379 |
+| django-redis-cache |  redis | 6370 |
+| celery_worker |  celery | NA |
+| terracotta | Terracotta | 5000 |
+| titiler | titiler | 7000 |
+| geoserver | geoserver | 8600 |
+|geoserver-postgis|  Postgresql + PostGIS | 32767 |
 ### Start app
 
 ```bash
