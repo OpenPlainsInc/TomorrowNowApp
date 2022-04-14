@@ -206,14 +206,6 @@ function install_plugin() {
 
 }
 
-# function install_grass_plugin() {
-#   if [[ -f /geoserver/start.jar ]]; then
-#     cp -u -p "geoserver-grass-raster-datastore-0.1.1-SNAPSHOT.jar"  /geoserver/webapps/geoserver/WEB-INF/lib/
-#   else
-#     cp -u -p "geoserver-grass-raster-datastore-0.1.1-SNAPSHOT.jar"  "${CATALINA_HOME}"/webapps/geoserver/WEB-INF/lib/
-#   fi
-# }
-
 # Helper function to setup disk quota configs and database configurations
 
 function default_disk_quota_config() {

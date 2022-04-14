@@ -58,7 +58,6 @@ else
   done
 fi
 
-
 #Install some mandatory stable extensions
 pushd ${resources_dir}/plugins || exit
 

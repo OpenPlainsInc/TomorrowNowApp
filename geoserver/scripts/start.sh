@@ -112,9 +112,6 @@ else
         community_config
       fi
   done
-  echo "Enabling GRASS GIS Plugin for GeoServer ${GS_VERSION}"
-  mv "geoserver-grass-raster-datastore-0.1.1-SNAPSHOT.jar"  "${CATALINA_HOME}"/webapps/geoserver/WEB-INF/lib/
-
 fi
 
 

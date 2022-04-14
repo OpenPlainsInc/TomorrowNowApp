@@ -1,0 +1,8 @@
+
+# [debug]
+DEBUG = true
+FLASK_PROFILE = true
+
+# [cors]
+TC_ALLOWED_ORIGINS_METADATA = '["*"]'
+TC_ALLOWED_ORIGINS_TILES = '["*"]'
