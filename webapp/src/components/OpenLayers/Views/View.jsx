@@ -9,20 +9,22 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { View } from 'ol';
+import { OlView } from 'ol';
 import MapContext from "./MapContext";
 
+// https://openlayers.org/en/latest/apidoc/module-ol_View-View.html
 
 const View = (props) => {
     const { map } = useContext(MapContext);
     const [view, setView] = useState(null);
 
     useEffect(() => {
-        let view = new ol.View({ 
-          zoom, 
-          center,
-          projection // 4326 //EPSG:3857 
+        if (!map) return;
+        let view = new OlView({ 
+          ...props
         })
+        map.setView(view)
+    },[props])
 
     return null;
 };

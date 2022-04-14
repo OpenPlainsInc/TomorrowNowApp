@@ -19,8 +19,7 @@ const OnMoveEnd = ({eventHandler}) => {
     map.on('moveend', eventHandler)
     return () => {
       if (map) {
-        
-        map.on('moveend', eventHandler)
+        map.un('moveend', eventHandler)
       }
     };
   }, [map]);

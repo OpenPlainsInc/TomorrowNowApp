@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: We/03/yyyy 10:nn:34
+ * Last Modified: Tu/04/yyyy 03:nn:07
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -48,13 +48,14 @@ const RasterCardImage = ({raster}) => {
     const [image, setImage] = useState(null)
     const [loading, setLoading] = useState(true)
     // const mountedRef = useRef(true)
+    const [mapset, setMapset] = useState('PERMANENT')
 
     useEffect(() => {
         let isMounted = true; 
         async function fetchImage(raster_name) {
             try {
                 // let queryParams = {un: params.unId}
-                let url = new URL(`http://localhost:8005/savana/r/renderpng/${raster_name}/PERMANENT`)
+                let url = new URL(`http://localhost:8005/savana/r/renderpng/${raster_name}/${mapset}`)
                 // url.search = new URLSearchParams(queryParams).toString();
                 const res = await fetch(url);
                 const data = await res.json();
