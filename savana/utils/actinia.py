@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 13 2022                                               #
+# Last Modified: Sat Apr 16 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -136,11 +136,6 @@ def split_grass_command(grass_command: str):
             if val.startswith(val[-1]):
                 tokens[i] = "%s=%s" % (par, val.strip('\"').strip("\'"))
     return tokens
-
-
-grass_command_1 = split_grass_command("g.region raster=elevation res=3 -pa")
-grass_command_2 = split_grass_command("r.slope.aspect elevation=dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif slope=dem_10m_slope --overwrite")
-grass_commands = [grass_command_1, grass_command_2]
 
 
 def create_actinia_process_chain(command: List[dict]) -> Optional[dict]:

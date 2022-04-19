@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 13 2022                                               #
+# Last Modified: Sat Apr 16 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -44,7 +44,7 @@ from django.contrib.gis.db import models
 class DrainRequest(models.Model):
     # id = models.AutoField()
     created = models.DateTimeField(auto_now_add=True)
-    point = models.PointField()
+    point = models.PointField(srid=4326)
 
     # Returns the string representation of the model.
     def __str__(self):

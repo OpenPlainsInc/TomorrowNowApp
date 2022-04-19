@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 13 2022                                               #
+# Last Modified: Mon Apr 18 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -55,6 +55,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.gis.geos import Point
 
 
 import requests
@@ -199,15 +200,48 @@ def rDrain(request):
         return JsonResponse({'route': 'GET: r.drain'})
 
     if request.method == 'POST':
+      
+        mapset_name = "basin_test"
+        url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/{mapset_name}/processing_async"
+
         # body_unicode = request.body.decode('utf-8')
         print(request.data)
-        pc1 = acp.create_actinia_process(acp.grass_command_1)
-        pc2 = acp.create_actinia_process(acp.grass_command_2)
-        pc = acp.create_actinia_process_chain([pc1, pc2])
-        serializer = DrainRequestSerializer(data=request.data)
-        # print("Body Params:", data)
+        coords = request.data[0]['point'].split(',')
+        point = Point(float(coords[0]), float(coords[1]), srid=4326)
+        point.transform(ct=3358)
+        print("Point", point)
+        t_coords = [str(t) for t in point]
+        t_coords = ",".join(t_coords)
+        print("Transformed Point", t_coords)
+
+        direction = "https://storage.googleapis.com/tomorrownow-actinia-dev/direction_3k_cog.tif"
+        output_basin = "point_basin"
+        elev = "dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif"
+        grass_command_1 = acp.split_grass_command(f"g.region raster={elev} res=3 -pa")
+        grass_command_2 = acp.split_grass_command(f"r.circle -b output=circle coordinate={t_coords} max=200")
+        grass_command_3 = acp.split_grass_command(f"r.stream.basins -c direction={direction} streams=circle basins={output_basin}")
+
+        pc1 = acp.create_actinia_process(grass_command_1)
+        pc2 = acp.create_actinia_process(grass_command_2)
+        pc3 = acp.create_actinia_process(grass_command_3)
+        grass_commands = [pc1, pc2, pc3]
+        pc = acp.create_actinia_process_chain(grass_commands)
+
+        r = requests.post(
+            url, auth=acp.auth(),
+            json=pc,
+            headers={"content-type": "application/json; charset=utf-8"}
+        )
+        jsonResponse = r.json()
+        print(f"Response: {r.json()}")
+        serializer = DrainRequestSerializer(data=[{"point": point}])
+     
         if (serializer.is_valid()):
+            print("serializer data:", serializer.data)
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print("Fail :(")
+            return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse})
 
-        return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc})
+        # return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc})

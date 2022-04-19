@@ -296,37 +296,21 @@ const Game = ({params}) => {
                         .find(row => row.startsWith('csrftoken='))
                         .split('=')[1];
 
+                // let geojson = [{
+                //   point: {
+                //   "type": "Point", 
+                //   "coordinates": coords
+                //   }
+                // }]
+
                 let geojson = [{
-                  point: {
-                  "type": "Point", 
-                  "coordinates": coords
-                  }
+                  point: coords.join(',')
                 }]
-
-                // let geojson = {
-                //   "id": 1,
-                //   "type": "Feature",
-                //   "geometry": {
-                //       "type": "Point",
-                //       "coordinates": coords,
-                //   },
-                //   "properties": {}
-                // }
-
-                // let geojson = {
-                //   coordinate: coords.join()
-                // }
 
                 let url = new URL(`${API_HOST}/r/drain/`)
                 console.log(coords)
                 const res = await fetch(url, {
                     method: "POST",
-                    // data: {
-                    //   coordinate: JSON.stringify({data: coords}) 
-                    // },
-                    // json: {
-                    //   coordinate: JSON.stringify({data: coords}) 
-                    // },
                     body: JSON.stringify(geojson),
                     headers: {
                         // 'X-CSRFToken': await getCsrfToken()
