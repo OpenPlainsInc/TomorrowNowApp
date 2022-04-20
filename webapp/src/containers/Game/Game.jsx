@@ -40,8 +40,14 @@ import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
 import OnMoveEnd from '../../components/OpenLayers/Events/onMoveEnd';
 
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
+import GrassColors from '../../components/OpenLayers/Colors'
+import utils from "../../components/OpenLayers/Colors/utils";
+import WebGLTileLayer from "../../components/OpenLayers/Layers/WebGLTileLayer"
+import Reprojection from "../../components/OpenLayers/Views/Reprojection";
+import ActiniaGeoTiff from '../../components/OpenLayers/Sources/ActiniaGeoTiff';
 
 // import VectorSource from "ol/source/Vector";
 // import { Style, Stroke } from "ol/style";
@@ -54,18 +60,51 @@ const Game = ({params}) => {
     
     const [center, setCenter] = useState([-78.6802,35.8408]);
     const [zoom, setZoom] = useState(11);
+    const [basinRaster, setBasinRaster] = useState(null);
+
     const [projection, setProjection] = useState('EPSG:4326')
     const [legend, setLegend] = useState(nlcdSource({LAYERS: "NLCD_01-19_Land_Cover_Change_First_Disturbance_Date"}).getLegendUrl())
     const [surveyData, setSurveyData] = useState([])
-    // const [nlcdDataSouce, setNlcdDataSource] = useState(GeoTIFFSource({
-    //   sources: [
-        // {
-        //   url: 'https://www.mrlc.gov/geoserver/mrlc_download/NLCD_2016_Land_Cover_L48/wcs?service=WCS&version=2.0.1&request=GetCoverage&FORMAT=image/tiff&coverageId=mrlc_download__NLCD_2016_Land_Cover_L48&CRS=EPSG:4326&BBOX=35.68359375%2C-78.75%2C35.859375%2C-78.57421875'
-        // }
-    //   ]
-    // }))
+    const [extent, setExtent] = useState(null)
+    const [source, setSource] = useState(null);
+    const [view, setView] = useState(null)
+    const [status, setStatus] = useState(null)
+    const [resourceId, setResourceId] = useState(null)
+    const [dataRangeMin, setDataRangeMin] = useState(null)
+    const [dataRangeMax, setDataRangeMax] = useState(null)
+    const [socketUrl, setSocketUrl] = useState(null);
+    const [messageHistory, setMessageHistory] = useState(['test']);
+    const { sendMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(socketUrl, { share: false });
+    const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette())
+
+    const connectionStatus = {
+      [ReadyState.CONNECTING]: 'Connecting',
+      [ReadyState.OPEN]: 'Open',
+      [ReadyState.CLOSING]: 'Closing',
+      [ReadyState.CLOSED]: 'Closed',
+      [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
     let _csrfToken = null;
     const API_HOST = "http://localhost:8005/savana"
+
+    const [tileStyle, setTileStyle] = useState({
+      // color: GrassColors.utils.autoDetectPalette(params.rasterId),
+      color: undefined,
+      exposure: ['var', 'exposure'],
+      contrast: ['var', 'contrast'],
+      saturation: ['var', 'saturation'],
+      gamma: ['var', 'gamma'],
+      // color: ['var', 'color'],
+      variables: {
+          exposure: 0,
+          contrast: 0,
+          saturation: 0,
+          gamma: 1,
+          color: undefined,
+          level: 0
+        }
+    })
+
     async function getCsrfToken() {
       if (_csrfToken === null) {
           const response = await fetch(`${API_HOST}/csrf/`, {
@@ -76,61 +115,16 @@ const Game = ({params}) => {
       }
       return _csrfToken;
   }
-    
-
-    const data = [
-      {
-        name: 'Page A',
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
-      },
-      {
-        name: 'Page B',
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
-      },
-      {
-        name: 'Page C',
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
-      },
-      {
-        name: 'Page D',
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
-      },
-      {
-        name: 'Page E',
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
-      },
-      {
-        name: 'Page F',
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
-      },
-      {
-        name: 'Page G',
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
-      },
-    ];
 
     function onMoveEventHandler(e) {
       console.log("VectorLayer Click Event:", e)
       const view = e.target.getView()
-      const extent = view.calculateExtent()
-      console.log('extent', extent, 'resolution', view.getResolution())
+      const _extent = view.calculateExtent()
+      console.log('extent', _extent, 'resolution', view.getResolution())
+      setExtent(extent)
       const viewResolution = (view.getResolution());
       const url = nlcdSource({LAYERS: 'NLCD_2019_Land_Cover_L48'}).getFeatureInfoUrl(
-        extent,
+        _extent,
         viewResolution,
         'EPSG:4326',
         {'INFO_FORMAT': 'application/json'}
@@ -227,21 +221,6 @@ const Game = ({params}) => {
      
       
       e.target.getLayers().forEach((el) => {
-        if (el.get('name') === "featureOverlayer") {
-          // console.log(el.getFeatures)
-          // console.log(el.getSource())
-          // if (feature !== highlight) {
-          //   if (highlight) {
-          //     el.getSource().removeFeature(highlight);
-          //   }
-          //   if (feature) {
-          //     console.log("Set Feature",feature)
-          //     el.getSource().addFeature(feature);
-          //   }
-          //   highlight = feature;
-          // }
-        }
-
         if (el.get('name') === "survey") {
           console.log(el.getSource().getFeatures().map(f=>f.getProperties()))
           let properties =  el.getSource().getFeatures().map(f=> {
@@ -287,7 +266,7 @@ const Game = ({params}) => {
 
 
     
-       
+      let isMounted = true;   
       async function rDrain(coords) {
             try {
                
@@ -296,15 +275,9 @@ const Game = ({params}) => {
                         .find(row => row.startsWith('csrftoken='))
                         .split('=')[1];
 
-                // let geojson = [{
-                //   point: {
-                //   "type": "Point", 
-                //   "coordinates": coords
-                //   }
-                // }]
-
                 let geojson = [{
-                  point: coords.join(',')
+                  point: coords.join(','),
+                  extent: extent
                 }]
 
                 let url = new URL(`${API_HOST}/r/drain/`)
@@ -320,15 +293,99 @@ const Game = ({params}) => {
                 });
                 const data = await res.json();
                 console.log("response:", data)             
+                setResourceId(data.response.resource_id)
+                setStatus(data.response.status)
+                // console.log("Starting Websocket...")
+                // console.log("Websocket: ResourceId Received...")
+                // console.log(`Websocket: Resource Id: ${data.response.resource_id}`)
+                // let resourceName = data.response.resourceId.replace(/-/g , '_')
+                // console.log(`Websocket: Resource Name: ${resourceName}`)
+
+                // // setSocketUrl( `ws://localhost:8005/ws/savana/resource/${params.rasterId}/`)
+                // setSocketUrl( `ws://localhost:8005/ws/savana/resource/${resourceName}/`)
 
               } catch (e) {
                 console.log(e);
             }
-            return () => data
+            return () => { isMounted = false }
+
         }
         rDrain(e.coordinate)
       
     }
+
+    // Get Websocket message history
+    useEffect(() => {
+      if (lastMessage !== null) {
+        setMessageHistory((prev) => prev.concat(lastMessage));
+      }
+    }, [lastMessage, setMessageHistory]);
+
+    // Open Websocket Connention for resource
+    useEffect(()=> {
+      if (!resourceId || !status) return;
+      console.log("Starting Websocket...")
+      console.log("Websocket: ResourceId Received...")
+      console.log(`Websocket: Resource Id: ${resourceId}`)
+      let resourceName = resourceId.replace(/-/g , '_')
+      console.log(`Websocket: Resource Name: ${resourceName}`)
+
+      // setSocketUrl( `ws://localhost:8005/ws/savana/resource/${params.rasterId}/`)
+      setSocketUrl( `ws://localhost:8005/ws/savana/resource/${resourceName}/`)
+
+  },[source, status, resourceId])
+
+  // Send websocket status message to server
+  useEffect(()=> {
+      if (readyState != ReadyState.OPEN) return;
+      console.log("Sending Websocket Message: ", status)
+      sendMessage(JSON.stringify({message: status, resource_id: resourceId}))
+      setMessageHistory([{message: status, resource_id: resourceId}])
+  },[connectionStatus])
+
+  // Log last message from Websocket
+  useEffect(()=> {
+      if (readyState != ReadyState.OPEN) return;
+      console.log("Last Websocket Message", lastMessage)
+
+  },[lastMessage])
+
+  // Set source data once data is finished
+  useEffect(() => {
+      if (!lastJsonMessage) return;
+      if (lastJsonMessage.message !== 'finished') return;
+
+      console.log("Last Message: ", lastJsonMessage)
+      if (lastJsonMessage) {
+          let data = lastJsonMessage
+
+          setBasinRaster("point_basin")
+         
+      
+        
+            // const rastersData = `${API_HOST}/r/resource/point_basin/stream/${data.resource_id}`
+            // setDataRangeMin(data.statistics.min)
+            // setDataRangeMax(data.statistics.max)
+
+            // let sourceOptions = {
+            //     sources: [{url: rastersData}], 
+            //     allowFullFile: true, 
+            //     forceXHR: true, 
+            //     normalize: false, // set true for imagery
+            //     convertToRGB: false,
+            //     interpolate: true, // set fault for discrete data
+            //     style: tileStyle
+            // }
+            // console.log("COG Url: ", rastersData)
+            // let tmpSource = GeoTIFFSource(sourceOptions)
+            // setSource(tmpSource)
+       
+
+          
+
+         
+      }
+  }, [lastJsonMessage]);
 
 
     useEffect(() => {
@@ -340,6 +397,7 @@ const Game = ({params}) => {
   
         return (
           <Container>
+              
             <Row>
               <Col md={8}>
             <Map mapClass="map-fullscreen" center={center} zoom={zoom} projection='EPSG:4326'>
@@ -352,6 +410,29 @@ const Game = ({params}) => {
                   {/* <TileLayer source={nlcdDataSouce}></TileLayer> */}
                   <TileLayer source={osm()} opacity={0.5}></TileLayer>
                   <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
+
+                  {/* <WebGLTileLayer 
+                            // gamma={gammaValue}
+                            // opacity={opacity}
+                            // saturation={saturationValue}
+                            // contrast={contrastValue}
+                            // exposure={exposureValue}
+                            layerName="point_basin"
+                            style={tileStyle}
+                            color={tileColor}
+                            // minZoom={0}
+                            // maxZoom={16}
+                            source={source}>
+                        </WebGLTileLayer> */}
+                  {
+                    basinRaster ? 
+                      <ActiniaGeoTiff 
+                        rasterName={basinRaster} 
+                        mapsetName="basin_test"
+                        opacity={0.75}
+                      ></ActiniaGeoTiff> : null
+                  }
+                  
                   <VectorLayer layerName="featureOverlayer" source={VectorSource()} style={surveyStyles.styleCache.selected}></VectorLayer>
                   <VectorLayer layerName="survey" source={survery()}  style={surveyStyles.setSurveyStyle} ></VectorLayer> 
                    
@@ -372,10 +453,15 @@ const Game = ({params}) => {
                   {/* <RotateControl autoHide={false}/> */}
                   <EditMapControl />
               </Controls>
+              {/* <Reprojection epsg='3358'></Reprojection>  */}
+              {/* <Reprojection epsg='4326'></Reprojection>  */}
+
               </Map>
               </Col>
              
              <Col md={4}>
+             <h1>Connection Status: {connectionStatus}</h1>
+              <h1>{resourceId}: {status}</h1>
                 <BarChart
                   width={500}
                   height={400}
@@ -414,12 +500,17 @@ const Game = ({params}) => {
                     <Card.Body>
                       <Card.Title>NLCD 01-19 Land Cover Change First Disturbance Date</Card.Title>
                       <Card.Text>
-                        Some quick example text to build on the card title and make up the bulk of
-                        the card's content.
+                     {status}
+                     {resourceId}
+                  
+                    <span>{messageHistory[-1]}</span>
+                
                       </Card.Text>
                     </Card.Body>
                     <Card.Img variant="top" src={legend} />
                   </Card>
+
+                  
                   </Col>
                 </Row>
           </Container>

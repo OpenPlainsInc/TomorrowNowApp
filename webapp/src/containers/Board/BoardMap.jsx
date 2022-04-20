@@ -68,7 +68,7 @@ const BoardMap = (props) => {
     return (
             <Container>
                 <h1>{params.rasterId}</h1>
-
+                <Row>
                 <Map  center={fromLonLat(center)} zoom={zoom}>
 
                     <Layers>
@@ -76,7 +76,8 @@ const BoardMap = (props) => {
                         <TileLayer source={osm()}></TileLayer>
                         <ActiniaGeoTiff 
                             rasterName={params.rasterId} 
-                            mapsetName="PERMANENT"
+                            mapsetName={params.mapsetId}
+                            locationName={params.locationId}
                             gamma={gammaValue}
                             opacity={opacity}
                             saturation={saturationValue}
@@ -102,15 +103,12 @@ const BoardMap = (props) => {
                         <EditMapControl />
                     </Controls>
                     <Reprojection epsg='3358'></Reprojection> 
-                   
-                </Map>
+                    {/* <Reprojection epsg='3357'></Reprojection>  */}
 
-                {/* <ul>
-                    {messageHistory.map((message, idx) => (
-                    <span key={idx}>{message ? message.data : null}</span>
-                    ))}
-                </ul> */}
-                <Form>
+                </Map>
+                </Row>
+                <Row>
+                <Form style={{marginTop: 50}}>
                 <Form.Control as="select" value={colorPal} onChange={updateColor}>
                     {utils.defautColormaps.map((c, idx) =>{
                             return(
@@ -209,7 +207,7 @@ const BoardMap = (props) => {
                     </Form.Group>
                  
                 </Form>
-               
+                </Row>
             </Container>
         
     )

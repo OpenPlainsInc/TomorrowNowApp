@@ -1,85 +1,30 @@
-import React, { useState, useEffect, useRef, Fragment} from "react"
+import React, { useState, useEffect } from "react"
 import {useParams, useLocation } from "react-router-dom";
 
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Breadcrumb from "react-bootstrap/Breadcrumb"
-import Spinner from "react-bootstrap/Spinner"
 import Table from "react-bootstrap/Table"
-import Image from "react-bootstrap/Image"
 import {LinkContainer} from 'react-router-bootstrap'
 import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
-
-
-const RasterImage = ({raster}) => {
-    const [image, setImage] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const mountedRef = useRef(true)
-
-    useEffect(() => {
-        let isMounted = true; 
-        async function fetchImage(raster_name) {
-            try {
-                // let queryParams = {un: params.unId}
-                let url = new URL(`http://localhost:8005/savana/r/renderpng/${raster_name}/PERMANENT`)
-                // url.search = new URLSearchParams(queryParams).toString();
-                const res = await fetch(url);
-                const data = await res.json();
-                console.log("image response:", data)
-                data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
-                const rasterImage = data.response
-                setImage(rasterImage)
-               
-                setLoading(false)
-              } catch (e) {
-                console.log(e);
-            }
-            
-          }
-          fetchImage(raster)
-      },[raster])
-
-      useEffect(() => {
-        return () => { 
-          mountedRef.current = false
-        }
-      }, [])
-
-     
-      return (
-        <Fragment >
-            {
-                loading ? 
-                <Spinner as="span" animation="border" role="status" variant="secondary" className="bg-dark text-light" >
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-                :
-                <Image as="img" fluid={true} src={image ? image.imgurl : ""} className="bg-dark text-light"></Image>
-            }
-        </Fragment>
-      )
-
-};
-
+import RasterCardImage from "../../components/Grass/Utils/RasterCardImage";
+import Grass from "../../components/Grass/grass";
 
 const BoardDetail = (props) => {
     let params = useParams();
     const location = useLocation()
-    // const { from } = location.state
     const [info, setInfo] = useState([])
     
-
-
     useEffect(() => {
         let isMounted = true; 
         async function fetchRasterInfo() {
             try {
                 let rasterId = params.rasterId
-                let url = new URL(`http://localhost:8005/savana/r/info/${rasterId}/PERMANENT`)
-                const res = await fetch(url);
-                const data = await res.json();
+                let mapsetId = params.mapsetId
+                let locationId = params.locationId
+                const data = await Grass.r.info(locationId, mapsetId, rasterId)
                 console.log("response:", data)
                 const rastersData = data.response.process_results
                 let updateObject = {}
@@ -109,31 +54,33 @@ const BoardDetail = (props) => {
                         <Breadcrumb.Item>Board</Breadcrumb.Item>
                     </LinkContainer>
                     <LinkContainer to="/board">
-                        <Breadcrumb.Item>{info.location}</Breadcrumb.Item>
+                        <Breadcrumb.Item>{params.locationId}</Breadcrumb.Item>
                     </LinkContainer>
                     <LinkContainer to="/board">
-                        <Breadcrumb.Item>{info.mapset}</Breadcrumb.Item>
+                        <Breadcrumb.Item>{params.mapsetId}</Breadcrumb.Item>
                     </LinkContainer>
                     <LinkContainer to="/board">
-                        <Breadcrumb.Item>{info.map}</Breadcrumb.Item>
+                        <Breadcrumb.Item>{params.rasterId}</Breadcrumb.Item>
                     </LinkContainer>
                 </Breadcrumb>
-                {/* <Row><h1>{info.map}</h1></Row> */}
                 <Row md={2}>
                     <Col>
                         <Row>
                             <Card className="bg-dark text-white">
-                                {/* <Card.Img src="holder.js/100px270" alt="Card image" /> */}
-                                <RasterImage raster={params.rasterId} />
-
+                                <RasterCardImage 
+                                    card={false} 
+                                    rasterName={params.rasterId}
+                                    locationName={params.locationId}
+                                    mapsetName={params.mapsetId}
+                                ></RasterCardImage>
                                 <Card.ImgOverlay>
                                     <Card.Body  style={{ backgroundColor: 'rgba(30, 30, 30, 0.4)' }}>
-                                    <Card.Title><h1>{info.map}</h1></Card.Title>
+                                    <Card.Title><h1>{params.rasterId}</h1></Card.Title>
                                     <Card.Text>
                                     {info.title}
                                     </Card.Text>
                                     <Card.Text>Last updated {info.date}</Card.Text>
-                                    <LinkContainer to={`/board/map/${params.rasterId}`}>
+                                    <LinkContainer to={`/board/location/${params.locationId}/mapset/${params.mapsetId}/raster/${params.rasterId}/map`}>
                                         <Button variant="outline-secondary" size="lg" className="align-self-end">View Map</Button>
                                     </LinkContainer> 
                                     </Card.Body>

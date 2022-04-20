@@ -8,8 +8,8 @@ import BoardMap from '../containers/Board/BoardMap';
 
 const BoardRoutes = (
   <Fragment>
-    <Route path="board/map/:rasterId" element={<BoardMap /> } />
-    <Route path="board/:rasterId" element={<BoardDetail /> } />
+    <Route path="board/location/:locationId/mapset/:mapsetId/raster/:rasterId/map" element={<BoardMap /> } />
+    <Route path="board/location/:locationId/mapset/:mapsetId/raster/:rasterId" element={<BoardDetail /> } />
     <Route path="board" element={<Board /> } />
     
   </Fragment>

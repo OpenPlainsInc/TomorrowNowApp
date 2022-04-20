@@ -1,25 +1,25 @@
-FROM mundialis/actinia-core:3.1.2 as actinia
+FROM mundialis/actinia-core:4.0.0 as actinia
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
 
 USER root
 
-RUN apt-get install -y r-base
-
-RUN R -e "install.packages(c('MuMIn', 'lme4', 'optparse', 'snow'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
+# Install R libraies needed for FUTURES
+# RUN apt-get install -y r-base
+# RUN R -e "install.packages(c('MuMIn', 'lme4', 'optparse', 'snow'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 RUN pip3 install scipy
 
-COPY grass_addons_list.csv /src/grass_addons_list.csv
-COPY actinia.cfg /etc/default/actinia
-COPY start.sh /src/start.sh
+# Install additional GRASS plugins
+COPY grass_addon_list.csv /src/grass_addon_list_custom.csv
+RUN while IFS=, read -r ADDON SERVER; do if [[ $ADDON != "#*" ]]; then unset URL; test -z $SERVER || URL="url=$SERVER"; grass --tmp-location EPSG:4326 --exec g.extension -s extension=$ADDON $URL;fi;done < /src/grass_addon_list_custom.csv
 
-ARG USER_ID=1000
-ARG GROUP_ID=1000
+# # Copy Google Creds
+# RUN mkdir -p /home/user/gcp/
+# COPY gcp_keys/gcp_tomorrownow_dev_key.json /home/user/gcp/gcp_tomorrownow_dev_key.json
 
-RUN addgroup -g $GROUP_ID user
-RUN adduser -D -g '' -u $USER_ID -G user user
-RUN chown -R user:user /src/
+# COPY actinia.cfg /etc/default/actinia
+# COPY start.sh /src/start.sh
 
 USER user

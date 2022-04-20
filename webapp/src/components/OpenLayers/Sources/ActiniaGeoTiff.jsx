@@ -14,6 +14,7 @@ import WebGLTileLayer from "../Layers/WebGLTileLayer"
 import GeoTIFFSource from "./GeoTIFF"
 import GrassColors from "../Colors";
 import utils from "../Colors/utils";
+import Grass from "../../Grass/grass"
 
 
 
@@ -83,14 +84,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
         let isMounted = true; 
         async function fetchRasters() {
             try {
-                let rasterId = rasterName
-                
-                let url = new URL(`${API_HOST}/r/geotiff/${rasterName}/${mapsetName}`)
-
-                const res = await fetch(url, {
-                    method: "GET"
-                });
-                const data = await res.json();
+                let data = await Grass.d.renderGeoTiff(locationName, mapsetName, rasterName)
                 console.log("response:", data)
                 console.log("response:", data.response.resourceId)
                 console.log("response:", data.response.status)

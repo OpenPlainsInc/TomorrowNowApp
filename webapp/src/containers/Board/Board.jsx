@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tu/04/yyyy 03:nn:07
+ * Last Modified: We/04/yyyy 06:nn:22
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -37,63 +37,15 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Card from "react-bootstrap/Card"
-import Button from "react-bootstrap/Button"
-import Spinner from "react-bootstrap/Spinner"
+
 import FormControl from "react-bootstrap/FormControl"
 import InputGroup from "react-bootstrap/InputGroup"
 import {LinkContainer} from 'react-router-bootstrap'
+import Form from 'react-bootstrap/Form'
+import GrassSelect from "../../components/Grass/Utils/GrassSelect";
+import Grass from "../../components/Grass/grass";
+import RasterCardImage from "../../components/Grass/Utils/RasterCardImage";
 
-
-const RasterCardImage = ({raster}) => {
-    const [image, setImage] = useState(null)
-    const [loading, setLoading] = useState(true)
-    // const mountedRef = useRef(true)
-    const [mapset, setMapset] = useState('PERMANENT')
-
-    useEffect(() => {
-        let isMounted = true; 
-        async function fetchImage(raster_name) {
-            try {
-                // let queryParams = {un: params.unId}
-                let url = new URL(`http://localhost:8005/savana/r/renderpng/${raster_name}/${mapset}`)
-                // url.search = new URLSearchParams(queryParams).toString();
-                const res = await fetch(url);
-                const data = await res.json();
-                console.log("image response:", data)
-                data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
-                const rasterImage = data.response
-                setImage(rasterImage)
-               
-                setLoading(false)
-              } catch (e) {
-                console.log(e);
-            }
-            
-          }
-          fetchImage(raster)
-      },[raster])
-
-      useEffect(() => {
-        return () => { 
-          // mountedRef.current = false
-        }
-      }, [])
-
-     
-      return (
-        <Fragment >
-            {
-                loading ? 
-                <Spinner as="span" animation="border" role="status" variant="secondary" className="bg-dark text-light" >
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-                :
-                <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} className="bg-dark text-light"/>
-            }
-        </Fragment>
-      )
-
-};
 
 
 const Board = (props) => {
@@ -102,23 +54,18 @@ const Board = (props) => {
     const [filter, setFilter] = useState(null)
     const [filteredRasters, setFilteredRasters]  = useState([])
     const [chunks, setChunks]  = useState([])
+    const [locationValue, setLocationValue]  = useState("nc_spm_08")
+    const [mapsetValue, setMapsetValue]  = useState("PERMANENT")
 
 
     useEffect(() => {
         let isMounted = true; 
         async function fetchRasters() {
             try {
-                // let queryParams = {un: params.unId}
-                let url = new URL('http://localhost:8005/savana/g/list/')
-                // let url = new URL('http://api:8005/savana/g/list/')
-
-                // url.search = new URLSearchParams(queryParams).toString();
-                const res = await fetch(url);
-                const data = await res.json();
-                console.log("response:", data)
+                let data =  await Grass.locations.location.mapsets.getRasterLayers(locationValue, mapsetValue)
+                console.log("Raster response:", data)
                 const rastersData = data.response.process_results
                 console.log("rastersData:", rastersData)
-                setProcessChainList(data.response.process_chain_list)
                 if (isMounted) setRasters(rastersData)
               } catch (e) {
                 console.log(e);
@@ -130,6 +77,7 @@ const Board = (props) => {
 
 
       useEffect(()=> {
+        if (!rasters) return;
         setFilteredRasters(rasters.filter(f => f.includes(filter) || filter === ""))
         console.log("Set Filter", filteredRasters)
         let _chunks = filteredRasters.length > 0 ? sliceIntoChunks(filteredRasters,4) : sliceIntoChunks(rasters,4)
@@ -159,6 +107,43 @@ const Board = (props) => {
         setChunks(_chunks)
       }
 
+      async function fetchUpdate(locationValue, mapsetValue) {
+        console.log(`Updated Data for Location ${locationValue} @ Mapset ${mapsetValue}`)
+
+        let data =  await Grass.locations.location.mapsets.getRasterLayers(locationValue, mapsetValue)
+        console.log("updated Raster response:", data)
+        const rastersData = data.response.process_results
+        console.log("updated rastersData:", rastersData)
+        // setProcessChainList(data.response.process_chain_list)
+        setRasters(rastersData)
+      }
+
+      useEffect(()=> {
+        fetchUpdate(locationValue, mapsetValue)
+      },[mapsetValue,locationValue])
+
+      function updateMapset(e) {
+        console.log("Update Mapset:", e)
+        // setProcessChainList([])
+        setRasters(null)
+        setChunks([])
+        let newValue = e.target.value
+        setMapsetValue(newValue)
+        // fetchUpdate(locationValue, newValue)
+      }
+
+      function updateLocation(e) {
+        console.log("Update Location:", e)
+        let newValue = e.target.value
+        setRasters(null)
+        setChunks([])
+        // setProcessChainList([])
+
+        setMapsetValue("PERMANENT")
+        setLocationValue(newValue)
+        // fetchUpdate(locationValue, mapsetValue)
+      }
+
      
 
       const renderRasters = (rasters) => {
@@ -176,17 +161,15 @@ const Board = (props) => {
 
                             <Col key={raster}  xs={6} md={3} lg={3}>
                                 <Card  key={raster} >
-                                    <RasterCardImage raster={raster} />
+                                    <RasterCardImage rasterName={raster} locationName={locationValue} mapsetName={mapsetValue} />
                                     <Card.Body>
                                     <Card.Title>{raster}</Card.Title>
-                                    <Card.Subtitle className="mb-4 text-muted">Data Type : {processChainList[0][1].inputs.type}</Card.Subtitle>
                                     <Card.Text>
-                                        { `Mapset: ${processChainList[0][1].inputs.mapset}`}
                                     </Card.Text>
-                                    <LinkContainer to={`/board/map/${raster}`}> 
+                                    <LinkContainer to={`/board/location/${locationValue}/mapset/${mapsetValue}/raster/${raster}/map`}> 
                                         <Card.Link >Map</Card.Link>
                                     </LinkContainer>
-                                    <LinkContainer to={`/board/${raster}`}> 
+                                    <LinkContainer to={`/board/location/${locationValue}/mapset/${mapsetValue}/raster/${raster}`}> 
                                         <Card.Link >Metadata</Card.Link>
                                     </LinkContainer>
                                     
@@ -203,6 +186,7 @@ const Board = (props) => {
         return (
             <Container fluid className="bg-light text-dark">
                 <Row>
+                  <Col>
                  <InputGroup className="mb-3" style={{marginTop: 20}}>
                     <InputGroup.Text id="basic-addon1"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
                     <FormControl
@@ -212,6 +196,15 @@ const Board = (props) => {
                     onChange={filterData}
                     />
                 </InputGroup>
+                  </Col>
+
+                  <Col>
+                      <GrassSelect selectionType="locations" onSelect={updateLocation.bind(this)} location={locationValue}></GrassSelect>
+                  </Col>
+
+                  <Col>
+                      <GrassSelect selectionType="mapsets" onSelect={updateMapset.bind(this)} location={locationValue} mapset={mapsetValue}></GrassSelect>
+                  </Col>
                 </Row>
                 <Row>
                 {rasters ? renderRasters(rasters): []}

@@ -25,6 +25,10 @@ services:
    
   actinia-core:
     image: mundialis/actinia-core:4.0.0
+    # build:
+    #     context: ./actinia
+    #     dockerfile: Dockerfile
+   
     volumes:
       - ./actinia-core-data/grassdb:/actinia_core/grassdb:Z
       - ./actinia-core-data/userdata:/actinia_core/userdata

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Apr 12 2022
+ * Last Modified: Wed Apr 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,15 +30,155 @@
  * 
  */
 
+const API_HOST = "http://localhost:8005/savana"
 
-grass = {
-    utils: {},
-    d: {},
+
+const Grass = {
+    locations : {
+        getLocations: (async () => {
+            /**
+            * Route: /locations/{location_name}/info
+            */
+              try {
+                // let queryParams = {un: params.unId}
+                const url = new URL(`${API_HOST}/g/locations`)
+                let res = await fetch(url, { 
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                // let data = await res.json();
+                // console.log("response:", data)
+                return await res.json()                         
+            } catch (e) {
+                console.log(e);
+            }
+        }),
+        getLocation: (async (locationName) => {
+            /**
+            * Route: /locations/{location_name}/info
+            */
+              try {
+                // let queryParams = {un: params.unId}
+                const url = new URL(`${API_HOST}/g/locations/${locationName}/info`)
+                let res = await fetch(url, { 
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                let data = await res.json();
+                console.log("response:", data)
+                return data                         
+            } catch (e) {
+                console.log(e);
+            }
+        }),
+        location: {
+            mapsets: {
+                getMapsets: (async (locationName) => {
+                    /**
+                    * Route: /locations/{location_name}/mapsets
+                    */
+                    try {
+                        // let queryParams = {un: params.unId}
+                        const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets`)
+                        let res = await fetch(url, { 
+                            headers: {
+                            'Content-Type': 'application/json'
+                            }
+                        });
+                       
+                        return await res.json();                         
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }),
+                getMapset: (async (locationName, mapsetName) => {
+                    /**
+                     * Route: /locations/{location_name}/mapsets
+                    */
+                    try {
+                        const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}/info`)
+                        let res = await fetch(url, { 
+                            headers: {
+                            'Content-Type': 'application/json'
+                            }
+                        });
+                        let data = await res.json();
+                        console.log("response:", data)
+                        return data                    
+                      } catch (e) {
+                        console.log(e);
+                    }
+                }),
+                getRasterLayers: (async (locationName, mapsetName) => {
+                    /**
+                     * Route: /locations/{location_name}/mapsets
+                    */
+                    try {
+                        // let queryParams = {un: params.unId}
+                        const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}/raster_layers`)
+                        // url.search = new URLSearchParams(queryParams).toString();
+                        let res = await fetch(url, { 
+                            headers: {
+                            'Content-Type': 'application/json'
+                            }
+                        });
+                        let data = await res.json();
+                        console.log("response:", data)
+                        return data                    
+                      } catch (e) {
+                        console.log(e);
+                    }
+                })
+            }
+        }
+    },
+    d: {
+        renderRaster: (async (locationName, mapsetName, rasterName)=> {
+            try {
+                let url = new URL(`${API_HOST}/r/locations/${locationName}/mapsets/${mapsetName}/raster_layers/${rasterName}/render`)
+                const res = await fetch(url);
+                return await res.json();
+            } catch (e) {
+                console.log(e);
+            }
+        }),
+        renderGeoTiff: (async (locationName, mapsetName, rasterName)=> {
+            try {
+                let url = new URL(`${API_HOST}/r/locations/${locationName}/mapsets/${mapsetName}/raster_layers/${rasterName}/geotiff_async_orig`)
+                const res = await fetch(url);
+                return await res.json();
+            } catch (e) {
+                console.log(e);
+            }
+        })
+    },
     g: {},
-    r: {},
+    r: {
+        info: (async (locationName, mapsetName, rasterName)=> {
+            try {
+                let url = new URL(`${API_HOST}/r/locations/${locationName}/mapsets/${mapsetName}/raster_layers/${rasterName}`)
+                const res = await fetch(url);
+                return await res.json();
+            } catch (e) {
+                console.log(e);
+            }
+        }),
+        colors: (async (locationName, mapsetName, rasterName)=> {
+            try {
+                let url = new URL(`${API_HOST}/r/locations/${locationName}/mapsets/${mapsetName}/raster_layers/${rasterName}/colors`)
+                const res = await fetch(url);
+                return await res.json();
+            } catch (e) {
+                console.log(e);
+            }
+        })
+
+    },
     r3: {},
     v: {}
 }
 
 
-export default grass
+export default Grass
