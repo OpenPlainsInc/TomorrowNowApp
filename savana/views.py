@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 20 2022                                               #
+# Last Modified: Thu Apr 21 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -359,23 +359,23 @@ def rDrain(request):
         extent_ne.transform(ct=3358)
         extent_sw.transform(ct=3358)
 
-        s, w = extent_ne
-        n, e = extent_sw
+        minx, miny = extent_ne
+        maxx, maxy = extent_sw
 
-        direction = "direction_3k@https://storage.googleapis.com/tomorrownow-actinia-dev/direction_3k_cog.tif"
-        output_basin = "point_basin"
-        elev = "dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif"
+        # direction = "direction_3k@https://storage.googleapis.com/tomorrownow-actinia-dev/direction_3k_cog.tif"
+        # output_basin = "point_basin"
+        # elev = "dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif"
         # data_loader_1 = acp.split_grass_command(f"importer raster={direction}")
         # data_loader_2 = acp.split_grass_command(f"importer raster={elev}")
-        grass_command_1 = acp.split_grass_command(f"g.region raster={elev} n={n} e={e} s={s} w={w} res=10 -pa")
-        grass_command_2 = acp.split_grass_command(f"r.circle -b output=circle coordinate={t_coords} max=200")
-        grass_command_3 = acp.split_grass_command(f"r.stream.basins -c direction={direction} streams=circle basins={output_basin}")
+        # grass_command_1 = acp.split_grass_command(f"g.region raster={elev} n={n} e={e} s={s} w={w} res=10 -pa")
+        # grass_command_2 = acp.split_grass_command(f"r.circle -b output=circle coordinate={t_coords} max=200")
+        # grass_command_3 = acp.split_grass_command(f"r.stream.basins -c direction={direction} streams=circle basins={output_basin}")
 
         # dl1 = acp.create_actinia_process(data_loader_1)
         # dl2 = acp.create_actinia_process(data_loader_2)
         # pc1 = acp.create_actinia_process(grass_command_1)
-        pc2 = acp.create_actinia_process(grass_command_2)
-        pc3 = acp.create_actinia_process(grass_command_3)
+        # pc2 = acp.create_actinia_process(grass_command_2)
+        # pc3 = acp.create_actinia_process(grass_command_3)
         grass_commands = [
             {
                 "module": "g.region",
@@ -389,53 +389,58 @@ def rDrain(request):
                         "param": "raster",
                         "value": "direction_3k"
                     },
-                    # {
-                    #     "param": "res",
-                    #     "value": "10"
-                    # },
+                    {
+                        "param": "align",
+                        "value": "direction_3k"
+                    },
+                    {
+                        "param": "res",
+                        "value": "10"
+                    },
                     # {
                     #     "param": "n",
-                    #     "value": str(n)
+                    #     "value": str(maxx)
                     # },
                     # {
                     #     "param": "e",
-                    #     "value": str(e)
+                    #     "value": str(maxy)
                     # },
                     # {
                     #     "param": "s",
-                    #     "value": str(s)
+                    #     "value": str(minx)
                     # },
                     # {
                     #     "param": "w",
-                    #     "value": str(w)
+                    #     "value": str(miny)
                     # }
+            
 
                 ]
             },
-            # {
-            #     "module": "r.circle",
-            #     "id": "r.circle_1804289383",
-            #     "flags": "b",
-            #     "inputs": [
-            #         {
-            #             "param": "coordinates",
-            #             "value": t_coords
-            #         },
-            #         {
-            #             "param": "max",
-            #             "value": "200"
-            #         }
-            #     ],
-            #     "outputs": [
-            #         {
-            #             "param": "output",
-            #             "value": "circle"
-            #         }
-            #     ]
-            # },
+            {
+                "module": "r.circle",
+                "id": "r.circle_1804289383",
+                "flags": "b",
+                "inputs": [
+                    {
+                        "param": "coordinates",
+                        "value": t_coords
+                    },
+                    {
+                        "param": "max",
+                        "value": "200"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "param": "output",
+                        "value": "circle"
+                    }
+                ]
+            },
             {
                 "module": "r.stream.basins",
-                "id": "r.stream.basins_1804289383",
+                "id": "r.stream.basins_1804289382",
                 "flags": "c",
                 "inputs": [
                     {
@@ -446,14 +451,14 @@ def rDrain(request):
                         "param": "direction",
                         "value": "direction_3k"
                     },
-                    # {
-                    #     "param": "points",
-                    #     "value": "circle"
-                    # },
                     {
-                        "param": "coordinates",
-                        "value": t_coords
+                        "param": "stream_rast",
+                        "value": "circle"
                     },
+                    # {
+                    #     "param": "coordinates",
+                    #     "value": t_coords
+                    # },
                     {
                         "param": "memory",
                         "value": "1500"

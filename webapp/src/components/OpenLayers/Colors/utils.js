@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Apr 06 2022
+ * Last Modified: Thu Apr 21 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,6 +34,7 @@ import colormap from 'colormap';
 import colorbrewer from './colorbrewer';
 import grass from './grass';
 import nlcd from './nlcd';
+import Grass from '../../Grass/grass';
 
 const defautColormaps = [
     'jet', 'hsv','hot','cool','spring','summer','autumn','winter','bone',
@@ -85,6 +86,22 @@ const getColorStops = (name, min, max, steps, reverse) => {
       if (map === 'aspect') return grass.aspect;
       if (map === 'slope') return grass.slope;
       if (map === 'nlcd') return nlcd;
+
+      // if (map === 'point_basin') {
+      //   return [
+      //     'case',
+      //     ['==', ['band', 1], 1], 
+      //     "#00fa00", 
+      //     ['==', ['band', 2], 2],
+      //     "#476ba1",
+      //     ['==', ['band', 3], 3],
+      //     "#d1defa",
+      //     ['==', ['band', 4], 4],
+      //     "#decaca",
+      //     '#fff'
+      //   ]
+      // }
+
 
       if (map === 'elev_ned_30m') {
           return [

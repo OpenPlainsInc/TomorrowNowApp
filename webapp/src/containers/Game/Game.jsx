@@ -459,18 +459,20 @@ const Game = ({params}) => {
               </Map>
               </Col>
              
-             <Col md={4}>
-             <h1>Connection Status: {connectionStatus}</h1>
-              <h1>{resourceId}: {status}</h1>
+             <Col md={1}></Col>
+             
+             <Col md={3}>
+            <h2>Survey Data</h2>
+             <h3>Stormwater Problem Severity</h3>
                 <BarChart
-                  width={500}
+                  width={400}
                   height={400}
                   data={surveyData}
                   margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
+                    top: 10,
+                    right: 10,
+                    left: 10,
+                    bottom: 10,
                   }}
                 >
                  

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Apr 05 2022
+ * Last Modified: Thu Apr 21 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,7 +34,7 @@ const nlcd =  [
     'case',
     ['==', ['band', 1], 1], 
     "#00fa00", 
-    ['==', ['band', 1], 11],
+    ['==', ['band', 11], 11],
     "#476ba1",
     ['==', ['band', 12], 12],
     "#d1defa",

@@ -20,10 +20,7 @@ urlpatterns = [
     path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>', cache_page(60 * 15)(views.rInfo), name="rInfo"),
     path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>/render', cache_page(60 * 15)(views.rRenderImage), name="renderRaster"),
     path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>/colors', cache_page(60 * 15)(views.rColors), name="rColors"),
-    path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>/geotiff_async_orig', cache_page(60 * 15)(views.rGeoTiff), name="rGeoTiff"),
-
-   
-    # path('r/geotiff/<str:raster_name>/<str:mapset_name>', views.rGeoTiff, name="rGeoTiff"),
+    path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>/geotiff_async_orig', views.rGeoTiff, name="rGeoTiff"),
     path('r/resource/<str:raster_name>/stream/<str:resource_id>', views.streamCOG, name="rStreamOCG"),
     path('r/drain/', views.rDrain, name="rDrain"),
     path('r', views.ping, name='r'),

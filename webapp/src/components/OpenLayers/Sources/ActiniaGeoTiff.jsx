@@ -30,7 +30,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     color,
     minZoom = undefined,
     maxZoom = undefined,
-    opacity = 1, 
+    opacity = 0.5, 
     zIndex = 0 
 }) => {
  
