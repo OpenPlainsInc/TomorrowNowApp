@@ -4,6 +4,7 @@
 # g.extension extension=r.futures.demand
 # g.extension extension=r.futures.devpressure
 # g.extension extension=r.futures.category
+g.extension extension=r.futures
 g.extension extension=r.stream.basins 
 g.extension extension=r.stream.order 
 g.extension extension=r.stream.stats 
