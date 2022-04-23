@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Apr 20 2022
+ * Last Modified: Fri Apr 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -40,15 +40,12 @@ const Grass = {
             * Route: /locations/{location_name}/info
             */
               try {
-                // let queryParams = {un: params.unId}
                 const url = new URL(`${API_HOST}/g/locations`)
                 let res = await fetch(url, { 
                     headers: {
                     'Content-Type': 'application/json'
                     }
                 });
-                // let data = await res.json();
-                // console.log("response:", data)
                 return await res.json()                         
             } catch (e) {
                 console.log(e);
@@ -113,12 +110,10 @@ const Grass = {
                 }),
                 getRasterLayers: (async (locationName, mapsetName) => {
                     /**
-                     * Route: /locations/{location_name}/mapsets
+                     * Route: /locations/{location_name}/mapsets/{mapsetName}/raster_layers
                     */
                     try {
-                        // let queryParams = {un: params.unId}
                         const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}/raster_layers`)
-                        // url.search = new URLSearchParams(queryParams).toString();
                         let res = await fetch(url, { 
                             headers: {
                             'Content-Type': 'application/json'
@@ -154,7 +149,30 @@ const Grass = {
             }
         })
     },
-    g: {},
+    g: {
+        modules: {
+            all: (async (queryParams={})=> {
+                try {
+                    let url = new URL(`${API_HOST}/g/modules`)
+                    let params = new URLSearchParams(queryParams)
+                    const res = await fetch(`${url}?${params}`);   
+                    return await res.json();
+                } catch (e) {
+                    console.log(e);
+                }
+            }),
+            get: (async (moduleName)=> {
+                try {
+                    let url = new URL(`${API_HOST}/g/modules/${moduleName}`)
+                    const res = await fetch(url);   
+                    return await res.json();
+                } catch (e) {
+                    console.log(e);
+                }
+            })
+
+        }
+    },
     r: {
         info: (async (locationName, mapsetName, rasterName)=> {
             try {

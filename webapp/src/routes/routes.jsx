@@ -6,6 +6,7 @@ import DashboardRoutes from "./DashboardRoutes";
 import WorldRoutes from "./WorldRoutes"
 import HomeRoutres from "./HomeRoutes";
 import SettingsRoutes from "./SettingsRoutes";
+import ModuleRouters from "./ModuleRoutes";
 const routes = (
     <Route path="/" element={<App />}>
         {HomeRoutres}
@@ -13,6 +14,7 @@ const routes = (
         {BoardRoutes}
         {WorldRoutes}
         {DashboardRoutes}
+        {ModuleRouters}
         {SettingsRoutes}
         <Route path="*"
             element={

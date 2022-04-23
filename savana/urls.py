@@ -17,12 +17,18 @@ urlpatterns = [
     path('g/locations/<str:location_name>/mapsets/<str:mapset_name>', cache_page(60 * 15)(views.gMapset), name="Mapset"),
     path('g/locations/<str:location_name>/mapsets/<str:mapset_name>/info', cache_page(60 * 15)(views.gMapsetInfo), name="MapsetInfo"),
     path('g/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers', cache_page(60 * 15)(views.gListRasters), name="ListRaster"),
+
+    path('g/modules', cache_page(60 * 15)(views.gModules), name="gModules"),
+    path('g/modules/<str:grassmodule>', cache_page(60 * 15)(views.gModule), name="gModule"),
+
+
     path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>', cache_page(60 * 15)(views.rInfo), name="rInfo"),
     path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>/render', cache_page(60 * 15)(views.rRenderImage), name="renderRaster"),
     path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>/colors', cache_page(60 * 15)(views.rColors), name="rColors"),
     path('r/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers/<str:raster_name>/geotiff_async_orig', views.rGeoTiff, name="rGeoTiff"),
     path('r/resource/<str:raster_name>/stream/<str:resource_id>', views.streamCOG, name="rStreamOCG"),
     path('r/drain/', views.rDrain, name="rDrain"),
+    
     path('r', views.ping, name='r'),
     path('r3', views.ping, name='r3'),
     path('v', views.ping, name='v'),

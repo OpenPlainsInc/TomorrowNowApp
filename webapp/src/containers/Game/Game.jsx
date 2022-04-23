@@ -462,7 +462,7 @@ const Game = ({params}) => {
              <Col md={1}></Col>
              
              <Col md={3}>
-            <h2>Survey Data</h2>
+             <h2>Survey Data</h2>
              <h3>Stormwater Problem Severity</h3>
                 <BarChart
                   width={400}

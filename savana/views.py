@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Apr 21 2022                                               #
+# Last Modified: Fri Apr 22 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -125,6 +125,7 @@ def gLocation(request, location_name):
 
     # TODO - Set up proper error handling and reponse messages
     return JsonResponse({"error": "gLocation View: Fix Me"})
+
 
 def gLocationInfo(request, location_name):
     """
@@ -492,3 +493,50 @@ def rDrain(request):
             return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse})
 
         # return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc})
+
+
+def gModules(request):
+    """
+    Get a list of all grass modules that are avaliable to user.
+    Actinia Route
+    GET /grass_modules
+    Parameters 
+        tag
+        category
+        family (d,db,g,i,m,ps,r,r3,t,test,v)
+        record : set to 'full' if you want full module response
+
+    """
+
+    url = f"{acp.baseUrl()}/grass_modules"
+    if request.method == 'GET':
+        query_params = request.GET
+        r = requests.get(url, auth=acp.auth(), params=query_params)
+        print(f"Request URL: {url}")
+        print(r)
+        return JsonResponse({"response": r.json()}, safe=False)
+
+    # TODO - Set up proper error handling and reponse messages
+    return JsonResponse({"error": "gModules View: Fix Me"})
+
+
+def gModule(request, grassmodule):
+    """
+    Gets details about a Grass Module.
+    Actinia Route
+    GET /grass_modules/{grassmodule}
+    """
+
+    url = f"{acp.baseUrl()}/grass_modules/{grassmodule}"
+    if request.method == 'GET':
+        r = requests.get(url, auth=acp.auth())
+        print(f"Request URL: {url}")
+        print(r)
+        if r.status_code == 200:
+            return JsonResponse({"response": r.json()}, safe=False)
+
+        if r.status_code == 400:
+            return JsonResponse({"status": 400, "error": "gModules View: Fix Me"})
+
+    # TODO - Set up proper error handling and reponse messages
+    return JsonResponse({"error": "gModules View: Fix Me"})
