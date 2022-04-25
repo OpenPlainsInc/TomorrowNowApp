@@ -31,20 +31,9 @@ import OLVectorSource from "ol/source/Vector";
  * @returns TileWMSSource
  */
 const VectorSource = ((props)=>{ 
-
-    // if (!Object.hasOwn(wmsRequestParams, 'LAYERS')) { Not supported yet
-    // if (!typeof wmsRequestParams === 'object' || !wmsRequestParams.hasOwnProperty('LAYERS')) {
-    //     console.error("TileWMSSource requires a LAYERS param defined in wmsRequestParams Object")
-    //     return null
-    // }
-
-
-
-    //Set the default params first then overwrite them if repacements are provided in params
     let source = new OLVectorSource({
         ...props
     })
-
     return source
      
 })

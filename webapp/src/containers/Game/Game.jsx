@@ -34,11 +34,7 @@ import Card from 'react-bootstrap/Card'
 import {TileDebug} from 'ol/source';
 // import Container from 'react-bootstrap/esm/Container';
 import Events from '../../components/OpenLayers/Events/Events';
-import OnClick from '../../components/OpenLayers/Events/onClick';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
-
-import OnMoveEnd from '../../components/OpenLayers/Events/onMoveEnd';
-
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 

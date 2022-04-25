@@ -25,6 +25,7 @@ import Form from 'react-bootstrap/Form'
 import ModuleStringParam from './Inputs/ModuleStringParam'
 import ModuleBooleanParam from './Inputs/ModuleBooleanParam';
 import ModuleArrayParam from './Inputs/ModuleArrayParam';
+import ModuleNumberParam from './Inputs/ModuleNumberParam';
 
 const Module = ({moduleName}) => {
   let params = useParams();
@@ -73,6 +74,7 @@ const Module = ({moduleName}) => {
     if (schemaType === 'string') return <ModuleStringParam key={idx} param={param}></ModuleStringParam>;
     if (schemaType === 'boolean') return <ModuleBooleanParam key={idx} param={param}></ModuleBooleanParam>;
     if (schemaType === 'array') return <ModuleArrayParam key={idx} param={param}></ModuleArrayParam>;
+    if (schemaType === 'number') return <ModuleNumberParam key={idx} param={param}></ModuleNumberParam>
   }
 
   useEffect(() => {
@@ -135,7 +137,7 @@ const Module = ({moduleName}) => {
               { 
                 sectionParams.map((p, idx) => { 
                   return(       
-                    <Col key={idx} md={4}>
+                    <Col key={idx} md={6}>
                       
                         {formInputFromSchema(p, idx)}
 

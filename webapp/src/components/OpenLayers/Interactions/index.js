@@ -1,7 +1,7 @@
 /*
  * Filename: index.js
  * Project: TomorrowNow
- * File Created: Friday April 22nd 2022
+ * File Created: Monday April 25th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,20 +30,9 @@
  * 
  */
 
-import ModuleStringParam from "./ModuleStringParam";
-import ModuleBooleanParam from "./ModuleBooleanParam"
-import ModuleArrayParam from "./ModuleArrayParam"
-import ModuleEnumParam from "./ModuleEnumParam"
-import ModuleNumberParam from "./ModuleNumberParam"
-import ModuleCoordsParam from "./ModuleCoordsParam"
 
-const moduleInputs = {
-	ModuleStringParam,
-	ModuleNumberParam,
-	ModuleBooleanParam,
-	ModuleArrayParam,
-	ModuleEnumParam,
-	ModuleCoordsParam
+
+import Draw from "./Draw"
+export {
+	Draw
 }
-
-export default moduleInputs
