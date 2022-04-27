@@ -32,7 +32,6 @@
 
 // react
 import React, { useState, useEffect } from 'react';
-import {Outlet} from "react-router-dom";
 import {LinkContainer} from 'react-router-bootstrap'
 import './module.scss';
 import Container from 'react-bootstrap/esm/Container';
@@ -58,7 +57,7 @@ const ModuleCard = ({module, icon}) => {
                 <Card.Body>
                     <Card.Title>{module.id}</Card.Title>
                     <Card.Text>{module.description}</Card.Text>
-                    <LinkContainer to={`/modules/${module.id}`}>
+                    <LinkContainer to={`${module.id}`} state={{routeName:"module"}}>
                         <Button variant="outline-secondary" size="md" className="align-self-end">View Module</Button>
                     </LinkContainer> 
                         <p>

@@ -20,24 +20,23 @@
 
 // react
 import React, { useState, useEffect } from 'react';
-import {Outlet} from "react-router-dom";
+import {useParams, Outlet, useNavigate, useLocation} from "react-router-dom";
 
 import './module.scss';
 import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import FormControl from 'react-bootstrap/FormControl'
 import Card from 'react-bootstrap/Card'
-import Button from 'react-bootstrap/Button'
-import Badge from 'react-bootstrap/Badge'
+import InputGroup from 'react-bootstrap/InputGroup'
 import Nav from 'react-bootstrap/Nav'
-import Grass from '../grass'
-import ModuleCard from './ModuleCard'
 
+import ModuleFamily from './ModuleFamily';
+ 
 
 const Modules = () => {
+    let params = useParams()
+    let location = useLocation()
     
-    const [modules, setModules] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [families, setFamilies] = useState({
         'g': {
             id: 'general',
@@ -106,31 +105,29 @@ const Modules = () => {
         //     icon: 'fa-vial'
         // }
     });
-    const [family, setFamily] = useState('g');
-    const [activeFamily, setActiveFamily] = useState(families.g);
+    const [family, setFamily] = useState(params.familyName || 'g');
+    const [activeFamily, setActiveFamily] = useState(families[family]);
+    const [searchValue, setSearchValue] = useState("");
 
-    // function createCategoryList(x) {
-    //     const catSet = new Set()
-    //     const catDict = x.categories.map(c => {c: c})
-    //     catSet.add(catDict)
-    //     return catSet
-    // }
+    let navigate = useNavigate();
+    console.log("Modules", location)
     const handleSelect = (eventKey) => {
         setFamily(eventKey)
         setActiveFamily(families[eventKey])
+        setSearchValue("")
+        navigate(`/modules/${eventKey}`, {state: {routeName:"module_family"}});
     }
 
+    const filterModules = (e) => {
+        e.preventDefault()
+        let newVal = e.target.value
+        console.log("Filter Modules", newVal)
+        if (newVal.length >=2) {
+            setSearchValue(newVal)
+        } else {
 
-    useEffect(() => {
-        let isMounted = true;   
-        (async () => {
-            let res = await Grass.g.modules.all({family})
-            let data = res.response.processes
-            console.log(data)
-            setModules(data)
-            return () => { isMounted = false }   
-        })()    
-      }, [family])
+        }
+    }
 
   
         return (
@@ -143,35 +140,48 @@ const Modules = () => {
                             Object.values(families).map((c, idx) => {
                                 return(
                                     <Nav.Item key={idx}>
-                                        <Nav.Link eventKey={c.family}>{c.id}</Nav.Link>
+                                        <Nav.Link 
+                                            eventKey={c.family}
+                                            >{c.id}</Nav.Link>
                                     </Nav.Item>
                                 )
                             })
                         }
                         </Nav>
+                       
                     </Card.Header>
                     <Card.Body>
                         <Card.Title>
-                            {/* <span className={`fa-solid ${activeFamily.icon}`}> </span> */}
                             {activeFamily.id}
                         </Card.Title>
                         <Card.Text>
                             {activeFamily.description}
                         </Card.Text>
+                        { location.state ?
+                        <InputGroup className="mb-3" style={{marginTop: 20}}>
+                            <InputGroup.Text id="module_search"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
+                            <FormControl
+                            placeholder="Search Data"
+                            aria-label="Search"
+                            aria-describedby="module_search"
+                            onChange={filterModules}
+                            />
+                        </InputGroup>
+                       : null}   
                     </Card.Body>
                 </Card>
               </Row>
+
               <Row>
-              <Outlet />
-              { modules.map( (m, idx) => { 
-                return(       
-                    <Col key={idx} md={3}>
-                        <ModuleCard module={m} icon={activeFamily.icon}></ModuleCard>
-                    </Col>     
-                )
-                })}
+
+              <ModuleFamily family={family} icon={activeFamily.icon} filter={searchValue}></ModuleFamily>
+              <Outlet/>     
+                
             </Row>
+           
+            
           </Container>
+          
         )
   }
 

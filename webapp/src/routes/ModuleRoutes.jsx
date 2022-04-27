@@ -13,11 +13,17 @@ import React, { Fragment} from "react"
 import { Route } from "react-router-dom";
 import ModulesContainer from '../containers/Modules/ModulesContainer';
 import Module from "../components/Grass/Modules/Module";
+import Modules from "../components/Grass/Modules/Modules";
+// import ModuleFamily from "../components/Grass/Modules/ModuleFamily";
 
 const ModuleRouters = (
   <Fragment>
-    <Route path="modules" element={<ModulesContainer /> } />
-    <Route path="modules/:moduleName" element={<Module /> } />
+    <Route path="modules" element={<ModulesContainer /> }>
+      <Route path=":familyName" element={<Modules /> }>
+        <Route path=":moduleName" element={<Module /> } />
+      </Route>
+    </Route>
+    {/* <Route path="modules/:familyName/:moduleName" element={<Module /> } /> */}
   </Fragment>
 )
 

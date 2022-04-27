@@ -6,12 +6,12 @@
  * 
  * Copyright (c) 2022 Corey White
  */
-import Modules from "../../components/Grass/Modules/Modules"
-
+// import Modules from "../../components/Grass/Modules/Modules"
+import { Outlet } from "react-router-dom";
 export default function ModulesContainer() {
     return (
       <main style={{ padding: "1rem 0" }}>
-        <Modules></Modules>
+        <Outlet />
       </main>
     );
   }

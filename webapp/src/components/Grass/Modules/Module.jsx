@@ -29,6 +29,8 @@ import ModuleNumberParam from './Inputs/ModuleNumberParam';
 
 const Module = ({moduleName}) => {
   let params = useParams();
+  let location = useLocation()
+  console.log("Module", location)
   const [module, setModule] = useState([]);
   const [moduleParams, setModuleParams] = useState([])
   const [subsections, setSubsections] = useState(['required', 'optional', 'output', 'manual']);
