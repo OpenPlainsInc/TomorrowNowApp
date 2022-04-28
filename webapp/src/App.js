@@ -43,7 +43,7 @@ class App extends Component {
             <LinkContainer to="/board">
               <Nav.Link>Board</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/modules">
+            <LinkContainer to="/modules/g">
               <Nav.Link>Modules</Nav.Link>
             </LinkContainer>
             <LinkContainer to="/dashboard">

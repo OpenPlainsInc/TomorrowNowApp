@@ -20,7 +20,7 @@
 
 // react
 import React, { useState, useEffect } from 'react';
-import {useParams, Outlet, useNavigate, useLocation} from "react-router-dom";
+import {useParams, Outlet, useNavigate, useLocation, useSearchParams} from "react-router-dom";
 
 import './module.scss';
 import Container from 'react-bootstrap/esm/Container';
@@ -29,6 +29,7 @@ import FormControl from 'react-bootstrap/FormControl'
 import Card from 'react-bootstrap/Card'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Nav from 'react-bootstrap/Nav'
+import Fade from 'react-bootstrap/Fade'
 
 import ModuleFamily from './ModuleFamily';
  
@@ -36,7 +37,8 @@ import ModuleFamily from './ModuleFamily';
 const Modules = () => {
     let params = useParams()
     let location = useLocation()
-    
+    // let [searchParams, setSearchParams] = useSearchParams({family: 'g'});
+
     const [families, setFamilies] = useState({
         'g': {
             id: 'general',
@@ -106,6 +108,7 @@ const Modules = () => {
         // }
     });
     const [family, setFamily] = useState(params.familyName || 'g');
+    console.log("Init: Family", family)
     const [activeFamily, setActiveFamily] = useState(families[family]);
     const [searchValue, setSearchValue] = useState("");
 
@@ -158,16 +161,21 @@ const Modules = () => {
                             {activeFamily.description}
                         </Card.Text>
                         { location.state ?
-                        <InputGroup className="mb-3" style={{marginTop: 20}}>
-                            <InputGroup.Text id="module_search"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
-                            <FormControl
-                            placeholder="Search Data"
-                            aria-label="Search"
-                            aria-describedby="module_search"
-                            onChange={filterModules}
-                            />
-                        </InputGroup>
-                       : null}   
+                        //  <Fade in={location.state}>
+                         
+                            <InputGroup className="mb-3" style={{marginTop: 20}}>
+                                <InputGroup.Text id="module_search"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
+                                <FormControl
+                                placeholder="Search Data"
+                                aria-label="Search"
+                                aria-describedby="module_search"
+                                onChange={filterModules}
+                                />
+                            </InputGroup>
+                       
+                        //  </Fade> 
+                         : null 
+                        }
                     </Card.Body>
                 </Card>
               </Row>
