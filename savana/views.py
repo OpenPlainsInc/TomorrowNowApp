@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Apr 22 2022                                               #
+# Last Modified: Wed Apr 27 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -382,38 +382,35 @@ def rDrain(request):
                 "module": "g.region",
                 "id": "g.region_1804289",
                 "inputs": [
+                    # {
+                      
+                    #     "param": "res",
+                    #     "value": "10"
+                    # },
                     {
                         # "import_descr": {
                         #     "source": "https://storage.googleapis.com/tomorrownow-actinia-dev/direction_3k_cog.tif",
                         #     "type": "raster"
                         # },
-                        "param": "raster",
-                        "value": "direction_3k"
-                    },
-                    {
                         "param": "align",
-                        "value": "direction_3k"
+                        "value": "direction_3k_10m_d"
                     },
                     {
-                        "param": "res",
-                        "value": "10"
+                        "param": "n",
+                        "value": str(maxy)
                     },
-                    # {
-                    #     "param": "n",
-                    #     "value": str(maxx)
-                    # },
-                    # {
-                    #     "param": "e",
-                    #     "value": str(maxy)
-                    # },
-                    # {
-                    #     "param": "s",
-                    #     "value": str(minx)
-                    # },
-                    # {
-                    #     "param": "w",
-                    #     "value": str(miny)
-                    # }
+                    {
+                        "param": "e",
+                        "value": str(maxx)
+                    },
+                    {
+                        "param": "s",
+                        "value": str(miny)
+                    },
+                    {
+                        "param": "w",
+                        "value": str(minx)
+                    }
             
 
                 ]
@@ -439,6 +436,27 @@ def rDrain(request):
                     }
                 ]
             },
+            # {
+            #     "module": "r.water.outlet",
+            #     "id": "r.water.outlet_1804289382",
+            #     "flags": "",
+            #     "inputs": [
+            #         {
+            #             "param": "input",
+            #             "value": "direction_3k"
+            #         },
+            #         {
+            #             "param": "coordinates",
+            #             "value": t_coords
+            #         }
+            #     ],
+            #     "outputs": [
+            #         {
+            #             "param": "output",
+            #             "value": "point_basin"
+            #         }
+            #     ]
+            # }
             {
                 "module": "r.stream.basins",
                 "id": "r.stream.basins_1804289382",
@@ -450,7 +468,7 @@ def rDrain(request):
                         #     "type": "raster"
                         # },
                         "param": "direction",
-                        "value": "direction_3k"
+                        "value": "direction_3k_10m_d"
                     },
                     {
                         "param": "stream_rast",
@@ -471,7 +489,39 @@ def rDrain(request):
                         "value": "point_basin"
                     }
                 ]
-            }
+            },
+            {
+                "module": "g.region",
+                "id": "g.region_1804289",
+                "inputs": [
+                    {
+                      
+                        "param": "raster",
+                        "value": "point_basin"
+                    }
+                ]
+            },
+            # {
+            #     "module": "r.stats",
+            #     "id": "r.stats_1",
+            #     "flags": "aln",
+            #     "inputs": [
+            #         {
+            #             "import_descr": {
+            #                 "source": "https://cpdataeuwest.blob.core.windows.net/cpdata/raw/nlcd/conus/30m/2016.tif",
+            #                 "type": "raster"
+            #             },
+            #             "param": "input",
+            #             "value": "nlcd_2016"
+            #         }
+            #     ],
+            #     "outputs": [
+            #         {
+            #             "param": "output",
+            #             "value": "point_basin_stats"
+            #         }
+            #     ]
+            # }
         ]
         pc = acp.create_actinia_process_chain(grass_commands)
         print(f"Process Chain: {pc}")
