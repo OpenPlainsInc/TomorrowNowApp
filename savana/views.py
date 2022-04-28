@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 27 2022                                               #
+# Last Modified: Thu Apr 28 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -217,6 +217,21 @@ def gListRasters(request, location_name, mapset_name):
     return JsonResponse({"response": r.json()}, safe=False)
 
 
+# Create your views here.
+def gListVectors(request, location_name, mapset_name):
+    """
+    Get list of vector layers in mapset.
+    Actinia Route
+    GET /locations/{location_name}/mapsets/{mapset_name}/vector_layers
+    """
+    url = f"{acp.baseUrl()}/locations/{location_name}/mapsets/" \
+          f"{mapset_name}/vector_layers"
+    r = requests.get(url, auth=acp.auth())
+    print(f"Request URL: {url}")
+    print(r)
+    return JsonResponse({"response": r.json()}, safe=False)
+
+
 def rRenderImage(request, location_name, raster_name, mapset_name):
     """
     Get png image of raster
@@ -234,6 +249,23 @@ def rRenderImage(request, location_name, raster_name, mapset_name):
         return JsonResponse({"response": {"imagedata": decode, "raster_name": raster_name}}, safe=False)
 
 
+def vRenderImage(request, location_name, vector_name, mapset_name):
+    """
+    Get png image of vector
+    Actinia Route
+    GET /locations/{location_name}/mapsets/{mapset_name}/vector_layers/{vector_name}/render
+    """
+
+    url = f"{acp.baseUrl()}/locations/{location_name}/mapsets/" \
+          f"{mapset_name}/vector_layers/{vector_name}/render"
+
+    r = requests.get(url, auth=acp.auth(), stream=True)
+
+    if r.status_code == 200:
+        decode = base64.b64encode(r.content).decode('utf-8')
+        return JsonResponse({"response": {"imagedata": decode, "raster_name": vector_name}}, safe=False)
+
+
 def rInfo(request, location_name, mapset_name, raster_name):
     """
     Get raster info using r.info
@@ -249,6 +281,21 @@ def rInfo(request, location_name, mapset_name, raster_name):
     return JsonResponse({"response": r.json()}, safe=False)
 
 
+def vInfo(request, location_name, mapset_name, vector_name):
+    """
+    Get raster info using r.info
+    Actinia Route
+    GET /locations/{location_name}/mapsets/{mapset_name}/vector_layers/{vector_name}
+    """
+
+    url = f"{acp.baseUrl()}/locations/{location_name}/mapsets/" \
+          f"{mapset_name}/vector_layers/{vector_name}"
+
+    r = requests.get(url, auth=acp.auth())
+    print(f"Request URL: {url}")
+    return JsonResponse({"response": r.json()}, safe=False)
+
+
 def rColors(request, location_name, mapset_name, raster_name):
     """
     Get a list of all mapsets that are located in a specific location.
@@ -256,7 +303,7 @@ def rColors(request, location_name, mapset_name, raster_name):
     GET /locations/{location_name}/mapsets
     """
     url = f"{acp.baseUrl()}/locations/{location_name}/mapsets" \
-          f"{mapset_name}/raster_layers/{raster_name}/colors"
+          f"/{mapset_name}/raster_layers/{raster_name}/colors"
     if request.method == 'GET':
         r = requests.get(url, auth=acp.auth())
         print(f"Request URL: {url}")
@@ -491,34 +538,74 @@ def rDrain(request):
                 ]
             },
             {
-                "module": "g.region",
-                "id": "g.region_1804289",
+                "module": "r.to.vect",
+                "id": "r.to.vect_1804289383",
                 "inputs": [
                     {
-                      
-                        "param": "raster",
+                        "param": "input",
+                        "value": "point_basin"
+                    },
+                    {
+                        "param": "type",
+                        "value": "area"
+                    },
+                    {
+                        "param": "column",
+                        "value": "value"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "param": "output",
                         "value": "point_basin"
                     }
                 ]
-            },
+            }
+            # {
+            #     "module": "r.mask",
+            #     "id": "r.mask",
+            #     "inputs": [
+            #         {
+                      
+            #             "param": "raster",
+            #             "value": "point_basin"
+            #         },
+            #         {
+            #             "param": "maskcats",
+            #             "value": "*"
+            #         },
+            #         {
+            #             "param": "layer",
+            #             "value": "1"
+            #         }
+            #     ]
+            # },
             # {
             #     "module": "r.stats",
             #     "id": "r.stats_1",
-            #     "flags": "aln",
+            #     "flags": "acpl",
             #     "inputs": [
             #         {
-            #             "import_descr": {
-            #                 "source": "https://cpdataeuwest.blob.core.windows.net/cpdata/raw/nlcd/conus/30m/2016.tif",
-            #                 "type": "raster"
-            #             },
             #             "param": "input",
             #             "value": "nlcd_2016"
+            #         },
+            #         {
+            #             "param": "separator",
+            #             "value": "|"
+            #         },
+            #         {
+            #             "param": "null_value",
+            #             "value": "*"
+            #         },
+            #         {
+            #             "param": "nsteps",
+            #             "value": "255"
             #         }
             #     ],
             #     "outputs": [
             #         {
             #             "param": "output",
-            #             "value": "point_basin_stats"
+            #             "value": "point_basin_stats.csv"
             #         }
             #     ]
             # }

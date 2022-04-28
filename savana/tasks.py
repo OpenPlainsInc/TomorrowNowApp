@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 13 2022                                               #
+# Last Modified: Thu Apr 28 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -57,11 +57,11 @@ def asyncResourceStatus(user_id, resource_id):
         updated_status = data['status']
         resources = data['urls']['resources']
         resource_group = f"savana_{resource_name}"
-
         print(f"""
         asyncResourceStatus Data ----
         Resource Group Name: {resource_group}
         Updated Status: {updated_status}
+        Urls: {data['urls']}
         Resource Url: {resources}
         """)
 

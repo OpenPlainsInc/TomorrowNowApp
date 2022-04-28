@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: We/04/yyyy 06:nn:22
+ * Last Modified: Th/04/yyyy 05:nn:48
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -45,7 +45,7 @@ import Form from 'react-bootstrap/Form'
 import GrassSelect from "../../components/Grass/Utils/GrassSelect";
 import Grass from "../../components/Grass/grass";
 import RasterCardImage from "../../components/Grass/Utils/RasterCardImage";
-
+import { GrassDataTypeSelect, GrassRenderImage } from "../../components/Grass/Utils";
 
 
 const Board = (props) => {
@@ -55,6 +55,7 @@ const Board = (props) => {
     const [filteredRasters, setFilteredRasters]  = useState([])
     const [chunks, setChunks]  = useState([])
     const [locationValue, setLocationValue]  = useState("nc_spm_08")
+    const [dataTypeValue, setDataTypeValue]  = useState("raster")
     const [mapsetValue, setMapsetValue]  = useState("PERMANENT")
 
 
@@ -62,7 +63,14 @@ const Board = (props) => {
         let isMounted = true; 
         async function fetchRasters() {
             try {
-                let data =  await Grass.locations.location.mapsets.getRasterLayers(locationValue, mapsetValue)
+              let data = null;
+                if (dataTypeValue === 'raster') {
+                    data = await Grass.locations.location.mapsets.getRasterLayers(locationValue, mapsetValue)
+                }
+                if (dataTypeValue === 'vector') {
+                    data = await Grass.v.layers(locationValue, mapsetValue)
+                }
+
                 console.log("Raster response:", data)
                 const rastersData = data.response.process_results
                 console.log("rastersData:", rastersData)
@@ -73,7 +81,7 @@ const Board = (props) => {
             return () => { isMounted = false }
         }
         fetchRasters()
-      }, [])
+      }, [dataTypeValue])
 
 
       useEffect(()=> {
@@ -102,7 +110,6 @@ const Board = (props) => {
         setFilter(keyword)
         let searchFilter = rasters.filter(f => f.includes(filter) || filter === "")
         setFilteredRasters(searchFilter)
-        // .map(sliceIntoChunks)
         let _chunks = searchFilter.length > 0 ? sliceIntoChunks(searchFilter) : sliceIntoChunks(rasters)
         setChunks(_chunks)
       }
@@ -114,7 +121,6 @@ const Board = (props) => {
         console.log("updated Raster response:", data)
         const rastersData = data.response.process_results
         console.log("updated rastersData:", rastersData)
-        // setProcessChainList(data.response.process_chain_list)
         setRasters(rastersData)
       }
 
@@ -124,12 +130,10 @@ const Board = (props) => {
 
       function updateMapset(e) {
         console.log("Update Mapset:", e)
-        // setProcessChainList([])
         setRasters(null)
         setChunks([])
         let newValue = e.target.value
         setMapsetValue(newValue)
-        // fetchUpdate(locationValue, newValue)
       }
 
       function updateLocation(e) {
@@ -144,7 +148,13 @@ const Board = (props) => {
         // fetchUpdate(locationValue, mapsetValue)
       }
 
-     
+      function updateDataType(e) {
+        console.log("Update Datatype:", e)
+        let newValue = e.target.value
+        setRasters(null)
+        setChunks([])
+        setDataTypeValue(newValue)
+      }
 
       const renderRasters = (rasters) => {
         //   setFilteredRasters(rasters.filter(f => f.includes(filter) || filter === ""))
@@ -161,7 +171,8 @@ const Board = (props) => {
 
                             <Col key={raster}  xs={6} md={3} lg={3}>
                                 <Card  key={raster} >
-                                    <RasterCardImage rasterName={raster} locationName={locationValue} mapsetName={mapsetValue} />
+                                    {/* <RasterCardImage rasterName={raster} locationName={locationValue} mapsetName={mapsetValue} /> */}
+                                    <GrassRenderImage layerType={dataTypeValue} layerName={raster} locationName={locationValue} mapsetName={mapsetValue}></GrassRenderImage>
                                     <Card.Body>
                                     <Card.Title>{raster}</Card.Title>
                                     <Card.Text>
@@ -199,11 +210,14 @@ const Board = (props) => {
                   </Col>
 
                   <Col>
-                      <GrassSelect selectionType="locations" onSelect={updateLocation.bind(this)} location={locationValue}></GrassSelect>
+                      <GrassSelect selectionType="locations" onSelect={updateLocation} location={locationValue}></GrassSelect>
                   </Col>
 
                   <Col>
-                      <GrassSelect selectionType="mapsets" onSelect={updateMapset.bind(this)} location={locationValue} mapset={mapsetValue}></GrassSelect>
+                      <GrassSelect selectionType="mapsets" onSelect={updateMapset} location={locationValue} mapset={mapsetValue}></GrassSelect>
+                  </Col>
+                  <Col>
+                    <GrassDataTypeSelect onSelect={updateDataType}></GrassDataTypeSelect>
                   </Col>
                 </Row>
                 <Row>

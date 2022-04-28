@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Apr 05 2022
+ * Last Modified: Thu Apr 28 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -32,6 +32,31 @@
 
 //GRASS Color Maps
 //https://svn.osgeo.org/grass/grass/branches/releasebranch_6_4/lib/gis/colors/
+
+import Grass from "../../Grass/grass"
+
+const fetchScheme = (locationName, mapsetName, rasterName) => {
+    return Grass.r.colors(locationName, mapsetName, rasterName)
+}
+
+const parseResults = (data) => {
+    let scheme = [
+        'interpolate',
+        ['linear'],
+        ['band', 1],
+    ]
+
+    data.map(d=> {
+        let tmp = d.split(" ")
+        let value = parseFloat(tmp[0])
+        let color = tmp[1].split(":").map(i => parseInt(i))
+        scheme.push(value, color)
+    })
+   
+    let noData = [-9999, [0,0,0,0]]
+
+    return scheme.slice(0, -4)
+}
 
 const aspect =  [
     'interpolate',
@@ -93,5 +118,7 @@ export default {
     aspect,
     aspectBW,
     slope,
-    terrain
+    terrain,
+    fetchScheme,
+    parseResults
 }

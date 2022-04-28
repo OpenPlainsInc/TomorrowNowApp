@@ -41,7 +41,7 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
       }
       return () => { isMounted = false }
     })()
-  },[]);
+  },[location]);
 
   function handleSeletionEvent(e) {
     let newValue = e.target.value

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 13 2022                                               #
+# Last Modified: Wed Apr 27 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -315,10 +315,7 @@ STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, "savana", "templates"),
     os.path.join(BASE_DIR, "world", "templates"),
     os.path.join(BASE_DIR, "grassapp", "static"),
-    os.path.join(BASE_DIR, "grassapp", "templates"),
-
-    # "/home/me/Music/TaylorSwift/",
-    # "/home/me/Videos/notNsfw/",
+    os.path.join(BASE_DIR, "grassapp", "templates")
 ]
 
 STATIC_ROOT = "/var/www/tomorrownow/"
@@ -331,6 +328,7 @@ STATIC_URL = f'https://storage.googleapis.com/{env("GS_BUCKET_NAME")}/'
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_BUCKET_NAME = env('GS_BUCKET_NAME')
 GS_PROJECT_ID = env('GS_PROJECT_ID')
+GOOGLE_APPLICATION_CREDENTIALS = env('GOOGLE_APPLICATION_CREDENTIALS')
 
 STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 

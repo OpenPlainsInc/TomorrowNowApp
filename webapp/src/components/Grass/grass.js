@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Apr 22 2022
+ * Last Modified: Thu Apr 28 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -139,6 +139,15 @@ const Grass = {
                 console.log(e);
             }
         }),
+        renderVector: (async (locationName, mapsetName, vectorName)=> {
+            try {
+                let url = new URL(`${API_HOST}/v/locations/${locationName}/mapsets/${mapsetName}/vector_layers/${vectorName}/render`)
+                const res = await fetch(url);
+                return await res.json();
+            } catch (e) {
+                console.log(e);
+            }
+        }),
         renderGeoTiff: (async (locationName, mapsetName, rasterName)=> {
             try {
                 let url = new URL(`${API_HOST}/r/locations/${locationName}/mapsets/${mapsetName}/raster_layers/${rasterName}/geotiff_async_orig`)
@@ -195,7 +204,35 @@ const Grass = {
 
     },
     r3: {},
-    v: {}
+    v: {
+        info: (async (locationName, mapsetName, vectorName)=> {
+            try {
+                let url = new URL(`${API_HOST}/r/locations/${locationName}/mapsets/${mapsetName}/vector_layers/${vectorName}`)
+                const res = await fetch(url);
+                return await res.json();
+            } catch (e) {
+                console.log(e);
+            }
+        }),
+        layers: (async (locationName, mapsetName) => {
+            /**
+             * Route: /locations/{location_name}/mapsets/{mapsetName}/vector_layers
+            */
+            try {
+                const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}/vector_layers`)
+                let res = await fetch(url, { 
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                let data = await res.json();
+                console.log("response:", data)
+                return data                    
+              } catch (e) {
+                console.log(e);
+            }
+        })
+    }
 }
 
 

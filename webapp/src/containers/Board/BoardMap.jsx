@@ -1,4 +1,4 @@
-import React, { useState} from "react"
+import React, { useEffect, useState} from "react"
 import Container from "react-bootstrap/Container"
 import {useParams} from "react-router-dom";
 import Map from "../../components/OpenLayers/Map"
@@ -16,6 +16,7 @@ import Col from 'react-bootstrap/Col'
 import utils from "../../components/OpenLayers/Colors/utils";
 import {TileDebug} from 'ol/source';
 import ActiniaGeoTiff from "../../components/OpenLayers/Sources/ActiniaGeoTiff";
+import grassSchemes from "../../components/OpenLayers/Colors/grass";
 
 
 const BoardMap = (props) => {
@@ -45,7 +46,7 @@ const BoardMap = (props) => {
     const [contrastValue, setContrastValue] = useState(0)
     const [saturationValue, setSaturationValue] = useState(0)
     const [gammaValue, setGammaValue] = useState(1)
-    const [colorPal, setColorPal] = useState('earth')
+    const [colorPal, setColorPal] = useState('grass')
 
     //Set TileLayer styles when range moves
     const rangeValue = (key, value) => {
