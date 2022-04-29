@@ -15,6 +15,7 @@ import TileLayer from "../../components/OpenLayers/Layers/TileLayer"
 import VectorLayer from "../../components/OpenLayers/Layers/VectorLayer"
 // import { fromLonLat } from 'ol/proj';
 import osm from "../../components/OpenLayers/Sources/osm"
+import savanaSource from "../../components/OpenLayers/Sources/savana"
 import Controls from "../../components/OpenLayers/Controls/Controls";
 // import FullScreenControl from "../../components/OpenLayers/Controls/FullScreenControl";
 // import ZoomSliderControl from "../../components/OpenLayers/Controls/ZoomSliderControl";
@@ -74,6 +75,7 @@ const Game = ({params}) => {
     const { sendMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(socketUrl, { share: false });
     const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette())
     const [nlcdData, setNlcdData] = useState(null)
+    const [basinWMSSource, setBasinWMSSource] = useState(savanaSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})) 
 
     const connectionStatus = {
       [ReadyState.CONNECTING]: 'Connecting',
@@ -266,6 +268,7 @@ const Game = ({params}) => {
     
       let isMounted = true;   
       async function rDrain(coords) {
+            setBasinRaster(null)
             try {
                
                 
@@ -290,14 +293,7 @@ const Game = ({params}) => {
                 console.log("response:", data)             
                 setResourceId(data.response.resource_id)
                 setStatus(data.response.status)
-                // console.log("Starting Websocket...")
-                // console.log("Websocket: ResourceId Received...")
-                // console.log(`Websocket: Resource Id: ${data.response.resource_id}`)
-                // let resourceName = data.response.resourceId.replace(/-/g , '_')
-                // console.log(`Websocket: Resource Name: ${resourceName}`)
-
-                // // setSocketUrl( `ws://localhost:8005/ws/savana/resource/${params.rasterId}/`)
-                // setSocketUrl( `ws://localhost:8005/ws/savana/resource/${resourceName}/`)
+               
 
               } catch (e) {
                 console.log(e);
@@ -395,7 +391,7 @@ const Game = ({params}) => {
               setNlcdData(nlcdGraphData)
             console.log("Raw NLCD Summary Data", nlcdGraphData)
           }
-
+          basinWMSSource.clear()
           setBasinRaster("point_basin")
 
          
@@ -429,16 +425,22 @@ const Game = ({params}) => {
                   {/* <TileLayer source={nlcdDataSouce}></TileLayer> */}
                   <TileLayer source={osm()} opacity={0.5}></TileLayer>
                   <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
-
-          
                   {
+                    basinRaster ? 
+                    <TileLayer 
+                      source={basinWMSSource} 
+                      opacity={0.5}>
+                    </TileLayer> : null
+                  }
+          
+                  {/* {
                     basinRaster ? 
                       <ActiniaGeoTiff 
                         rasterName={basinRaster} 
                         mapsetName="basin_test"
                         opacity={0.75}
                       ></ActiniaGeoTiff> : null
-                  }
+                  } */}
                   
                   <VectorLayer layerName="featureOverlayer" source={VectorSource()} style={surveyStyles.styleCache.selected}></VectorLayer>
                   <VectorLayer layerName="survey" source={survery()}  style={surveyStyles.setSurveyStyle} ></VectorLayer> 
@@ -449,19 +451,17 @@ const Game = ({params}) => {
               <Events>
                 <OnMapEvent eventName='click' eventHandler={surveyClickEvent}></OnMapEvent>
                 <OnMapEvent eventName='moveend' eventHandler={onMoveEventHandler}></OnMapEvent>
-                {/* <OnClick eventHandler={surveyClickEvent} /> */}
-                {/* <OnMoveEnd eventHandler={onMoveEventHandler}></OnMoveEnd> */}
+            
               </Events>
 
               <Controls>
                   <FullScreenControl />
                   <ZoomSliderControl />
                   <ScaleLineControl />
-                  {/* <RotateControl autoHide={false}/> */}
+                
                   <EditMapControl />
               </Controls>
-              {/* <Reprojection epsg='3358'></Reprojection>  */}
-              {/* <Reprojection epsg='4326'></Reprojection>  */}
+           
 
               </Map>
               </Col>

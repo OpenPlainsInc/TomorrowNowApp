@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Apr 28 2022                                               #
+# Last Modified: Fri Apr 29 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -46,6 +46,7 @@ from .models import TestGCSResourceModel
 from .models import DrainRequest
 from .serializers import DrainRequestSerializer
 from django.core.files.base import ContentFile
+
 
 # from .serializers import WorldBorderSerializer
 from rest_framework import viewsets, generics
@@ -155,7 +156,7 @@ def gMapsets(request, location_name):
         print(f"Request URL: {url}")
         print(r)
         return JsonResponse({"response": r.json()}, safe=False)
-    
+
     # TODO - Set up proper error handling and reponse messages
     return JsonResponse({"error": "gMapsets View: Fix Me"})
 
@@ -370,7 +371,6 @@ def streamCOG(request, raster_name, resource_id):
         response = JsonResponse({'error': 'File not exist'})
 
     return response
-# /code/actinia-core-data/resources/actinia-gdi#
 
 
 @api_view(['GET', 'POST'])
@@ -385,7 +385,7 @@ def rDrain(request):
         return JsonResponse({'route': 'GET: r.drain'})
 
     if request.method == 'POST':
-      
+
         mapset_name = "basin_test"
         url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/{mapset_name}/processing_async"
         print(f"Actinia Request Url: {url}")
@@ -393,6 +393,8 @@ def rDrain(request):
         print(request.data)
         coords = request.data[0]['point'].split(',')
         point = Point(float(coords[0]), float(coords[1]), srid=4326)
+        db_point = point
+
         point.transform(ct=3358)
         # point.transform(ct=6542)
         print("Point", point)
@@ -410,35 +412,12 @@ def rDrain(request):
         minx, miny = extent_ne
         maxx, maxy = extent_sw
 
-        # direction = "direction_3k@https://storage.googleapis.com/tomorrownow-actinia-dev/direction_3k_cog.tif"
-        # output_basin = "point_basin"
-        # elev = "dem_10m_mosaic@https://storage.googleapis.com/tomorrownow-actinia-dev/dem_10m_mosaic_cog.tif"
-        # data_loader_1 = acp.split_grass_command(f"importer raster={direction}")
-        # data_loader_2 = acp.split_grass_command(f"importer raster={elev}")
-        # grass_command_1 = acp.split_grass_command(f"g.region raster={elev} n={n} e={e} s={s} w={w} res=10 -pa")
-        # grass_command_2 = acp.split_grass_command(f"r.circle -b output=circle coordinate={t_coords} max=200")
-        # grass_command_3 = acp.split_grass_command(f"r.stream.basins -c direction={direction} streams=circle basins={output_basin}")
-
-        # dl1 = acp.create_actinia_process(data_loader_1)
-        # dl2 = acp.create_actinia_process(data_loader_2)
-        # pc1 = acp.create_actinia_process(grass_command_1)
-        # pc2 = acp.create_actinia_process(grass_command_2)
-        # pc3 = acp.create_actinia_process(grass_command_3)
         grass_commands = [
             {
                 "module": "g.region",
                 "id": "g.region_1804289",
                 "inputs": [
-                    # {
-                      
-                    #     "param": "res",
-                    #     "value": "10"
-                    # },
                     {
-                        # "import_descr": {
-                        #     "source": "https://storage.googleapis.com/tomorrownow-actinia-dev/direction_3k_cog.tif",
-                        #     "type": "raster"
-                        # },
                         "param": "align",
                         "value": "direction_3k_10m_d"
                     },
@@ -557,7 +536,7 @@ def rDrain(request):
                 "outputs": [
                     {
                         "param": "output",
-                        "value": "point_basin"
+                        "value": "point_basin_cloud"
                     }
                 ]
             },
@@ -602,6 +581,46 @@ def rDrain(request):
                         "value": "255"
                     }
                 ]
+            },
+            {
+                "id": "v.out.ogr_1804289383",
+                "inputs": [
+                    {
+                        "param": "input",
+                        "value": "point_basin_cloud"
+                    },
+                    {
+                        "param": "layer",
+                        "value": "1"
+                    },
+                    {
+                        "param": "type",
+                        "value": "area"
+                    },
+                    {
+                        "param": "format",
+                        "value": "PostgreSQL"
+                    },
+                    {
+                        "param": "output_type",
+                        "value": ""
+                    },
+                    {
+                        "param": "dsco",
+                        "value": ""
+                    },
+                    {
+                        "param": "lco",
+                        "value": ""
+                    }
+                ],
+                "module": "v.out.ogr",
+                "outputs": [
+                    {
+                        "param": "output",
+                        "value": "PG:host=db port=5432 dbname=actinia user=actinia password=actinia"
+                    }
+                ]
             }
         ]
         pc = acp.create_actinia_process_chain(grass_commands)
@@ -613,17 +632,13 @@ def rDrain(request):
         )
         jsonResponse = r.json()
         print(f"Response: {r.json()}")
-        serializer = DrainRequestSerializer(data=[{"point": point}])
-     
-        if (serializer.is_valid()):
-            print("serializer data:", serializer.data)
-            serializer.save()
-            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        requestModel = DrainRequestSerializer(data={"point": db_point})
+        if (requestModel.is_valid()):
+            print("serializer data:", requestModel.validated_data)
+            requestModel.save()
+            return JsonResponse({"savana_response": requestModel.data, "response": jsonResponse}, status=status.HTTP_201_CREATED)
         else:
-            print("Fail :(")
-            return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse})
-
-        # return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc})
+            return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse, 'errors': requestModel.errors})
 
 
 def gModules(request):

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 13 2022                                               #
+# Last Modified: Fri Apr 29 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -42,4 +42,4 @@ class DrainRequestSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = DrainRequest
         geo_field = 'point'
-        fields = ('point')
+        fields = ('point',)
