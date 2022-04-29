@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Th/04/yyyy 05:nn:48
+ * Last Modified: Th/04/yyyy 08:nn:55
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -62,6 +62,7 @@ const Board = (props) => {
     useEffect(() => {
         let isMounted = true; 
         async function fetchRasters() {
+            // if (!isMounted) return null;
             try {
               let data = null;
                 if (dataTypeValue === 'raster') {

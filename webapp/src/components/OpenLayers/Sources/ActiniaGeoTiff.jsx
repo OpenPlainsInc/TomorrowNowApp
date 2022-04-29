@@ -42,6 +42,8 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     const [resourceId, setResourceId] = useState(null)
     const [dataRangeMin, setDataRangeMin] = useState(null)
     const [dataRangeMax, setDataRangeMax] = useState(null)
+    const [grassColorScheme, setGrassColorScheme] = useState(null)
+
 
     // const [tileStyle, setTileStyle] = useState(style)
     const [tileStyle, setTileStyle] = useState({
@@ -67,7 +69,6 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
 
     
     const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette(rasterName))
-    const [colorPal, setColorPal] = useState('earth')
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
@@ -162,6 +163,17 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
         }
     }, [lastJsonMessage]);
 
+
+    useEffect(()=> {
+        (async () => {
+            let data = await GrassColors.grass.fetchScheme(locationName, mapsetName, rasterName)
+            console.log("GRASS color scheme:", data)
+            let scheme = GrassColors.grass.parseResults(data.response.process_results)
+            setGrassColorScheme(scheme)
+            console.log("GRASS color scheme:", scheme)
+        })()
+    },[])
+
     
 
   
@@ -169,7 +181,8 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     // //Set Color Palette and Style once source is set
     useEffect(()=> {
         if (!source || status !== 'finished') return;
-        let colorPalette = GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+        
+        let colorPalette = color === 'grass' ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
         console.log("Color Palette Set: ", colorPalette)
         setTileColor(colorPalette)
         setTileStyle(prevState => ({
@@ -182,12 +195,14 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     // Update the Tile Stlye with new color palette
     useEffect(()=> {
         if (!source || !color) return;
-        let colorPalette = [
+        console.log("update color")
+        
+        let colorPalette = color !== 'grass' ? [
             'interpolate',
             ['linear'],
             ['band', 1],
             ...utils.getColorStops(color, dataRangeMin, dataRangeMax, 15, false)
-        ]
+        ] : grassColorScheme
         setTileColor(colorPalette)
         setTileStyle(prevState => ({
             ...style,

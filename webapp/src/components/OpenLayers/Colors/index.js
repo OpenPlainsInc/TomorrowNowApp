@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Apr 05 2022
+ * Last Modified: Thu Apr 28 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,12 +31,14 @@
  */
 import grass from "./grass";
 import colorbrewer from "./colorbrewer";
-import utils from "./utils"
+import utils from "./utils";
+import nlcd from "./nlcd";
 
 const GrassColors = {
     utils,
     grass,
-    colorbrewer
+    colorbrewer,
+    nlcd
 }
 
 export default GrassColors

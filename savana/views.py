@@ -560,55 +560,49 @@ def rDrain(request):
                         "value": "point_basin"
                     }
                 ]
-            }
-            # {
-            #     "module": "r.mask",
-            #     "id": "r.mask",
-            #     "inputs": [
-            #         {
+            },
+            {
+                "module": "r.mask",
+                "id": "r.mask",
+                "inputs": [
+                    {
                       
-            #             "param": "raster",
-            #             "value": "point_basin"
-            #         },
-            #         {
-            #             "param": "maskcats",
-            #             "value": "*"
-            #         },
-            #         {
-            #             "param": "layer",
-            #             "value": "1"
-            #         }
-            #     ]
-            # },
-            # {
-            #     "module": "r.stats",
-            #     "id": "r.stats_1",
-            #     "flags": "acpl",
-            #     "inputs": [
-            #         {
-            #             "param": "input",
-            #             "value": "nlcd_2016"
-            #         },
-            #         {
-            #             "param": "separator",
-            #             "value": "|"
-            #         },
-            #         {
-            #             "param": "null_value",
-            #             "value": "*"
-            #         },
-            #         {
-            #             "param": "nsteps",
-            #             "value": "255"
-            #         }
-            #     ],
-            #     "outputs": [
-            #         {
-            #             "param": "output",
-            #             "value": "point_basin_stats.csv"
-            #         }
-            #     ]
-            # }
+                        "param": "raster",
+                        "value": "point_basin"
+                    },
+                    {
+                        "param": "maskcats",
+                        "value": "*"
+                    },
+                    {
+                        "param": "layer",
+                        "value": "1"
+                    }
+                ]
+            },
+            {
+                "module": "r.stats",
+                "id": "r.stats_1",
+                "flags": "acpl",
+                "inputs": [
+                    {
+                        "param": "input",
+                        "value": "nlcd_2016"
+                    },
+                    {
+                        "param": "separator",
+                        "value": "|"
+                    },
+                    {
+                        "param": "null_value",
+                        "value": "*"
+                    },
+                    {
+                        "param": "nsteps",
+                        "value": "255"
+                    }
+                ]
+            }
         ]
         pc = acp.create_actinia_process_chain(grass_commands)
         print(f"Process Chain: {pc}")

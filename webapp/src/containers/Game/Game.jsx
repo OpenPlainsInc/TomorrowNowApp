@@ -35,12 +35,13 @@ import {TileDebug} from 'ol/source';
 // import Container from 'react-bootstrap/esm/Container';
 import Events from '../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, FunnelChart, Funnel, LabelList } from 'recharts';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
 import GrassColors from '../../components/OpenLayers/Colors'
 import utils from "../../components/OpenLayers/Colors/utils";
+import nlcdColors from "../../components/OpenLayers/Colors/nlcd"
 import WebGLTileLayer from "../../components/OpenLayers/Layers/WebGLTileLayer"
 import Reprojection from "../../components/OpenLayers/Views/Reprojection";
 import ActiniaGeoTiff from '../../components/OpenLayers/Sources/ActiniaGeoTiff';
@@ -59,7 +60,7 @@ const Game = ({params}) => {
     const [basinRaster, setBasinRaster] = useState(null);
 
     const [projection, setProjection] = useState('EPSG:4326')
-    const [legend, setLegend] = useState(nlcdSource({LAYERS: "NLCD_01-19_Land_Cover_Change_First_Disturbance_Date"}).getLegendUrl())
+    const [legend, setLegend] = useState(nlcdSource({LAYERS: "NLCD_2019_Land_Cover_L48"}).getLegendUrl())
     const [surveyData, setSurveyData] = useState([])
     const [extent, setExtent] = useState(null)
     const [source, setSource] = useState(null);
@@ -72,6 +73,7 @@ const Game = ({params}) => {
     const [messageHistory, setMessageHistory] = useState(['test']);
     const { sendMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(socketUrl, { share: false });
     const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette())
+    const [nlcdData, setNlcdData] = useState(null)
 
     const connectionStatus = {
       [ReadyState.CONNECTING]: 'Connecting',
@@ -266,10 +268,7 @@ const Game = ({params}) => {
       async function rDrain(coords) {
             try {
                
-                const csrftoken = document.cookie
-                        .split('; ')
-                        .find(row => row.startsWith('csrftoken='))
-                        .split('=')[1];
+                
 
                 let geojson = [{
                   point: coords.join(','),
@@ -282,10 +281,10 @@ const Game = ({params}) => {
                     method: "POST",
                     body: JSON.stringify(geojson),
                     headers: {
-                        // 'X-CSRFToken': await getCsrfToken()
+                       
                         'Content-Type': 'application/json'
                     }
-                    // credentials: 'include'
+                    
                 });
                 const data = await res.json();
                 console.log("response:", data)             
@@ -353,31 +352,51 @@ const Game = ({params}) => {
 
       console.log("Last Message: ", lastJsonMessage)
       if (lastJsonMessage) {
-          let data = lastJsonMessage
+          
+          if (lastJsonMessage.process_log) {
+            function sliceIntoChunks(arr, chunkSize) {
+              const res = [];
+              for (let i = 0; i < arr.length; i += chunkSize) {
+                  const chunk = arr.slice(i, i + chunkSize);
+                  res.push(chunk);
+              }
+              return res;
+            }
+            // Cat, Label, area, cells, %
+            let rawnlcdData = lastJsonMessage.process_log
+              .filter(f => f.executable === 'r.stats')
+              .map(e => {
+                return e.stdout.split("|").slice(0, -4)
+              }).map(i => i.map(s=> s.replace("\n", "|").split("|")).flatMap(x=>{
+                return x //parseInt(x)//parseFloat(x).toFixed(2)
+              })).flatMap(x=>x)
+
+             
+              console.log("NLCD", nlcdColors)
+              let nlcdGraphData = sliceIntoChunks(rawnlcdData, 5).map(d => {
+                let catId = parseInt(d[0])
+                console.log('d', catId, nlcdColors.categories)
+                let catDetails = nlcdColors.categories.filter(c => c.category === catId)[0]
+                console.log('catDetails', catDetails)
+
+
+                let tmp =  {
+                  cat: catId,
+                  color: catDetails ? catDetails.category_color : "#fff",
+                  label: catDetails ? catDetails.category_label : "",
+                  area: (parseFloat(d[2])/ 1e6).toFixed(2),
+                  cells: parseInt(d[3]),
+                  percent: d[4],
+                  catDetails
+                }
+                tmp[tmp.label] = tmp.area
+                return tmp
+              })
+              setNlcdData(nlcdGraphData)
+            console.log("Raw NLCD Summary Data", nlcdGraphData)
+          }
 
           setBasinRaster("point_basin")
-         
-      
-        
-            // const rastersData = `${API_HOST}/r/resource/point_basin/stream/${data.resource_id}`
-            // setDataRangeMin(data.statistics.min)
-            // setDataRangeMax(data.statistics.max)
-
-            // let sourceOptions = {
-            //     sources: [{url: rastersData}], 
-            //     allowFullFile: true, 
-            //     forceXHR: true, 
-            //     normalize: false, // set true for imagery
-            //     convertToRGB: false,
-            //     interpolate: true, // set fault for discrete data
-            //     style: tileStyle
-            // }
-            // console.log("COG Url: ", rastersData)
-            // let tmpSource = GeoTIFFSource(sourceOptions)
-            // setSource(tmpSource)
-       
-
-          
 
          
       }
@@ -390,6 +409,10 @@ const Game = ({params}) => {
 
          
       }, [])
+
+      const nlcdTotalArea = (data) => {
+        return data.filter(c=> c.catDetails).reduce((a,b) => a.area + b.area)
+      }
   
         return (
           <Container>
@@ -401,25 +424,13 @@ const Game = ({params}) => {
               <Layers>
                   <TileLayer source={ned3DepSource({layer: 'Hillshade Multidirectional'})} opacity={1} ></TileLayer>
                   {/* <TileLayer source={nlcdSource()} opacity={0.5}></TileLayer> */}
-                  <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_01-19_Land_Cover_Change_First_Disturbance_Date'})} opacity={0.5}></TileLayer>
+                  <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
 
                   {/* <TileLayer source={nlcdDataSouce}></TileLayer> */}
                   <TileLayer source={osm()} opacity={0.5}></TileLayer>
                   <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
 
-                  {/* <WebGLTileLayer 
-                            // gamma={gammaValue}
-                            // opacity={opacity}
-                            // saturation={saturationValue}
-                            // contrast={contrastValue}
-                            // exposure={exposureValue}
-                            layerName="point_basin"
-                            style={tileStyle}
-                            color={tileColor}
-                            // minZoom={0}
-                            // maxZoom={16}
-                            source={source}>
-                        </WebGLTileLayer> */}
+          
                   {
                     basinRaster ? 
                       <ActiniaGeoTiff 
@@ -458,34 +469,87 @@ const Game = ({params}) => {
              <Col md={1}></Col>
              
              <Col md={3}>
-             <h2>Survey Data</h2>
-             <h3>Stormwater Problem Severity</h3>
-                <BarChart
-                  width={400}
-                  height={400}
-                  data={surveyData}
-                  margin={{
-                    top: 10,
-                    right: 10,
-                    left: 10,
-                    bottom: 10,
-                  }}
-                >
+            
+
+
+                
+                  { 
+                    nlcdData ? 
+                  <Row>
+                  <h1>Upstream Land Use Characteristics</h1>
+                  <h2>Total Area {nlcdTotalArea(nlcdData)}</h2>
+                  <BarChart
+                    width={400}
+                    height={400}
+                    data={nlcdData}
+                    // layout="horizontal"
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                    barSize={5}
+                  >
+                    <XAxis dataKey="cat" scale="point" padding={{ left: 10, right: 10 }}  />
+                    <YAxis  />
+                    <Tooltip />
+                    <Legend />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    {/* {
+                      nlcdData.map((d, idx) => {
+                        let catLab = d.label
+                        return(<Bar key={idx} dataKey={catLab} fill={d.color} background={{ fill: '#eee' }} />)
+                      })
+                        
+                    } */}
+                    <Bar
+                        dataKey="area"
+                        fill="#000"
+                        stroke="#000"
+                        // layout="vertical"
+                        strokeWidth={1}>
+                        {
+                            nlcdData.map((d, idx) => (
+                                <Cell key={`cell-${idx}`} fill={d.color} />
+                            ))
+                        }
+                    </Bar>
+                    
+                  </BarChart>
+
                  
-
-           
-
-            <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="unserious" fill={surveyStyles.colorScheme[0]} />
-                  <Bar dataKey="somewhat_unserious" fill={surveyStyles.colorScheme[1]} />
-                  <Bar dataKey="neutral" fill={surveyStyles.colorScheme[2]} />
-                  <Bar dataKey="somewhat_serious" fill={surveyStyles.colorScheme[3]} />
-                  <Bar dataKey="serious" fill={surveyStyles.colorScheme[4]} />
-                </BarChart>
+                  
+                  </Row>
+                  :  
+                  <Row>
+                  <h2>Survey Data</h2>
+                  <h3>Stormwater Problem Severity</h3>
+                     <BarChart
+                       width={400}
+                       height={400}
+                       data={surveyData}
+                       margin={{
+                         top: 10,
+                         right: 10,
+                         left: 10,
+                         bottom: 10,
+                       }}
+                     >
+                 <CartesianGrid strokeDasharray="3 3" />
+                       <XAxis dataKey="name" />
+                       <YAxis />
+                       <Tooltip />
+                       <Legend />
+                       <Bar dataKey="unserious" fill={surveyStyles.colorScheme[0]} />
+                       <Bar dataKey="somewhat_unserious" fill={surveyStyles.colorScheme[1]} />
+                       <Bar dataKey="neutral" fill={surveyStyles.colorScheme[2]} />
+                       <Bar dataKey="somewhat_serious" fill={surveyStyles.colorScheme[3]} />
+                       <Bar dataKey="serious" fill={surveyStyles.colorScheme[4]} />
+                     </BarChart>
+                     </Row>
+                }
+                
                 </Col>
                 </Row>
                 <Row>
@@ -511,6 +575,66 @@ const Game = ({params}) => {
                   
                   </Col>
                 </Row>
+                { 
+                    nlcdData ? 
+                  <Row>
+                  <h1>Upstream Land Use Characteristics</h1>
+                  <h2>Total Area {nlcdTotalArea(nlcdData)}</h2>
+                  <BarChart
+                    width={1000}
+                    height={800}
+                    data={nlcdData}
+                    // layout="vertical"
+                    // margin={{
+                    //   top: 5,
+                    //   right: 30,
+                    //   left: 20,
+                    //   bottom: 5,
+                    // }}
+                    // barSize={50}
+                  >
+                    <XAxis dataKey="cat" angle={90} tickCount={15} padding={{ left: 10, right: 10 }}  />
+                    <YAxis dataKey="area"/>
+                    <Tooltip />
+                    <Legend />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    {/* {
+                      nlcdData.map((d, idx) => {
+                        let catLab = d.label
+                        return(<Bar key={idx} dataKey={label} fill={d.color} background={{ fill: '#eee' }} />)
+                      })
+                        
+                    } */}
+                     <Bar
+                        dataKey="area"
+                        fill="#000"
+                        stroke="#000"
+                        // layout="vertical"
+                        strokeWidth={1}>
+                        {
+                            nlcdData.map((d, idx) => (
+                                <Cell key={`cell-${idx}`} fill={d.color} />
+                            ))
+                        }
+                    </Bar>
+
+                    
+                  </BarChart>
+
+                  {/* <FunnelChart width={500} height={250}>
+                    <Tooltip />
+                    <Funnel
+                      dataKey="area"
+                      data={nlcdData}
+                      isAnimationActive
+                    >
+                      <LabelList position="right" fill="#000" stroke="none" dataKey="label" />
+                    </Funnel>
+                  </FunnelChart> */}
+                  
+                  </Row>
+                  : null
+                }
           </Container>
         )
   }

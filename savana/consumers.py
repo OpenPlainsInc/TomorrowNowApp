@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Apr 19 2022                                               #
+# Last Modified: Thu Apr 28 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -136,6 +136,7 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
                     'message': message,
                     'resource_id': resource_id,
                     'resources': resources,
+                    'process_log': event['process_log']
                 }))
 
         else:

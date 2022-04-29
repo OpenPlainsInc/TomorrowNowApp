@@ -34,7 +34,6 @@ import colormap from 'colormap';
 import colorbrewer from './colorbrewer';
 import grass from './grass';
 import nlcd from './nlcd';
-import Grass from '../../Grass/grass';
 
 const defautColormaps = [
     'jet', 'hsv','hot','cool','spring','summer','autumn','winter','bone',

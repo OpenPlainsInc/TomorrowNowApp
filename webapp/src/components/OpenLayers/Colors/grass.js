@@ -58,67 +58,7 @@ const parseResults = (data) => {
     return scheme.slice(0, -4)
 }
 
-const aspect =  [
-    'interpolate',
-    ['linear'],
-    ['band', 1],
-    0, 'white',
-    1, 'yellow',
-    90, 'green',
-    180, 'cyan',
-    270, 'red',
-    360, 'yellow'
-]
-
-const aspectBW = [
-    'interpolate',
-    ['linear'],
-    ['band', 1],
-    0, 'black',
-    180, 'white',
-    360, 'black'
-]
-
-const slope =  [
-        'interpolate',
-        ['linear'],
-        ['band', 1],
-        0,  [255,255,255],
-        2,  [255,255,0],
-        5,  [0,255,0],
-        10, [0,255,255],
-        15, [0,0,255],
-        30, [255,0,255],
-        50, [255,0,0],
-        90, [0,0,0]
-    ]
-
-const terrain = [
-    'interpolate',
-    ['linear'],
-    ['band', 1],
-    -11000, [0, 0, 0],
-    -500,   [0, 0, 30],
-    -100,   [0, 0, 200],
-    -1,     [150, 150, 255],
-    0,      [0, 120, 0],
-    100,    [0, 150, 0],
-    270,    [90, 165, 90],
-    300,    [90 ,175, 90],
-    500,    [50, 180, 50],
-    500,    [70, 170, 70],
-    1000,   [70 ,145, 75],
-    1000,   [70, 155, 75],
-    2000,   [150, 156, 100],
-    2800,   [220, 220, 220],
-    3000,   [255, 255, 255],
-    8850,   [255, 255, 255]
-]
 export default {
-    aspect,
-    aspectBW,
-    slope,
-    terrain,
     fetchScheme,
     parseResults
 }

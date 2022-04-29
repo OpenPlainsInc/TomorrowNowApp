@@ -56,12 +56,16 @@ def asyncResourceStatus(user_id, resource_id):
         resource_name = resource_id.replace('-', '_')
         updated_status = data['status']
         resources = data['urls']['resources']
+        process_log = []
+        if data.get('process_log') is not None:
+            process_log = data['process_log']
+
         resource_group = f"savana_{resource_name}"
         print(f"""
         asyncResourceStatus Data ----
         Resource Group Name: {resource_group}
         Updated Status: {updated_status}
-        Urls: {data['urls']}
+     
         Resource Url: {resources}
         """)
 
@@ -69,7 +73,8 @@ def asyncResourceStatus(user_id, resource_id):
             "type": 'resource_message',
             "message": updated_status,
             "resource_id": resource_id,
-            "resources": resources
+            "resources": resources,
+            "process_log": process_log
         }
 
         return async_to_sync(channel_layer.group_send)(resource_group, response_message)

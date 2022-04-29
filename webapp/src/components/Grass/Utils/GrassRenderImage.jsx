@@ -21,6 +21,7 @@ const GrassRenderImage = ({layerType, layerName, mapsetName, locationName, card=
     useEffect(() => {
         let isMounted = true; 
         (async () => {
+            // if (!isMounted) return null;
             try {
                 let data = null;
                 if (layerType === 'raster') {
