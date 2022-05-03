@@ -1,0 +1,28 @@
+/*
+ * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Utils/nlcd-legend.scss
+ * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
+ * Created Date: Monday, May 2nd 2022, 4:56:11 pm
+ * Author: Corey White
+ * 
+ * Copyright (c) 2022 Corey White
+ */
+
+
+.grass-nlcd-legend {
+   
+}
+
+// .accordion-header .accordion-button collapsed {
+//     background-color: aqua;
+// }
+
+.accordion-button {
+    background-color: aqua;
+    &:collapsed {
+        background-color: rgb(0, 255, 38);
+    }
+
+    &:not(collapsed) {
+        background-color: rgb(255, 0, 38);
+    }
+}

@@ -21,13 +21,15 @@ const VectorLayer = ({ layerName, source, style, zIndex = 0, handleClickEvent=nu
     vectorLayer.set('name', layerName)
     setLayer(vectorLayer)
     if (handleClickEvent){
-      map.on('click',handleClickEvent)
+      map.on('click', handleClickEvent)
     }
-    return () => {
+  
+    return () => { 
       if (map) {
         if (handleClickEvent){
           map.un('click',handleClickEvent)
         }
+       
         map.removeLayer(vectorLayer);
         setLayer(null)
       }

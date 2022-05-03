@@ -22,6 +22,7 @@ import Controls from "../../components/OpenLayers/Controls/Controls";
 import { ScaleLineControl, ZoomSliderControl, FullScreenControl, RotateControl, EditMapControl } from "../../components/OpenLayers/Controls";
 // import Reprojection from "../../components/OpenLayers/Views/Reprojection";
 import surveyStyles from '../../components/OpenLayers/Features/surveyStyles';
+import vectorStyles from '../../components/OpenLayers/Features/Styles'
 // import {sourcesFromTileGrid} from 'ol/source';
 
 import GeoTIFFSource from '../../components/OpenLayers/Sources/GeoTIFF'
@@ -36,7 +37,7 @@ import {TileDebug} from 'ol/source';
 // import Container from 'react-bootstrap/esm/Container';
 import Events from '../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, FunnelChart, Funnel, LabelList } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, FunnelChart, Funnel, LabelList, ResponsiveContainer } from 'recharts';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
@@ -46,7 +47,8 @@ import nlcdColors from "../../components/OpenLayers/Colors/nlcd"
 import WebGLTileLayer from "../../components/OpenLayers/Layers/WebGLTileLayer"
 import Reprojection from "../../components/OpenLayers/Views/Reprojection";
 import ActiniaGeoTiff from '../../components/OpenLayers/Sources/ActiniaGeoTiff';
-
+import { NLCDLegend } from '../../components/Grass/Utils';
+import basinResponseSource from './basinResponseSource';
 // import VectorSource from "ol/source/Vector";
 // import { Style, Stroke } from "ol/style";
 // import surveyStyles from "../Features/surveyStyles"
@@ -77,6 +79,11 @@ const Game = ({params}) => {
     const [nlcdData, setNlcdData] = useState(null)
     const [basinWMSSource, setBasinWMSSource] = useState(savanaSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})) 
 
+
+
+
+    const [surveySource, setSurveySource] = useState(survery(loadSurveyData))
+    const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
     const connectionStatus = {
       [ReadyState.CONNECTING]: 'Connecting',
       [ReadyState.OPEN]: 'Open',
@@ -105,91 +112,67 @@ const Game = ({params}) => {
         }
     })
 
-    async function getCsrfToken() {
-      if (_csrfToken === null) {
-          const response = await fetch(`${API_HOST}/csrf/`, {
-          credentials: 'include',
-          });
-          const data = await response.json();
-          _csrfToken = data.csrfToken;
-      }
-      return _csrfToken;
-  }
+    const basinStyle = vectorStyles.Polygon
+
+  
+    let groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
+      // reduce runs this anonymous function on each element of `data` (the `item` parameter,
+      // returning the `storage` parameter at the end
+      return data.reduce(function(storage, item) {
+        // get the first instance of the key by which we're grouping
+        var group = item[key];
+        
+        // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
+        storage[group] = storage[group] || []
+        
+        // add this item to its group within `storage`
+        storage[group].push(item);
+        
+        // return the updated storage to the reduce function, which will then loop through the next 
+        return storage; 
+      }, {}); // {} is the initial value of the storage
+    };
 
     function onMoveEventHandler(e) {
-      console.log("VectorLayer Click Event:", e)
       const view = e.target.getView()
       const _extent = view.calculateExtent()
       console.log('extent', _extent, 'resolution', view.getResolution())
       setExtent(extent)
-      const viewResolution = (view.getResolution());
-      const url = nlcdSource({LAYERS: 'NLCD_2019_Land_Cover_L48'}).getFeatureInfoUrl(
-        _extent,
-        viewResolution,
-        'EPSG:4326',
-        {'INFO_FORMAT': 'application/json'}
-      );
-      console.log(url)
-      if (url) {
-        fetch(url)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("NLCD Data",data)
-            // document.getElementById('info').innerHTML = html;
-        });
-      }
    
       e.target.getLayers().forEach((el) => {
 
         if (el.get('name') === "survey") {
-          console.log(el.getSource().getFeatures().map(f=>f.getProperties()))
-         let properties =  el.getSource().getFeatures().map(f=> {
-            return f.getProperties()
+        
+          let properties = []
+          el.getSource().forEachFeatureInExtent(_extent, (f) => {
+            properties.push(f.getProperties())
           })
-
-
-          var groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
-            // reduce runs this anonymous function on each element of `data` (the `item` parameter,
-            // returning the `storage` parameter at the end
-            return data.reduce(function(storage, item) {
-              // get the first instance of the key by which we're grouping
-              var group = item[key];
-              
-              // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
-              storage[group] = storage[group] || []
-              
-              // add this item to its group within `storage`
-              storage[group].push(item);
-              
-              // return the updated storage to the reduce function, which will then loop through the next 
-              return storage; 
-            }, {}); // {} is the initial value of the storage
-          };
+          console.log("onMoveEnd properites: ", properties)
+          if (!properties) return;
 
           let grouped = groupBy(properties,'how_serious_is_this_problem')
 
 
-         console.log("Grouped", properties, )
+          console.log("Grouped", properties, )
        
-
-
-         setSurveyData(Object.entries(grouped).map((k, v) => {
-          console.log(k)
-          let newData = {}
-          newData.name = k[0]
-          newData[k[0]] = k[1].length
-          return newData
-        }))
+          setSurveyData(Object.entries(grouped)
+            .map((k, v) => {
+              console.log(k)
+              let newData = {}
+              newData.name = k[0]
+              newData[k[0]] = k[1].length
+              return newData
+            })
+          )
 
         }
       })
 
     }
+
+   
   
-    // const featureOverlayer = VectorLayer({
-    //   source:VectorSource(), 
-    //   style:surveyStyles.styleCache.selected
-    // })
+ 
     let highlight;
     function surveyClickEvent(e) {
       console.log("VectorLayer Click Event:", e)
@@ -202,67 +185,6 @@ const Game = ({params}) => {
       const view = e.target.getView()
       const extent = view.calculateExtent()
       console.log('extent', extent, 'resolution', view.getResolution())
-      const viewResolution = (view.getResolution());
-      const url = nlcdSource({LAYERS: 'NLCD_2019_Land_Cover_L48'}).getFeatureInfoUrl(
-        extent,
-        viewResolution,
-        'EPSG:4326',
-        {'INFO_FORMAT': 'application/json'}
-      );
-      console.log(url)
-      if (url) {
-        fetch(url)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("NLCD Data",data)
-            // document.getElementById('info').innerHTML = html;
-        });
-      }
-     
-      
-      e.target.getLayers().forEach((el) => {
-        if (el.get('name') === "survey") {
-          console.log(el.getSource().getFeatures().map(f=>f.getProperties()))
-          let properties =  el.getSource().getFeatures().map(f=> {
-            return f.getProperties()
-          })
-
-
-          var groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
-            // reduce runs this anonymous function on each element of `data` (the `item` parameter,
-            // returning the `storage` parameter at the end
-            return data.reduce(function(storage, item) {
-              // get the first instance of the key by which we're grouping
-              var group = item[key];
-              
-              // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
-              storage[group] = storage[group] || []
-              
-              // add this item to its group within `storage`
-              storage[group].push(item);
-              
-              // return the updated storage to the reduce function, which will then loop through the next 
-              return storage; 
-            }, {}); // {} is the initial value of the storage
-          };
-
-          let grouped = groupBy(properties,'how_serious_is_this_problem')
-  
-
-         console.log("Grouped", properties, )
-       
-
-
-         setSurveyData(Object.entries(grouped).map((k, v) => {
-          console.log(k)
-          let newData = {}
-          newData.name = k[0]
-          newData[k[0]] = k[1].length
-          return newData
-        }))
-
-        }
-      })
 
 
     
@@ -305,6 +227,33 @@ const Game = ({params}) => {
       
     }
 
+
+    function loadSurveyData(surveySource) {
+      if (!surveySource) return;
+      if (isSurveyDataLoaded) return;
+      console.log("Survey Source: ", surveySource)
+      // surveySource.on('featuresloadend', onPostRenderEvent)
+      let properties = surveySource.target.getFeatures().map(f => {
+        return f.getProperties()
+      })
+
+      
+      if (!properties.length) return;
+      console.log("Survey Source Properties: ", properties)
+      let grouped = groupBy(properties,'how_serious_is_this_problem')
+  
+      setSurveyData(Object.entries(grouped)
+        .map((k, v) => {
+          let newData = {}
+          newData.name = k[0]
+          newData[k[0]] = k[1].length
+          return newData
+        })
+      )
+      setIsSurveyDataLoaded(true)
+      return surveyData
+    }
+
     // Get Websocket message history
     useEffect(() => {
       if (lastMessage !== null) {
@@ -321,7 +270,6 @@ const Game = ({params}) => {
       let resourceName = resourceId.replace(/-/g , '_')
       console.log(`Websocket: Resource Name: ${resourceName}`)
 
-      // setSocketUrl( `ws://localhost:8005/ws/savana/resource/${params.rasterId}/`)
       setSocketUrl( `ws://localhost:8005/ws/savana/resource/${resourceName}/`)
 
   },[source, status, resourceId])
@@ -399,134 +347,160 @@ const Game = ({params}) => {
   }, [lastJsonMessage]);
 
 
-    useEffect(() => {
-      // 'https://storage.googleapis.com/download/storage/v1/b/tomorrownow-actinia-dev/o/dem_10m_mosaic_cog.tif?alt=media'
-         console.log(this)
-
-         
-      }, [])
 
       const nlcdTotalArea = (data) => {
-        return data.filter(c=> c.catDetails).reduce((a,b) => a.area + b.area)
+        const areaList = data.filter(c=> c.catDetails).map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
+        console.log("Area List", areaList)
+        return areaList.toFixed(2)
       }
   
         return (
-          <Container>
+          <Container fluid className="bg-light text-dark">
               
             <Row>
-              <Col md={8}>
-            <Map mapClass="map-fullscreen" center={center} zoom={zoom} projection='EPSG:4326'>
-             
-              <Layers>
-                  <TileLayer source={ned3DepSource({layer: 'Hillshade Multidirectional'})} opacity={1} ></TileLayer>
-                  {/* <TileLayer source={nlcdSource()} opacity={0.5}></TileLayer> */}
-                  <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
-
-                  {/* <TileLayer source={nlcdDataSouce}></TileLayer> */}
-                  <TileLayer source={osm()} opacity={0.5}></TileLayer>
-                  <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
-                  {
-                    basinRaster ? 
-                    <TileLayer 
-                      source={basinWMSSource} 
-                      opacity={0.5}>
-                    </TileLayer> : null
-                  }
-          
-                  {/* {
-                    basinRaster ? 
-                      <ActiniaGeoTiff 
-                        rasterName={basinRaster} 
-                        mapsetName="basin_test"
-                        opacity={0.75}
-                      ></ActiniaGeoTiff> : null
-                  } */}
-                  
-                  <VectorLayer layerName="featureOverlayer" source={VectorSource()} style={surveyStyles.styleCache.selected}></VectorLayer>
-                  <VectorLayer layerName="survey" source={survery()}  style={surveyStyles.setSurveyStyle} ></VectorLayer> 
-                   
-
-              </Layers>
-
-              <Events>
-                <OnMapEvent eventName='click' eventHandler={surveyClickEvent}></OnMapEvent>
-                <OnMapEvent eventName='moveend' eventHandler={onMoveEventHandler}></OnMapEvent>
-            
-              </Events>
-
-              <Controls>
-                  <FullScreenControl />
-                  <ZoomSliderControl />
-                  <ScaleLineControl />
+              <Col md={6}>
+                <Map mapClass="map-fullscreen" center={center} zoom={zoom} projection='EPSG:4326'>
                 
-                  <EditMapControl />
-              </Controls>
-           
+                  <Layers>
+                      <TileLayer source={ned3DepSource({layer: 'Hillshade Multidirectional'})} opacity={1} ></TileLayer>
+                      {/* <TileLayer source={nlcdSource()} opacity={0.5}></TileLayer> */}
+                      <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
 
-              </Map>
+                      {/* <TileLayer source={nlcdDataSouce}></TileLayer> */}
+                      <TileLayer source={osm()} opacity={0.5}></TileLayer>
+                      <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
+                      {
+                        basinRaster ? 
+                        <VectorLayer
+                          layerName="basin"
+                          style={basinStyle}
+                          source={basinResponseSource()}
+                        ></VectorLayer>
+                        // <TileLayer 
+                        //   source={basinWMSSource} 
+                        //   opacity={0.5}>
+                        // </TileLayer> 
+                        : null
+                      }
+              
+                      {/* {
+                        basinRaster ? 
+                          <ActiniaGeoTiff 
+                            rasterName={basinRaster} 
+                            mapsetName="basin_test"
+                            opacity={0.75}
+                          ></ActiniaGeoTiff> : null
+                      } */}
+                      
+                      <VectorLayer layerName="featureOverlayer" source={VectorSource()} style={surveyStyles.styleCache.selected}></VectorLayer>
+                      <VectorLayer 
+                        layerName="survey" 
+                        source={surveySource}  
+                        style={surveyStyles.setSurveyStyle}
+                      ></VectorLayer> 
+
+                      
+                      
+
+                  </Layers>
+
+                  <Events>
+                    {/* <OnMapEvent eventName='postrender' eventHandler={onPostRenderEvent}></OnMapEvent> */}
+                    <OnMapEvent eventName='click' eventHandler={surveyClickEvent}></OnMapEvent>
+                    <OnMapEvent eventName='moveend' eventHandler={onMoveEventHandler}></OnMapEvent>
+                
+                  </Events>
+
+                  <Controls>
+                      <FullScreenControl />
+                      <ZoomSliderControl />
+                      <ScaleLineControl />
+                    
+                      {/* <EditMapControl drawTypes={['Point']}/> */}
+                  </Controls>
+              
+
+                </Map>
               </Col>
              
-             <Col md={1}></Col>
+              {/* <Col md={1}></Col> */}
              
-             <Col md={3}>
-            
-
-
-                
+             <Col md={4} >                
                   { 
                     nlcdData ? 
-                  <Row>
-                  <h1>Upstream Land Use Characteristics</h1>
-                  <h2>Total Area {nlcdTotalArea(nlcdData)}</h2>
-                  <BarChart
-                    width={400}
-                    height={400}
-                    data={nlcdData}
-                    // layout="horizontal"
-                    margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                    barSize={5}
-                  >
-                    <XAxis dataKey="cat" scale="point" padding={{ left: 10, right: 10 }}  />
-                    <YAxis  />
-                    <Tooltip />
-                    <Legend />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    {/* {
-                      nlcdData.map((d, idx) => {
-                        let catLab = d.label
-                        return(<Bar key={idx} dataKey={catLab} fill={d.color} background={{ fill: '#eee' }} />)
-                      })
-                        
-                    } */}
-                    <Bar
-                        dataKey="area"
-                        fill="#000"
-                        stroke="#000"
-                        // layout="vertical"
-                        strokeWidth={1}>
-                        {
-                            nlcdData.map((d, idx) => (
-                                <Cell key={`cell-${idx}`} fill={d.color} />
-                            ))
-                        }
-                    </Bar>
-                    
-                  </BarChart>
-
-                 
+                  <Row className="bg-alert text-dark">
                   
+                    <Card bg="bg-secondary-light" text="dark">
+                    
+                    <Card.Body>
+                      <Card.Title>Upstream Land Use Characteristics</Card.Title>
+                      <Card.Subtitle>Total Area ({nlcdTotalArea(nlcdData)} km<sup>2</sup>)</Card.Subtitle>
+                      
+                    </Card.Body>
+                    <div style={{backgroundColor: "white"}}>
+                    <BarChart
+                      width={500}
+                      height={400}
+                      data={nlcdData}
+                      // layout="horizontal"
+                      margin={{
+                        top: 5,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                      barSize={5}
+                    >
+                      <XAxis dataKey="cat" scale="point" padding={{ left: 10, right: 10 }}  />
+                      <YAxis  />
+                      <Tooltip />
+                      <Legend />
+                      <CartesianGrid strokeDasharray="3 3" />
+                      {/* {
+                        nlcdData.map((d, idx) => {
+                          let catLab = d.label
+                          return(<Bar key={idx} dataKey={catLab} fill={d.color} background={{ fill: '#eee' }} />)
+                        })
+                          
+                      } */}
+                      <Bar
+                          dataKey="area"
+                          fill="#000"
+                          stroke="#000"
+                          // layout="vertical"
+                          strokeWidth={1}>
+                          {
+                              nlcdData.map((d, idx) => (
+                                  <Cell key={`cell-${idx}`} fill={d.color} />
+                              ))
+                          }
+                      </Bar>
+                      
+                    </BarChart>
+                    </div>
+                    <Card.Footer>
+                      <Card.Text>
+                      USGS NLCD
+                      </Card.Text>
+                    </Card.Footer>
+                  </Card>
                   </Row>
                   :  
-                  <Row>
-                  <h2>Survey Data</h2>
-                  <h3>Stormwater Problem Severity</h3>
-                     <BarChart
-                       width={400}
+                  <Row >
+                  
+
+
+                    <Card bg="bg-secondary-light" text="dark">
+                    
+                    <Card.Body>
+                      <Card.Title>Survey Data</Card.Title>
+                      <Card.Subtitle>Stormwater Problem Severity</Card.Subtitle>
+                      
+                    </Card.Body>
+                    <div style={{backgroundColor: "white"}}>
+
+                    <BarChart 
+                       width={500}
                        height={400}
                        data={surveyData}
                        margin={{
@@ -547,94 +521,35 @@ const Game = ({params}) => {
                        <Bar dataKey="somewhat_serious" fill={surveyStyles.colorScheme[3]} />
                        <Bar dataKey="serious" fill={surveyStyles.colorScheme[4]} />
                      </BarChart>
-                     </Row>
+                  
+                     </div>
+                    <Card.Footer>
+                      <Card.Text>
+                       Data Collected during RCN Workshop...
+                      </Card.Text>
+                    </Card.Footer>
+                  </Card>
+                  </Row>
                 }
-                
-                </Col>
-                </Row>
-                <Row>
-                  <Col md={10}>
-                  </Col>
+            </Col>
+               
                   <Col md={2}>
                   
-                  <Card style={{ width: '18rem' }}>
+                  <Card
+                  //  style={{ width: '20rem' }} 
+                   className="bg-secondary-light text-dark">
                     
                     <Card.Body>
-                      <Card.Title>NLCD 01-19 Land Cover Change First Disturbance Date</Card.Title>
-                      <Card.Text>
-                     {status}
-                     {resourceId}
-                  
-                    <span>{messageHistory[-1]}</span>
-                
-                      </Card.Text>
+                      <Card.Title>NLCD Land Cover Categories</Card.Title>
+                    
                     </Card.Body>
-                    <Card.Img variant="top" src={legend} />
+                    <NLCDLegend categories={nlcdColors.categories} family={true} ></NLCDLegend>
+                    {/* <Card.Img variant="top" src={legend} /> */}
                   </Card>
 
                   
                   </Col>
                 </Row>
-                { 
-                    nlcdData ? 
-                  <Row>
-                  <h1>Upstream Land Use Characteristics</h1>
-                  <h2>Total Area {nlcdTotalArea(nlcdData)}</h2>
-                  <BarChart
-                    width={1000}
-                    height={800}
-                    data={nlcdData}
-                    // layout="vertical"
-                    // margin={{
-                    //   top: 5,
-                    //   right: 30,
-                    //   left: 20,
-                    //   bottom: 5,
-                    // }}
-                    // barSize={50}
-                  >
-                    <XAxis dataKey="cat" angle={90} tickCount={15} padding={{ left: 10, right: 10 }}  />
-                    <YAxis dataKey="area"/>
-                    <Tooltip />
-                    <Legend />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    {/* {
-                      nlcdData.map((d, idx) => {
-                        let catLab = d.label
-                        return(<Bar key={idx} dataKey={label} fill={d.color} background={{ fill: '#eee' }} />)
-                      })
-                        
-                    } */}
-                     <Bar
-                        dataKey="area"
-                        fill="#000"
-                        stroke="#000"
-                        // layout="vertical"
-                        strokeWidth={1}>
-                        {
-                            nlcdData.map((d, idx) => (
-                                <Cell key={`cell-${idx}`} fill={d.color} />
-                            ))
-                        }
-                    </Bar>
-
-                    
-                  </BarChart>
-
-                  {/* <FunnelChart width={500} height={250}>
-                    <Tooltip />
-                    <Funnel
-                      dataKey="area"
-                      data={nlcdData}
-                      isAnimationActive
-                    >
-                      <LabelList position="right" fill="#000" stroke="none" dataKey="label" />
-                    </Funnel>
-                  </FunnelChart> */}
-                  
-                  </Row>
-                  : null
-                }
           </Container>
         )
   }

@@ -30,7 +30,7 @@ $savan-primary: #657e96;
 // $primary-light:
 // $primary-dark:
 $savan-secondary: #d07944;
-// $secondary-light:
+$savan-secondary-light:rgb(207, 207, 207);
 // $secondary-dark:
 $savan-orange: #d49441;
 $savan-tan: #f0e3ce;
@@ -69,6 +69,7 @@ $theme-colors: (
     "success": $savan-orange,
     "warning": $buff,
     "light": $savan-tan,
+    "secondary-light": $savan-secondary-light,
     "dark": rgb(0, 0, 0)
    
 );

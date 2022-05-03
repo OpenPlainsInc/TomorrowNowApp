@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Apr 29 2022
+ * Last Modified: Mon May 02 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,6 +33,7 @@
 class NLCD {
     constructor(...categories) {
         this.categories = categories
+        // this.families = families
     }
 
     *getCategories() {
@@ -40,6 +41,12 @@ class NLCD {
           yield categories;
         }
     }
+
+    families() {
+        let tmpSet = new Set(this.categories.map(f => f.family))
+        return tmpSet
+    }
+
 }
 
 class NLCDCategory {
@@ -84,8 +91,8 @@ const nlcdCats = new NLCD(
     new NLCDCategory(7, "Herbaceous", "#e3e3c2", 74, "Moss", "#78ae94", "Alaska only areas dominated by mosses, generally greater than 80% of total vegetation."),
 
     //Planted/Cultvated
-    new NLCDCategory(8, "Planted/Cultvated", "#dcd93d", 81, "Pasture/Hay", "#476ba1", "Areas of grasses, legumes, or grass-legume mixtures planted for livestock grazing or the production of seed or hay crops, typically on a perennial cycle. Pasture/hay vegetation accounts for greater than 20% of total vegetation."),
-    new NLCDCategory(8, "Planted/Cultvated", "#ab7028", 82, "Cultivated Crops", "#476ba1", "Areas used for the production of annual crops, such as corn, soybeans, vegetables, tobacco, and cotton, and also perennial woody crops such as orchards and vineyards. Crop vegetation accounts for greater than 20% of total vegetation. This class also includes all land being actively tilled."),
+    new NLCDCategory(8, "Planted/Cultvated", "#dcd93d", 81, "Pasture/Hay", "#dcd93d", "Areas of grasses, legumes, or grass-legume mixtures planted for livestock grazing or the production of seed or hay crops, typically on a perennial cycle. Pasture/hay vegetation accounts for greater than 20% of total vegetation."),
+    new NLCDCategory(8, "Planted/Cultvated", "#dcd93d", 82, "Cultivated Crops", "#ab7028", "Areas used for the production of annual crops, such as corn, soybeans, vegetables, tobacco, and cotton, and also perennial woody crops such as orchards and vineyards. Crop vegetation accounts for greater than 20% of total vegetation. This class also includes all land being actively tilled."),
 
     //Wetlands
     new NLCDCategory(9, "Wetlands", "#bad9eb", 90, "Woody Wetlands", "#bad9eb", "Areas where forest or shrubland vegetation accounts for greater than 20% of vegetative cover and the soil or substrate is periodically saturated with or covered with water."),

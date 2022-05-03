@@ -1,7 +1,7 @@
 /*
- * Filename: survey.js
+ * Filename: basinResponseSource.js
  * Project: TomorrowNow
- * File Created: Wednesday April 6th 2022
+ * File Created: Monday May 2nd 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -31,50 +31,34 @@
  */
 
 
-// 'https://services1.arcgis.com/aT1T0pU1ZdpuDk1t/ArcGIS/rest/services/'
-// '0/query?f=json&returnGeometry=true&inSR=102100&outFields=*&outSR=4326&where=1=1`'
-import EsriJSON from 'ol/format/EsriJSON';
+
+
+import GeoJSON from 'ol/format/GeoJSON';
 import {fromLonLat} from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 import {tile as tileStrategy} from 'ol/loadingstrategy';
 import {createXYZ} from 'ol/tilegrid';
 
-const survery = ((onAddFeature)=> {
+const basinResponseSource = ((onAddFeature)=> {
 
-    const serviceUrl = 'https://services1.arcgis.com/aT1T0pU1ZdpuDk1t/ArcGIS/rest/services/' +
-    'survey123_571499fe84ac4125abe48b793b9970a3_stakeholder/FeatureServer/'
+    const serviceUrl = "http://localhost:8600/geoserver/actinia/ows?" + 
+        "service=WFS&version=1.0.0&request=GetFeature&typeName=actinia%3Apoint_basin_cloud&" +
+        "maxFeatures=50&outputFormat=application%2Fjson&srsName=EPSG:4326"
     const layer = 0
 
-    const esrijsonFormat = new EsriJSON();
+    const geojsonFormat = new GeoJSON();
     // async function fetchRasters() 
     const vectorSource = new VectorSource({
         loader: async (extent, resolution, projection, success, failure) => {
-          const url = new URL(
-            serviceUrl +
-            layer +
-            '/query/?f=json&' +
-            'returnGeometry=true&outFields=*' +
-            '&spatialRel=esriSpatialRelIntersects&geometry=' +
-            encodeURIComponent(
-              '{"xmin":' +
-                extent[0] +
-                ',"ymin":' +
-                extent[1] +
-                ',"xmax":' +
-                extent[2] +
-                ',"ymax":' +
-                extent[3] +
-                ',"spatialReference":{"wkid":4326}}'
-            ) +
-            '&geometryType=esriGeometryEnvelope&inSR=4326&outFields=*' +
-            '&outSR=4326')
+          const url = new URL(serviceUrl)
 
             const res = await fetch(url, {
                 method: "GET",
                 cache: "reload"
             });
             const data = await res.json();
-            const features = esrijsonFormat.readFeatures(data, {
+            console.log("Basin Geojson", data)
+            const features = geojsonFormat.readFeatures(data, {
                 featureProjection: projection,
             });
             if (features.length > 0) {
@@ -97,6 +81,6 @@ const survery = ((onAddFeature)=> {
       return vectorSource
 })
 
-export default survery
+export default basinResponseSource
 
 

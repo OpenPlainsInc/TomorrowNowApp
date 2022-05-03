@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Apr 28 2022
+ * Last Modified: Mon May 02 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -36,10 +36,12 @@ import GrassSelect from "./GrassSelect";
 import RasterCardImage from "./RasterCardImage";
 import GrassDataTypeSelect from "./GrassDataTypeSelect";
 import GrassRenderImage from "./GrassRenderImage";
+import NLCDLegend from "./NLCDLegend";
 export {
 	GrassSelect,
     GrassLocalPagination,
     RasterCardImage,
     GrassDataTypeSelect,
-    GrassRenderImage
+    GrassRenderImage,
+    NLCDLegend
 }
