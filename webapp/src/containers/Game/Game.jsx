@@ -45,6 +45,7 @@ import GrassColors from '../../components/OpenLayers/Colors'
 import utils from "../../components/OpenLayers/Colors/utils";
 import nlcdColors from "../../components/OpenLayers/Colors/nlcd"
 import WebGLTileLayer from "../../components/OpenLayers/Layers/WebGLTileLayer"
+import nlcdCOGSource from "../../components/OpenLayers/Sources/nlcdCog"
 import Reprojection from "../../components/OpenLayers/Views/Reprojection";
 import ActiniaGeoTiff from '../../components/OpenLayers/Sources/ActiniaGeoTiff';
 import { NLCDLegend } from '../../components/Grass/Utils';
@@ -138,8 +139,13 @@ const Game = ({params}) => {
       const _extent = view.calculateExtent()
       console.log('extent', _extent, 'resolution', view.getResolution())
       setExtent(extent)
-   
+      console.log(e.target.getLayers())
       e.target.getLayers().forEach((el) => {
+
+        if (el.get('name') === "nlcd2019") {
+          console.log("onMove nlcd2019", el)
+          console.log("onMove nlcd2019")
+        }
 
         if (el.get('name') === "survey") {
         
@@ -365,6 +371,8 @@ const Game = ({params}) => {
                       <TileLayer source={ned3DepSource({layer: 'Hillshade Multidirectional'})} opacity={1} ></TileLayer>
                       {/* <TileLayer source={nlcdSource()} opacity={0.5}></TileLayer> */}
                       <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
+                      {/* <TileLayer layerName="nlcd2019" source={nlcdCOGSource()} opacity={1}></TileLayer> */}
+                      {/* <WebGLTileLayer layerName="nlcd2019" source={nlcdCOGSource()} opacity={1}></WebGLTileLayer> */}
 
                       {/* <TileLayer source={nlcdDataSouce}></TileLayer> */}
                       <TileLayer source={osm()} opacity={0.5}></TileLayer>

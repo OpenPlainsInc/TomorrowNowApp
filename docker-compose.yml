@@ -37,6 +37,7 @@ services:
       # - *services-volume
     ports:
       - "8088:8088"
+      - "5439:5432"
     depends_on:
       - redis
 

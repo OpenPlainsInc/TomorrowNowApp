@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Apr 29 2022                                               #
+# Last Modified: Tue May 03 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -462,37 +462,12 @@ def rDrain(request):
                     }
                 ]
             },
-            # {
-            #     "module": "r.water.outlet",
-            #     "id": "r.water.outlet_1804289382",
-            #     "flags": "",
-            #     "inputs": [
-            #         {
-            #             "param": "input",
-            #             "value": "direction_3k"
-            #         },
-            #         {
-            #             "param": "coordinates",
-            #             "value": t_coords
-            #         }
-            #     ],
-            #     "outputs": [
-            #         {
-            #             "param": "output",
-            #             "value": "point_basin"
-            #         }
-            #     ]
-            # }
             {
                 "module": "r.stream.basins",
                 "id": "r.stream.basins_1804289382",
                 "flags": "c",
                 "inputs": [
                     {
-                        # "import_descr": {
-                        #     "source": "https://storage.googleapis.com/tomorrownow-actinia-dev/direction_3k_cog.tif",
-                        #     "type": "raster"
-                        # },
                         "param": "direction",
                         "value": "direction_3k_10m_d"
                     },
@@ -500,10 +475,6 @@ def rDrain(request):
                         "param": "stream_rast",
                         "value": "circle"
                     },
-                    # {
-                    #     "param": "coordinates",
-                    #     "value": t_coords
-                    # },
                     {
                         "param": "memory",
                         "value": "1500"
@@ -544,8 +515,7 @@ def rDrain(request):
                 "module": "r.mask",
                 "id": "r.mask",
                 "inputs": [
-                    {
-                      
+                    {                
                         "param": "raster",
                         "value": "point_basin"
                     },
@@ -561,7 +531,7 @@ def rDrain(request):
             },
             {
                 "module": "r.stats",
-                "id": "r.stats_1",
+                "id": "r.stats_2016",
                 "flags": "acpl",
                 "inputs": [
                     {
@@ -582,6 +552,50 @@ def rDrain(request):
                     }
                 ]
             },
+            # {
+            #     "module": "r.stats",
+            #     "id": "r.stats_2019",
+            #     "flags": "acpl",
+            #     "inputs": [
+                    # {
+                    #     "import_descr": {
+                    #         "source": "https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2019_cog.tif",
+                    #         "type": "raster"
+                    #     },
+                    #     "param": "input",
+                    #     "value": "nlcd_2019_cog"
+                    # },
+            #         {
+            #             "import_descr": {
+            #                 "source": "stac.3dep.rastercube.3dep-seamless",
+            #                 "type": "stac",
+            #                 "extent": {
+            #                     "spatial": {
+            #                         "bbox": [[maxx, maxy, minx, miny]]
+            #                     },
+            #                     "temporal": {
+            #                         "interval": [["2021-09-09", "2021-09-12"]]
+            #                     }
+            #                 },
+            #                 "resample": 'bilinear'
+            #             },
+            #             "param": "input",
+            #             "value": "3dep-seamless"
+            #         },
+            #         {
+            #             "param": "separator",
+            #             "value": "|"
+            #         },
+            #         {
+            #             "param": "null_value",
+            #             "value": "*"
+            #         },
+            #         {
+            #             "param": "nsteps",
+            #             "value": "255"
+            #         }
+            #     ]
+            # },
             {
                 "id": "v.out.ogr_1804289383",
                 "inputs": [

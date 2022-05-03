@@ -1,14 +1,31 @@
+@use '../../App.scss' as colors;
+
 
 html,body {
     height: 100%; 
     width: 100%;
+    background-color: colors.$savan-tan;
 }
+// .map-fullscreen {
+//     height: auto; 
+//     position: relative; 
+//     height: 50rem;
+//     width: 100%;
+//     // top: 0; 
+//     // bottom: 0; 
+//     // left: 0; 
+//     // right: 33.33%;
+//     margin-top: 50px;
+// }
+
 .map-fullscreen {
     height: auto; 
     position: absolute; 
+    // height: 50rem;
+    // width: 100%;
     top: 0; 
     bottom: 0; 
     left: 0; 
-    right: 33.33%;
+    right: 50%;
     margin-top: 50px;
 }
