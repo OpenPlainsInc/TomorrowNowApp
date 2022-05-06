@@ -10,6 +10,7 @@
 
 // react
 import React, { useState, useEffect, useId } from 'react';
+import { useController } from "react-hook-form"
 
 
 import '../module.scss';
@@ -23,16 +24,25 @@ import osm from "../../../OpenLayers/Sources/osm"
 import TileLayer from "../../../OpenLayers/Layers/TileLayer"
 import ModuleCoordsParam from "./ModuleCoordsParam"
 
-const ModuleNumberParam = ({param}) => {
+const ModuleNumberParam = ({param, control}) => {
 
     const [subtype, setSubtype] = useState(null);
     const [defaultOption, setDefaultOption] = useState(null);
     const [subtypeComponent, setSubtypeComponent] = useState(null)
     console.log('ModuleNumberParam')
+    const {
+        field: { onChange, onBlur, name, value, ref },
+        fieldState: { invalid, isTouched, isDirty },
+        formState: { touchedFields, dirtyFields }
+    } = useController({
+        name: param.name,
+        control,
+        rules: { required: !param.optional },
+        defaultValue: param.default || "",
+    });
 
   
     useEffect(() => {
-       
         if (!param) return;
         if (param.schema.type !== 'number') {
             return console.error(`GRASS module parameter ${param.name} is not a number`, param)
@@ -41,14 +51,11 @@ const ModuleNumberParam = ({param}) => {
             setSubtype(param.schema.subtype)
         }
 
-        if (param.hasOwnProperty('default')) {
-            setDefaultOption(param.default)
-        }
-    }, [param, subtype, defaultOption ])
+    }, [param, subtype ])
   
 
     useEffect(() => {
-        if (!subtype) return null;
+        if (!subtype) return;
         if (subtype === 'coords') return setSubtypeComponent(<ModuleCoordsParam param={param} />);
       }, [param, subtype])
     
@@ -62,7 +69,10 @@ const ModuleNumberParam = ({param}) => {
                 {
                     subtype ? subtypeComponent :
                     <Form.Control 
-                        type="number" 
+                        type="number"
+                        value={value} 
+                        name={name}
+                        onChange={onChange}
                         placeholder={param.schema.type} 
                     />
                 }

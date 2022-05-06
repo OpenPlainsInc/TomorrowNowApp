@@ -10,6 +10,7 @@
 
 // react
 import React, { useState, useEffect } from 'react';
+import { useController } from "react-hook-form"
 
 
 import '../module.scss';
@@ -19,23 +20,34 @@ import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 
 
-const ModuleBooleanParam = ({param}) => {
-//   const [defaultValue, setDefaultValue] = useState([]);
-
-  useEffect(() => {
-      if (param.schema.type !== 'boolean') {
-          console.warn(`GRASS module parameter ${param.name} is not boolean`, param)
-      }
-  }, [])
+const ModuleBooleanParam = ({param, control}) => {
+    const {
+        field: { onChange, onBlur, name, value, ref },
+        fieldState: { invalid, isTouched, isDirty },
+        formState: { touchedFields, dirtyFields }
+      } = useController({
+        name: param.name,
+        control,
+        rules: { required: !param.optional },
+        defaultValue: param.default === 'True' ? true : false,
+      });
+    
+      useEffect(() => {
+        if (!param) return;
+        if (param.schema.type !== 'boolean') {
+            console.warn(`GRASS module parameter ${param.name} is not boolean`, param)
+        }
+      }, [param])
   
     return (      
-        <Form.Group as={Row} className="mb-2" controlId="formHorizontalEmail">
-            {/* <Form.Label column sm={2}>{param.name}</Form.Label> */}
+        <Form.Group as={Row} className="mb-2" controlId={`moduleBoolean.${param.name}`}>
             <Col sm={10}>
                 <Form.Check 
                     id={param.name} 
                     inline={true} 
-                    isValid={(param.default === 'True') ? true : false}
+                    isValid={value}
+                    onChange={onChange}
+                    value={value}
                     type="checkbox" 
                     label={param.name} />
                     <Form.Check.Label id={param.name} muted>{param.description}</Form.Check.Label>

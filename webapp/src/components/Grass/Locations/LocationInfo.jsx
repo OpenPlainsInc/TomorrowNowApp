@@ -1,5 +1,5 @@
 /*
- * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Locations/Location.jsx
+ * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Locations/LocationInfo.jsx
  * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
  * Created Date: Tuesday, April 12th 2022, 4:03:28 pm
  * Author: Corey White
@@ -20,19 +20,16 @@
  */
 
 
-import React, { useRef, useState, useEffect } from "react"
+import React, { } from "react"
 // import "./location.scss";
-import * as ol from "ol";
 
 
+export const LocationInfo = ({ name, projection, region}) => {
+  const {name, projection, region} = grassLocation || {};
 
-const Location = ({ children, user, url}) => {
-  // on component mount
-  useEffect(() => {
-  
-  },[]);
-
-
-
+  return grassLocation ? (
+    <>
+    <h3>{name}</h3>
+    </>
+  ) : <p>Loading...</p>
 }
-export default Location;

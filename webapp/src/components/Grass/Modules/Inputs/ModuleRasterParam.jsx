@@ -10,24 +10,39 @@
 
 // react
 import React, { useState, useEffect } from 'react';
+import { useController } from "react-hook-form"
 
 
 import '../module.scss';
-import InputGroup from 'react-bootstrap/InputGroup'
+// import InputGroup from 'react-bootstrap/InputGroup'
 // import FloatingLabel from 'react-bootstrap/FloatingLabel'
 
 import Form from 'react-bootstrap/Form'
 import Grass from '../../grass'
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
+// import { useDataSource } from '../../Utils';
+import { useDataSource } from '../../Utils/useDataSource';
+const ModuleRasterParam = ({param, control}) => {
+    const [subtype, setSubtype] = useState(null);
+//   const [value, setValue] = useState("");
+//   const [options, setOptions] = useState([]);
+    console.log("ModuleRasterParam", param.name)
+    const options = useDataSource(Grass.getRasterLayers('nc_spm_08', 'PERMANENT'))
 
-const ModuleRasterParam = ({param}) => {
-  const [subtype, setSubtype] = useState(null);
-  const [value, setValue] = useState("");
-  const [options, setOptions] = useState([]);
+    const {
+        field: { onChange, onBlur, name, value, ref },
+        fieldState: { invalid, isTouched, isDirty },
+        formState: { touchedFields, dirtyFields }
+    } = useController({
+        name: param.name,
+        control,
+        rules: { required: !param.optional },
+        defaultValue: param.default || "",
+    });
 
   const handleSeletionEvent = (e) => {
     let newValue = e.target.value
-    setValue(newValue)
+    // setValue(newValue)
   }
 
 
@@ -43,37 +58,35 @@ const ModuleRasterParam = ({param}) => {
     }, [param])
 
 
-    useEffect(() => {
-        if (subtype !== 'cell') return;
-        let isMounted = true;   
-        (async ()=> {
-            let data = await Grass.locations.location.mapsets.getRasterLayers('nc_spm_08', 'PERMANENT')
-            console.log("Raster Layers", data)
+    // useEffect(() => {
+    //     if (subtype !== 'cell') return;
+    //     let isMounted = true;   
+    //     (async ()=> {
+    //         // let data = await Grass.locations.location.mapsets.getRasterLayers('nc_spm_08', 'PERMANENT')
+    //         // console.log("Raster Layers", data)
            
-            let rasterData = data.response.process_results
-            console.log("rasterData", rasterData)
-            setOptions(rasterData)
+    //         // let rasterData = data.response.process_results
+    //         // console.log("rasterData", rasterData)
+    //         // setOptions(rasterData)
             
-        })()
-        return () => { isMounted = false } 
-    }, [subtype])
+    //     })()
+    //     return () => { isMounted = false } 
+    // }, [subtype])
   
     return (      
-        // <InputGroup className="mb-3">
-        //     <InputGroup.Text id={`RasterSelect.${param.name}`}>{param.name}</InputGroup.Text>
-            <Form.Control as="select" value={value} onChange={handleSeletionEvent}>
+       
+            <Form.Control name={name} as="select" value={value} onChange={onChange} ref={ref}>
                 <option>Select Raster</option>
 
-                {options ? options.map((c, idx) => {
+                {options ? options.map((c) => {
                     return(
-                    <option key={idx} value={c}>
+                    <option key={c} value={c}>
                         {c}
                     </option>
                     )
-                }) : []
+                }) : null
             }
             </Form.Control>
-        // </InputGroup>
     )
 }
 

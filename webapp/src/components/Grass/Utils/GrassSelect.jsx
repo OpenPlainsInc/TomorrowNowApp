@@ -25,7 +25,7 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
       if (selectionType == "locations") {
         setValue(location)
         setInputLabel("Location")
-        let data =  await Grass.locations.getLocations()
+        let data =  await Grass.getLocations()
         console.log("locations", data.response)
         setOptions(data.response.locations)
       }

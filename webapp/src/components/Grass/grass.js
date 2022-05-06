@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Apr 28 2022
+ * Last Modified: Thu May 05 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,43 +33,82 @@
 const API_HOST = "http://localhost:8005/savana"
 
 
+const getLocalStorageData = key => () => {
+    return localStorage.getItem(key);
+}
+
+const setLocalStorageData = (key, value) => () => {
+    return localStorage.setItem(key, value)
+}
+
+const removeLocalStorageData = (key, value) => () => {
+    return localStorage.removeItem(key, value)
+}
+
+const clearLocalStorageData = () => {
+    return localStorage.clear()
+}
+
 const Grass = {
+    getLocation: async (locationName) => {
+        /**
+        * Route: /locations/{location_name}/info
+        */
+          try {
+            // let queryParams = {un: params.unId}
+            const url = new URL(`${API_HOST}/g/locations/${locationName}/info`)
+            let res = await fetch(url, { 
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+            let data = await res.json();
+            let results = await data.process_results
+            console.log("getLocation: response:", data)
+            // console.log("getLocation: results:", results)
+            return results                         
+        } catch (e) {
+            console.log("getLocation: error", e);
+        }
+    },
+    getLocations: (async () => {
+        /**
+        * Route: /locations/{location_name}/info
+        */
+          try {
+            const url = new URL(`${API_HOST}/g/locations`)
+            let res = await fetch(url, { 
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+            return await res.json()                         
+        } catch (e) {
+            console.log(e);
+        }
+    }),
+    getRasterLayers: (async (locationName, mapsetName) => {
+        /**
+         * Route: /locations/{location_name}/mapsets/{mapsetName}/raster_layers
+        */
+        try {
+            const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}/raster_layers`)
+            let res = await fetch(url, { 
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+            let data = await res.json();
+            console.log("response:", data)
+            console.log("response data:", data.response.process_results)
+
+            return data.response.process_results                    
+          } catch (e) {
+            console.log(e);
+        }
+    }),
     locations : {
-        getLocations: (async () => {
-            /**
-            * Route: /locations/{location_name}/info
-            */
-              try {
-                const url = new URL(`${API_HOST}/g/locations`)
-                let res = await fetch(url, { 
-                    headers: {
-                    'Content-Type': 'application/json'
-                    }
-                });
-                return await res.json()                         
-            } catch (e) {
-                console.log(e);
-            }
-        }),
-        getLocation: (async (locationName) => {
-            /**
-            * Route: /locations/{location_name}/info
-            */
-              try {
-                // let queryParams = {un: params.unId}
-                const url = new URL(`${API_HOST}/g/locations/${locationName}/info`)
-                let res = await fetch(url, { 
-                    headers: {
-                    'Content-Type': 'application/json'
-                    }
-                });
-                let data = await res.json();
-                console.log("response:", data)
-                return data                         
-            } catch (e) {
-                console.log(e);
-            }
-        }),
+        
         location: {
             mapsets: {
                 getMapsets: (async (locationName) => {
@@ -170,15 +209,17 @@ const Grass = {
                     console.log(e);
                 }
             }),
-            get: (async (moduleName)=> {
+            get: async (moduleName)=> {
                 try {
                     let url = new URL(`${API_HOST}/g/modules/${moduleName}`)
-                    const res = await fetch(url);   
-                    return await res.json();
+                    const res = await fetch(url); 
+                    const responseJson = await res.json(); 
+                    console.log("Module Data", responseJson.response) 
+                    return responseJson.response;
                 } catch (e) {
                     console.log(e);
                 }
-            })
+            }
 
         }
     },

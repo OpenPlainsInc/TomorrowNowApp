@@ -316,6 +316,7 @@ const Game = ({params}) => {
             let rawnlcdData = lastJsonMessage.process_log
               .filter(f => f.executable === 'r.stats')
               .map(e => {
+                console.log("Stats", e)
                 return e.stdout.split("|").slice(0, -4)
               }).map(i => i.map(s=> s.replace("\n", "|").split("|")).flatMap(x=>{
                 return x //parseInt(x)//parseFloat(x).toFixed(2)

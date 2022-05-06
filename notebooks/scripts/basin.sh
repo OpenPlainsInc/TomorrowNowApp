@@ -5,4 +5,3 @@ r.to.vect input=point_basin_cloud output=point_basin_cloud type=area column=valu
 r.mask raster=point_basin_cloud
 r.stats input='nlcd_2019@https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2019_cog.tif' separator="," output="point_basin_stats.csv" -alnpc
 v.out.ogr in=point_basin_cloud output='PG:host=db port=5432 dbname=actinia user=actinia password=actinia' format=PostgreSQL type=area
-# v.external.out input='PG:dbname=actinia user=actinia password=actinia' format=PostgreSQL

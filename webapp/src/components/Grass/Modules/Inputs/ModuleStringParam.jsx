@@ -20,7 +20,7 @@
 
 // react
 import React, { useState, useEffect, useId } from 'react';
-
+import { useController } from "react-hook-form";
 
 import '../module.scss';
 import Row from 'react-bootstrap/Row'
@@ -29,22 +29,29 @@ import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import ModuleRasterParam from './ModuleRasterParam';
 import ModuleEnumParam from './ModuleEnumParam';
+import { appendErrors } from 'react-hook-form';
 
 
-const ModuleStringParam = ({param}) => {
-
+const ModuleStringParam = ({param, control}) => {
+    console.log("ModuleStringParam", param.name)
     const [subtype, setSubtype] = useState(null);
     const [subtypeComponent, setSubtypeComponent] = useState(null);
     const [enumOptions, setEnumOptions] = useState(null);
-    const [defaultOption, setDefaultOption] = useState(null);
-    let count= 0
-    console.log('ModuleStringParam', this)
+    const {
+        field: { onChange, onBlur, name, value, ref },
+        fieldState: { invalid, isTouched, isDirty },
+        formState: { touchedFields, dirtyFields }
+      } = useController({
+        name: param.name,
+        control,
+        rules: { required: !param.optional },
+        defaultValue: param.default || "",
+      });
 
 
   
     useEffect(() => {
-        count++
-        console.log("Count", count)
+        
         if (!param) return;
         if (param.schema.type !== 'string') {
             return console.error(`GRASS module parameter ${param.name} is not a string`, param)
@@ -57,27 +64,25 @@ const ModuleStringParam = ({param}) => {
             setEnumOptions(param.schema.enum)
         }
 
-        if (param.hasOwnProperty('default')) {
-            setDefaultOption(param.default)
-        }
-    }, [param, subtype, enumOptions, defaultOption ])
+        
+    }, [param])
   
     useEffect(() => {
-      if (!subtype && !enumOptions) return;
-      if (enumOptions) return setSubtypeComponent(<ModuleEnumParam param={param} options={enumOptions} defaultValue={defaultOption}/>);
-      if (!subtype) return null;
-      if (subtype === 'vector') return null;
-      if (subtype === 'cell') return setSubtypeComponent(<ModuleRasterParam param={param} />);
-      if (subtype === 'coords') return null;
+      if (!control) return;
+    //   if (!subtype && !enumOptions) return;
+    //   if (enumOptions) return setSubtypeComponent(<ModuleEnumParam param={param} options={enumOptions} control={control}/>);
+      if (!subtype) return;
+      if (subtype === 'vector') return;
+      if (subtype === 'cell') return setSubtypeComponent(<ModuleRasterParam param={param}  control={control}/>);
+      if (subtype === 'coords') return;
      
-    }, [param, subtype, enumOptions])
+    }, [subtype])
 
-//   useEffect(() => {
-//     if (!enumOptions) return null;
-//     console.log("Enums", enumOptions)
-//     console.log("Default Option", defaultOption)
-//     setSubtypeComponent(<ModuleEnumParam param={param} options={enumOptions} defaultValue={defaultOption}/>)
-//     }, [param, enumOptions])
+    useEffect(() => {
+        if (!control) return;
+        if (!enumOptions) return;
+        if (enumOptions) return setSubtypeComponent(<ModuleEnumParam param={param} options={enumOptions} control={control}/>);
+      }, [enumOptions])
     
   
     return (      
@@ -86,10 +91,15 @@ const ModuleStringParam = ({param}) => {
             <Form.Text muted>{param.description}</Form.Text>
             <Col sm={10}>
                 { 
-                    subtypeComponent ? 
+                    subtype || enumOptions ? 
                         subtypeComponent : 
                         <Form.Control 
                             type="text" 
+                            name={name}
+                            onChange={onChange}
+                            value={value}
+                            ref={ref}
+                            // isInvalid={appendErrors[param.name]}
                             placeholder={param.schema.type} 
                         />
                 }

@@ -8,35 +8,6 @@
  */
 
 
-/*
- * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Modules/Inputs/ModuleBooleanParam.jsx
- * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
- * Created Date: Friday, April 22nd 2022, 4:27:47 pm
- * Author: Corey White
- * 
- * Copyright (c) 2022 Corey White
- */
-
-/*
- * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Modules/inputs/ModuleStringParam.jsx
- * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
- * Created Date: Friday, April 22nd 2022, 4:07:07 pm
- * Author: Corey White
- * 
- * Copyright (c) 2022 Corey White
- */
-
-
-/*
- * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Modules/Module.jsx
- * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
- * Created Date: Tuesday, April 12th 2022, 4:05:44 pm
- * Author: Corey White
- * 
- * Copyright (c) 2022 Corey White
- */
-
-
 // react
 import React, { useState, useEffect } from 'react';
 
@@ -74,8 +45,7 @@ const ModuleArrayParam = ({param}) => {
             <Form.Label column sm={2}>{param.name}</Form.Label>
             <Form.Text id={param.name} muted>{param.description}</Form.Text>
             <Col sm={10}>
-                {/* <Form.Control type="text" placeholder={param.default} /> */}
-                {subtypeComponent ? subtypeComponent : <Form.Control type="text" placeholder={param.default} />}
+=                {subtypeComponent ? subtypeComponent : <Form.Control type="text" placeholder={param.default} />}
             </Col>
         </Form.Group>             
     )

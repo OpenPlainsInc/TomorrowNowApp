@@ -10,7 +10,7 @@
 
 // react
 import React, { useState, useEffect } from 'react';
-
+import { useController } from "react-hook-form"
 
 import '../module.scss';
 import InputGroup from 'react-bootstrap/InputGroup'
@@ -19,24 +19,23 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Form from 'react-bootstrap/Form'
 import { useParams } from 'react-router-dom';
 
-const ModuleEnumParam = ({param, options, defaultValue}) => {
-  const [value, setValue] = useState(defaultValue);
+const ModuleEnumParam = ({param, options, control}) => {
+//   const [value, setValue] = useState(defaultValue);
 
-  const handleSeletionEvent = (e) => {
-    let newValue = e.target.value
-    setValue(newValue)
-  }
-
-    // useEffect(() => {
-    //     setValue(defaultValue);
-    // }, [value])
-
-  
+  const {
+    field: { onChange, onBlur, name, value, ref },
+    fieldState: { invalid, isTouched, isDirty },
+    formState: { touchedFields, dirtyFields }
+  } = useController({
+    name: param.name,
+    control,
+    rules: { required: !param.optional },
+    defaultValue: param.default || "",
+  });
   
     return (      
-        // <InputGroup className="mb-3">
-        //     <InputGroup.Text id={`EnumSelect.${param.name}`}>{param.name}</InputGroup.Text>
-            <Form.Control as="select" value={value} onChange={handleSeletionEvent}>
+       
+            <Form.Control name={name} as="select" value={value} onChange={onChange} ref={ref}>
                 {options ? options.map((c, idx) => {
                     return(
                     <option key={idx} value={c}>
@@ -46,7 +45,7 @@ const ModuleEnumParam = ({param, options, defaultValue}) => {
                 }) : []
             }
             </Form.Control>
-        // </InputGroup>
+      
     )
 }
 
