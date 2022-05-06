@@ -403,7 +403,6 @@ def rDrain(request):
         print("Transformed Point", t_coords)
 
         extent_coords = request.data[0]['extent']
-      
         extent_ne = Point(float(extent_coords[0]), float(extent_coords[1]), srid=4326)
         extent_sw = Point(float(extent_coords[2]), float(extent_coords[3]), srid=4326)
         extent_ne.transform(ct=3358)
@@ -412,65 +411,70 @@ def rDrain(request):
         minx, miny = extent_ne
         maxx, maxy = extent_sw
 
-
         def importCOG(cog_name, year):
-            return    [     {
-                "module": "r.import",
-                "id": f"r.import_{cog_name}",
-                "flags": "",
-                "inputs": [
-                    {
-                        "param": "input",
-                        "value": f"/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/{cog_name}.tif"
-                    },
-                    {
-                        "param": "memory",
-                        "value": "3000"
-                    },
-                    {
-                        "param": "extent",
-                        "value": "region"
-                    },
-                ],
-                "outputs": [
-                    {
-                        "param": "output",
-                        "value": cog_name
-                    }
-                ]
-            },
-            {
-                "module": "r.stats",
-                "id": f"r.stats_{year}",
-                "flags": "acpl",
-                "inputs": [
-                    {
-                        "param": "input",
-                        "value": cog_name
-                    },
-                    {
-                        "param": "separator",
-                        "value": "|"
-                    },
-                    {
-                        "param": "null_value",
-                        "value": "*"
-                    },
-                    {
-                        "param": "nsteps",
-                        "value": "255"
-                    }
-                ]
-            }]
+            return [
+                {
+                    "module": "r.import",
+                    "id": f"r.import_{cog_name}",
+                    "flags": "",
+                    "inputs": [
+                        {
+                            "param": "input",
+                            "value": f"/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/{cog_name}.tif"
+                        },
+                        {
+                            "param": "memory",
+                            "value": "3000"
+                        },
+                        {
+                            "param": "extent",
+                            "value": "region"
+                        },
+                    ],
+                    "outputs": [
+                        {
+                            "param": "output",
+                            "value": cog_name
+                        }
+                    ]
+                },
+                {
+                    "module": "r.stats",
+                    "id": f"r.stats_{year}",
+                    "flags": "acpl",
+                    "inputs": [
+                        {
+                            "param": "input",
+                            "value": cog_name
+                        },
+                        {
+                            "param": "separator",
+                            "value": "|"
+                        },
+                        {
+                            "param": "null_value",
+                            "value": "*"
+                        },
+                        {
+                            "param": "nsteps",
+                            "value": "255"
+                        }
+                    ]
+                }
+            ]
 
         grass_commands = [
             {
                 "module": "g.region",
                 "id": "g.region_1804289",
                 "inputs": [
+                    # {
+                    #     "param": "align",
+                    #     "value": "direction_3k_10m_d"
+                    # },
                     {
-                        "param": "align",
-                        "value": "direction_3k_10m_d"
+                        "param": "res",
+                        "value": "30"
                     },
                     {
                         "param": "n",
@@ -490,6 +494,53 @@ def rDrain(request):
                     }
             
 
+                ]
+            },
+            {
+                "module": "r.import",
+                "id": "r.import_usgs30m_cog",
+                "flags": "",
+                "inputs": [
+                    # {
+                    #     "param": "input",
+                    #     "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/USGS_Seamless_DEM_13.vrt"
+                    # },
+                    {
+                        "param": "input",
+                        "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/USGS_Seamless_DEM_1.vrt"
+                    },
+                    {
+                        "param": "resample",
+                        "value": "bilinear"
+                    },
+                    {
+                        "param": "memory",
+                        "value": "5000"
+                    },
+                    {
+                        "param": "extent",
+                        "value": "region"
+                    },
+                ],
+                "outputs": [
+                    {
+                        "param": "output",
+                        "value": "usgs_3dep_30m"
+                    }
+                ]
+            },
+            {
+                "module": "r.watershed",
+                "id": "r.watershed_usgs_3dep_30",
+                "inputs": [
+                    {
+                        "param": "elevation",
+                        "value": "usgs_3dep_30m"
+                    },
+                    {
+                        "param": "drainage",
+                        "value": "usgs_3dep_30m_direction"
+                    }
                 ]
             },
             {
@@ -520,7 +571,8 @@ def rDrain(request):
                 "inputs": [
                     {
                         "param": "direction",
-                        "value": "direction_3k_10m_d"
+                        # "value": "direction_3k_10m_d",
+                        "value": "usgs_3dep_30m_direction"
                     },
                     {
                         "param": "stream_rast",
@@ -580,112 +632,90 @@ def rDrain(request):
                     }
                 ]
             },
-            importCOG("nlcd_2001_cog","2001")[0],
-            importCOG("nlcd_2001_cog","2001")[1],
-            importCOG("nlcd_2004_cog","2004")[0],
-            importCOG("nlcd_2004_cog","2004")[1],
-            importCOG("nlcd_2006_cog","2006")[0],
-            importCOG("nlcd_2006_cog","2006")[1],
-            importCOG("nlcd_2008_cog","2008")[0],
-            importCOG("nlcd_2008_cog","2008")[1],
-            importCOG("nlcd_2011_cog","2011")[0],
-            importCOG("nlcd_2011_cog","2011")[1],
-            importCOG("nlcd_2013_cog","2013")[0],
-            importCOG("nlcd_2013_cog","2013")[1],
+            importCOG("nlcd_2001_cog", "2001")[0],
+            importCOG("nlcd_2001_cog", "2001")[1],
+            importCOG("nlcd_2004_cog", "2004")[0],
+            importCOG("nlcd_2004_cog", "2004")[1],
+            importCOG("nlcd_2006_cog", "2006")[0],
+            importCOG("nlcd_2006_cog", "2006")[1],
+            importCOG("nlcd_2008_cog", "2008")[0],
+            importCOG("nlcd_2008_cog", "2008")[1],
+            importCOG("nlcd_2011_cog", "2011")[0],
+            importCOG("nlcd_2011_cog", "2011")[1],
+            importCOG("nlcd_2013_cog", "2013")[0],
+            importCOG("nlcd_2013_cog", "2013")[1],
+            importCOG("nlcd_2016_cog", "2016")[0],
+            importCOG("nlcd_2016_cog", "2016")[1],
+            importCOG("nlcd_2019_cog", "2019")[0],
+            importCOG("nlcd_2019_cog", "2019")[1],
+            # {
+            #     "module": "r.stats",
+            #     "id": "r.stats_2016",
+            #     "flags": "acpl",
+            #     "inputs": [
+            #         {
+            #             "param": "input",
+            #             "value": "nlcd_2016"
+            #         },
+            #         {
+            #             "param": "separator",
+            #             "value": "|"
+            #         },
+            #         {
+            #             "param": "null_value",
+            #             "value": "*"
+            #         },
+            #         {
+            #             "param": "nsteps",
+            #             "value": "255"
+            #         }
+            #     ]
+            # },
+            # {
+            #     "module": "r.import",
+            #     "id": "r.import_usgs30m_cog",
+            #     "flags": "",
+            #     "inputs": [
+            #         # {
+            #         #     "param": "input",
+            #         #     "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/USGS_Seamless_DEM_13.vrt"
+            #         # },
+            #         {
+            #             "param": "input",
+            #             "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/USGS_Seamless_DEM_1.vrt"
+            #         },
+            #         {
+            #             "param": "resample",
+            #             "value": "bilinear"
+            #         },
+            #         {
+            #             "param": "memory",
+            #             "value": "3000"
+            #         },
+            #         {
+            #             "param": "extent",
+            #             "value": "region"
+            #         },
+            #     ],
+            #     "outputs": [
+            #         {
+            #             "param": "output",
+            #             "value": "usgs_3dep_30m"
+            #         }
+            #     ]
+            # },
             {
-                "module": "r.stats",
-                "id": "r.stats_2016",
-                "flags": "acpl",
+                "module": "r.univar",
+                "id": "r.univar_3dep_30m",
+                "flags": "t",
                 "inputs": [
                     {
-                        "param": "input",
-                        "value": "nlcd_2016"
+                        "param": "map",
+                        "value": "usgs_3dep_30m"
                     },
                     {
                         "param": "separator",
                         "value": "|"
-                    },
-                    {
-                        "param": "null_value",
-                        "value": "*"
-                    },
-                    {
-                        "param": "nsteps",
-                        "value": "255"
-                    }
-                ]
-            },
-            {
-                "module": "r.import",
-                "id": "r.import_nlcd_2019_cog",
-                "flags": "",
-                "inputs": [
-                    {
-                        "param": "input",
-                        "value": "/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2019_cog.tif"
-                    },
-                    {
-                        "param": "memory",
-                        "value": "3000"
-                    },
-                    {
-                        "param": "extent",
-                        "value": "region"
-                    },
-                ],
-                "outputs": [
-                    {
-                        "param": "output",
-                        "value": "nlcd_2019_cog"
-                    }
-                ]
-            },
-            {
-                "module": "r.stats",
-                "id": "r.stats_2019",
-                "flags": "acpl",
-                "inputs": [
-                    {
-                        # "import_descr": {
-                        #     "source": "https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2019_cog.tif",
-                        #     "type": "raster"
-                        # },
-                        "param": "input",
-                        "value": "nlcd_2019_cog"
-                    },
-                    # {
-                    #     "import_descr": {
-                    #         "source": "stac.3dep.rastercube.3dep-seamless",
-                    #         "type": "stac",
-                    #         "semantic_label": '',
-                    #         "filter": {
-                    #             # "summaries": {"gsd": {"eq": 30}}
-                    #             "gsd": {"eq": "30"}
-                    #         },
-                    #         "extent": {
-                    #             "spatial": {
-                    #                 "bbox": [[str(minx), str(miny), str(maxx), str(maxy)]]
-                    #             },
-                    #             "temporal": {
-                    #                 "interval": [["2021-09-09", "2021-09-12"]]
-                    #             }
-                    #         },
-                    #         "resample": 'bilinear'
-                    #     },
-                    #     "param": "input",
-                    #     "value": "3dep-seamless"
-                    # },
-                    {
-                        "param": "separator",
-                        "value": "|"
-                    },
-                    {
-                        "param": "null_value",
-                        "value": "*"
-                    },
-                    {
-                        "param": "nsteps",
-                        "value": "255"
                     }
                 ]
             },
