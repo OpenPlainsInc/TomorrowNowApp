@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu May 05 2022                                               #
+# Last Modified: Fri May 06 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -412,6 +412,57 @@ def rDrain(request):
         minx, miny = extent_ne
         maxx, maxy = extent_sw
 
+
+        def importCOG(cog_name, year):
+            return    [     {
+                "module": "r.import",
+                "id": f"r.import_{cog_name}",
+                "flags": "",
+                "inputs": [
+                    {
+                        "param": "input",
+                        "value": f"/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/{cog_name}.tif"
+                    },
+                    {
+                        "param": "memory",
+                        "value": "3000"
+                    },
+                    {
+                        "param": "extent",
+                        "value": "region"
+                    },
+                ],
+                "outputs": [
+                    {
+                        "param": "output",
+                        "value": cog_name
+                    }
+                ]
+            },
+            {
+                "module": "r.stats",
+                "id": f"r.stats_{year}",
+                "flags": "acpl",
+                "inputs": [
+                    {
+                        "param": "input",
+                        "value": cog_name
+                    },
+                    {
+                        "param": "separator",
+                        "value": "|"
+                    },
+                    {
+                        "param": "null_value",
+                        "value": "*"
+                    },
+                    {
+                        "param": "nsteps",
+                        "value": "255"
+                    }
+                ]
+            }]
+
         grass_commands = [
             {
                 "module": "g.region",
@@ -529,6 +580,18 @@ def rDrain(request):
                     }
                 ]
             },
+            importCOG("nlcd_2001_cog","2001")[0],
+            importCOG("nlcd_2001_cog","2001")[1],
+            importCOG("nlcd_2004_cog","2004")[0],
+            importCOG("nlcd_2004_cog","2004")[1],
+            importCOG("nlcd_2006_cog","2006")[0],
+            importCOG("nlcd_2006_cog","2006")[1],
+            importCOG("nlcd_2008_cog","2008")[0],
+            importCOG("nlcd_2008_cog","2008")[1],
+            importCOG("nlcd_2011_cog","2011")[0],
+            importCOG("nlcd_2011_cog","2011")[1],
+            importCOG("nlcd_2013_cog","2013")[0],
+            importCOG("nlcd_2013_cog","2013")[1],
             {
                 "module": "r.stats",
                 "id": "r.stats_2016",
@@ -553,9 +616,9 @@ def rDrain(request):
                 ]
             },
             {
-                "module": "r.in.gdal",
-                "id": "r.in.gdal_1804289383",
-                "flags": "ro",
+                "module": "r.import",
+                "id": "r.import_nlcd_2019_cog",
+                "flags": "",
                 "inputs": [
                     {
                         "param": "input",
@@ -566,13 +629,9 @@ def rDrain(request):
                         "value": "3000"
                     },
                     {
-                        "param": "offset",
-                        "value": "0"
+                        "param": "extent",
+                        "value": "region"
                     },
-                    {
-                        "param": "num_digits",
-                        "value": "0"
-                    }
                 ],
                 "outputs": [
                     {

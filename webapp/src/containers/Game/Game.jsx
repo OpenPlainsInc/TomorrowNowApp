@@ -37,7 +37,7 @@ import {TileDebug} from 'ol/source';
 // import Container from 'react-bootstrap/esm/Container';
 import Events from '../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, FunnelChart, Funnel, LabelList, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, FunnelChart, Funnel, LabelList, ResponsiveContainer } from 'recharts';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
@@ -317,34 +317,49 @@ const Game = ({params}) => {
               .filter(f => f.executable === 'r.stats')
               .map(e => {
                 console.log("Stats", e)
-                return e.stdout.split("|").slice(0, -4)
+                let output = e.stdout.split("|").slice(0, -5) 
+                console.log("Output", output)
+                let year = e.id.split("_")[1]
+                console.log("Year", String(year))
+                output.push(String(year))
+                // let labeledOutput = 
+                console.log(output)
+                return output
               }).map(i => i.map(s=> s.replace("\n", "|").split("|")).flatMap(x=>{
-                return x //parseInt(x)//parseFloat(x).toFixed(2)
-              })).flatMap(x=>x)
+                return x
+              })).flatMap(x=> {
+                console.log("Flat Map", x)
+                let year = x.pop()
+                let nlcdGraphData = sliceIntoChunks(x, 5).map(d => {
+                  let catId = parseInt(d[0])
+                  console.log("real d", d)
+                  console.log('d', catId, nlcdColors.categories)
+                  let catDetails = nlcdColors.categories.filter(c => c.category === catId)[0]
+                  console.log('catDetails', catDetails)
+  
+  
+                  let tmp =  {
+                    cat: catId,
+                    color: catDetails ? catDetails.category_color : "#fff",
+                    label: catDetails ? catDetails.category_label : "",
+                    area: (parseFloat(d[2])/ 1e6).toFixed(2),
+                    cells: parseInt(d[3]),
+                    percent: d[4],
+                    catDetails,
+                    year: year
+                  }
+                  tmp[tmp.label] = tmp.area
+                  console.log("tmp", tmp)
+                  return tmp
+                })
 
-             
-              console.log("NLCD", nlcdColors)
-              let nlcdGraphData = sliceIntoChunks(rawnlcdData, 5).map(d => {
-                let catId = parseInt(d[0])
-                console.log('d', catId, nlcdColors.categories)
-                let catDetails = nlcdColors.categories.filter(c => c.category === catId)[0]
-                console.log('catDetails', catDetails)
-
-
-                let tmp =  {
-                  cat: catId,
-                  color: catDetails ? catDetails.category_color : "#fff",
-                  label: catDetails ? catDetails.category_label : "",
-                  area: (parseFloat(d[2])/ 1e6).toFixed(2),
-                  cells: parseInt(d[3]),
-                  percent: d[4],
-                  catDetails
-                }
-                tmp[tmp.label] = tmp.area
-                return tmp
+                return nlcdGraphData
               })
-              setNlcdData(nlcdGraphData)
-            console.log("Raw NLCD Summary Data", nlcdGraphData)
+
+       
+              lineChartDataFormat(rawnlcdData)
+              setNlcdData(rawnlcdData)
+            console.log("Raw NLCD Summary Data", rawnlcdData)
           }
           basinWMSSource.clear()
           setBasinRaster("point_basin")
@@ -353,7 +368,40 @@ const Game = ({params}) => {
       }
   }, [lastJsonMessage]);
 
+       
+              const lineChartDataFormat = (data) => {
+                // {
+              //   name: year: 2016
+              //   uv: 21:  some value
+              //   pv: 22: some value
+              //   amt: 23: some value
 
+              // }
+            
+                let finalFormat = []
+                let tmpYear = {}
+               
+                data.map(c => {
+                  if (!tmpYear.year) {
+                    tmpYear.year = c.year
+                  }
+                
+                  if (tmpYear.year !== c.year) {
+                    finalFormat.push(tmpYear)
+                    tmpYear = {
+                      year: c.year
+                    }
+                  }
+
+                  tmpYear[c.label] = c.area
+                  
+                })
+
+                // Add the last year
+                finalFormat.push(tmpYear)
+                console.log("lineChartDataFormat", finalFormat)
+                return finalFormat
+              }
 
       const nlcdTotalArea = (data) => {
         const areaList = data.filter(c=> c.catDetails).map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
@@ -450,7 +498,7 @@ const Game = ({params}) => {
                     <BarChart
                       width={500}
                       height={400}
-                      data={nlcdData}
+                      data={lineChartDataFormat(nlcdData)}
                       // layout="horizontal"
                       margin={{
                         top: 5,
@@ -460,19 +508,47 @@ const Game = ({params}) => {
                       }}
                       barSize={5}
                     >
-                      <XAxis dataKey="cat" scale="point" padding={{ left: 10, right: 10 }}  />
+                      <XAxis dataKey="year" scale="point" padding={{ left: 10, right: 10 }}  />
                       <YAxis  />
                       <Tooltip />
                       <Legend />
                       <CartesianGrid strokeDasharray="3 3" />
-                      {/* {
-                        nlcdData.map((d, idx) => {
-                          let catLab = d.label
-                          return(<Bar key={idx} dataKey={catLab} fill={d.color} background={{ fill: '#eee' }} />)
-                        })
-                          
-                      } */}
-                      <Bar
+                      {
+                           nlcdData.filter(y=>y.year ==='2016').map((d, idx) => (
+                            <Bar key={`cell-${idx}`} fill={d.color} dataKey={`${d.label}`}/>
+                        ))
+                        }
+                      
+                    </BarChart>
+                      <LineChart
+                        width={500}
+                        height={500}
+                        data={lineChartDataFormat(nlcdData)}
+                        margin={{
+                          top: 5,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          tickCount={8}
+                          label={"year"}
+                          dataKey="year"
+                          type="number" 
+                          domain={[2001, 2019]}
+                          allowDuplicatedCategory={false} 
+                        />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        {
+                           nlcdData.filter(y=>y.year ==='2016').map((d, idx) => (
+                            <Line key={`cell-${idx}`} type="monotone" stroke={d.color} dataKey={`${d.label}`}/>
+                        ))
+                        }
+                        {/* <Line
                           dataKey="area"
                           fill="#000"
                           stroke="#000"
@@ -483,9 +559,9 @@ const Game = ({params}) => {
                                   <Cell key={`cell-${idx}`} fill={d.color} />
                               ))
                           }
-                      </Bar>
-                      
-                    </BarChart>
+                      </Line> */}
+                      </LineChart>
+                    {/* </ResponsiveContainer> */}
                     </div>
                     <Card.Footer>
                       <Card.Text>
