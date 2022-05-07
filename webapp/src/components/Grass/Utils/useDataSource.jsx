@@ -16,7 +16,7 @@ export const useDataSource = getDataFunc => {
 
         let isMounted = true;
         (async () => {
-            let result = await getDataFunc
+            let result = await getDataFunc          
             setData(result)
         })()
         return () => { isMounted = false } 

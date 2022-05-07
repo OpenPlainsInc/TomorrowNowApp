@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 05 2022
+ * Last Modified: Sat May 07 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -49,6 +49,7 @@ const clearLocalStorageData = () => {
     return localStorage.clear()
 }
 
+
 const Grass = {
     getLocation: async (locationName) => {
         /**
@@ -87,25 +88,30 @@ const Grass = {
             console.log(e);
         }
     }),
-    getRasterLayers: (async (locationName, mapsetName) => {
+    // getRasterLayers,
+    getRasterLayers: ( async (locationName, mapsetName) => {
+
+        // const resourceFunction = (locationName, mapsetName) => (async () => {
         /**
          * Route: /locations/{location_name}/mapsets/{mapsetName}/raster_layers
         */
-        try {
-            const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}/raster_layers`)
-            let res = await fetch(url, { 
-                headers: {
-                'Content-Type': 'application/json'
-                }
-            });
-            let data = await res.json();
-            console.log("response:", data)
-            console.log("response data:", data.response.process_results)
-
-            return data.response.process_results                    
-          } catch (e) {
-            console.log(e);
-        }
+       
+            try {
+                const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}/raster_layers`)
+                let res = await fetch(url, { 
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                let responseJson = await res.json();
+                console.log("response", responseJson)
+                let data = await responseJson.response
+                return data.process_results                    
+            } catch (e) {
+                console.error(e);
+                return e
+            }
+        
     }),
     locations : {
         

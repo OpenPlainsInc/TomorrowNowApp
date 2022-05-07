@@ -11,21 +11,13 @@
 // react
 import React, { useState, useEffect } from 'react';
 import { useController } from "react-hook-form"
-
-
 import '../module.scss';
-// import InputGroup from 'react-bootstrap/InputGroup'
-// import FloatingLabel from 'react-bootstrap/FloatingLabel'
-
 import Form from 'react-bootstrap/Form'
 import Grass from '../../grass'
-// import { useParams } from 'react-router-dom';
-// import { useDataSource } from '../../Utils';
+
 import { useDataSource } from '../../Utils/useDataSource';
 const ModuleRasterParam = ({param, control}) => {
     const [subtype, setSubtype] = useState(null);
-//   const [value, setValue] = useState("");
-//   const [options, setOptions] = useState([]);
     console.log("ModuleRasterParam", param.name)
     const options = useDataSource(Grass.getRasterLayers('nc_spm_08', 'PERMANENT'))
 
@@ -40,13 +32,6 @@ const ModuleRasterParam = ({param, control}) => {
         defaultValue: param.default || "",
     });
 
-  const handleSeletionEvent = (e) => {
-    let newValue = e.target.value
-    // setValue(newValue)
-  }
-
-
-
   useEffect(() => {
       if (param.schema.subtype !== 'cell') {
           console.warn(`GRASS module parameter ${param.name} is not of type cell`, param)
@@ -56,22 +41,6 @@ const ModuleRasterParam = ({param, control}) => {
           setSubtype(param.schema.subtype)
       }
     }, [param])
-
-
-    // useEffect(() => {
-    //     if (subtype !== 'cell') return;
-    //     let isMounted = true;   
-    //     (async ()=> {
-    //         // let data = await Grass.locations.location.mapsets.getRasterLayers('nc_spm_08', 'PERMANENT')
-    //         // console.log("Raster Layers", data)
-           
-    //         // let rasterData = data.response.process_results
-    //         // console.log("rasterData", rasterData)
-    //         // setOptions(rasterData)
-            
-    //     })()
-    //     return () => { isMounted = false } 
-    // }, [subtype])
   
     return (      
        

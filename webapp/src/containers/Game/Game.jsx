@@ -50,6 +50,8 @@ import Reprojection from "../../components/OpenLayers/Views/Reprojection";
 import ActiniaGeoTiff from '../../components/OpenLayers/Sources/ActiniaGeoTiff';
 import { NLCDLegend } from '../../components/Grass/Utils';
 import basinResponseSource from './basinResponseSource';
+import Overlays from '../../components/OpenLayers/Overlays/Overlays';
+import { AnimatedCanvasOverlay } from '../../components/OpenLayers/Overlays';
 // import VectorSource from "ol/source/Vector";
 // import { Style, Stroke } from "ol/style";
 // import surveyStyles from "../Features/surveyStyles"
@@ -80,7 +82,7 @@ const Game = ({params}) => {
     const [nlcdData, setNlcdData] = useState(null)
     const [basinWMSSource, setBasinWMSSource] = useState(savanaSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})) 
     const [basinElevationInfo, setBasinElevationInfo] = useState(null)
-
+    const [loadingAnimation, setLoadingAnimation] = useState(false)
 
 
     const [surveySource, setSurveySource] = useState(survery(loadSurveyData))
@@ -182,6 +184,7 @@ const Game = ({params}) => {
     let highlight;
     function surveyClickEvent(e) {
       console.log("VectorLayer Click Event:", e)
+      setLoadingAnimation(true)
       const pixel = e.pixel
       const feature = e.target.forEachFeatureAtPixel(pixel, function (feature) {
         console.log(pixel, feature)
@@ -374,6 +377,7 @@ const Game = ({params}) => {
             console.log("Raw NLCD Summary Data", rawnlcdData)
           }
           basinWMSSource.clear()
+          setLoadingAnimation(false)
           setBasinRaster("point_basin")
 
          
@@ -472,6 +476,10 @@ const Game = ({params}) => {
                       
 
                   </Layers>
+
+                  <Overlays>
+                    <AnimatedCanvasOverlay visible={loadingAnimation}/>
+                  </Overlays>
 
                   <Events>
                     {/* <OnMapEvent eventName='postrender' eventHandler={onPostRenderEvent}></OnMapEvent> */}
@@ -584,6 +592,7 @@ const Game = ({params}) => {
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis 
+                          tickCount={8}
                           dataKey="year" 
                           type="number" 
                           domain={[2001, 2019]}
