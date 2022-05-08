@@ -1,30 +1,17 @@
 // react
 import React, { useState, useEffect } from 'react';
-// import 'ol/ol.css';
 import './game.scss';
-// openlayers
-// import XYZ from 'ol/source/XYZ';
-import nlcdSource from '../../components/OpenLayers/Sources/nlcd';
-import ned3DepSource from '../../components/OpenLayers/Sources/ned3dep';
-import VectorSource from '../../components/OpenLayers/Sources/VectorSource';
-// import nhdPlusSource from '../../components/OpenLayers/Sources/nhdPlus'
-import survery from '../../components/OpenLayers/Sources/survey';
+
 import Map from "../../components/OpenLayers/Map"
 import Layers from "../../components/OpenLayers/Layers/Layers"
 import TileLayer from "../../components/OpenLayers/Layers/TileLayer"
 import VectorLayer from "../../components/OpenLayers/Layers/VectorLayer"
-// import { fromLonLat } from 'ol/proj';
 import osm from "../../components/OpenLayers/Sources/osm"
 import savanaSource from "../../components/OpenLayers/Sources/savana"
 import Controls from "../../components/OpenLayers/Controls/Controls";
-// import FullScreenControl from "../../components/OpenLayers/Controls/FullScreenControl";
-// import ZoomSliderControl from "../../components/OpenLayers/Controls/ZoomSliderControl";
 import { ScaleLineControl, ZoomSliderControl, FullScreenControl, RotateControl, EditMapControl } from "../../components/OpenLayers/Controls";
-// import Reprojection from "../../components/OpenLayers/Views/Reprojection";
 import surveyStyles from '../../components/OpenLayers/Features/surveyStyles';
 import vectorStyles from '../../components/OpenLayers/Features/Styles'
-// import {sourcesFromTileGrid} from 'ol/source';
-
 import GeoTIFFSource from '../../components/OpenLayers/Sources/GeoTIFF'
 // import Form from 'react-bootstrap/Form'
 import Container from 'react-bootstrap/esm/Container';
@@ -52,9 +39,8 @@ import { NLCDLegend } from '../../components/Grass/Utils';
 import basinResponseSource from './basinResponseSource';
 import Overlays from '../../components/OpenLayers/Overlays/Overlays';
 import { AnimatedCanvasOverlay } from '../../components/OpenLayers/Overlays';
-// import VectorSource from "ol/source/Vector";
-// import { Style, Stroke } from "ol/style";
-// import surveyStyles from "../Features/surveyStyles"
+import { hucBoundaries, survey, nlcdSource, ned3DepSource, VectorSource, hucStyle } from '../../components/OpenLayers/Sources';
+
 
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
@@ -85,7 +71,7 @@ const Game = ({params}) => {
     const [loadingAnimation, setLoadingAnimation] = useState(false)
 
 
-    const [surveySource, setSurveySource] = useState(survery(loadSurveyData))
+    const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
     const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
     const connectionStatus = {
       [ReadyState.CONNECTING]: 'Connecting',
@@ -434,7 +420,6 @@ const Game = ({params}) => {
                 
                   <Layers>
                       <TileLayer source={ned3DepSource({layer: 'Hillshade Multidirectional'})} opacity={1} ></TileLayer>
-                      {/* <TileLayer source={nlcdSource()} opacity={0.5}></TileLayer> */}
                       <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
                       {/* <TileLayer layerName="nlcd2019" source={nlcdCOGSource()} opacity={1}></TileLayer> */}
                       {/* <WebGLTileLayer layerName="nlcd2019" source={nlcdCOGSource()} opacity={1}></WebGLTileLayer> */}
@@ -464,17 +449,22 @@ const Game = ({params}) => {
                             opacity={0.75}
                           ></ActiniaGeoTiff> : null
                       } */}
-                      
-                      <VectorLayer layerName="featureOverlayer" source={VectorSource()} style={surveyStyles.styleCache.selected}></VectorLayer>
+                    
+                      <VectorLayer
+                        layerName="HUC12"
+                        source={hucBoundaries("HUC12")}
+                        style={hucStyle()}
+                      />
+                      <VectorLayer 
+                        layerName="featureOverlayer" 
+                        source={VectorSource()} 
+                        style={surveyStyles.styleCache.selected}
+                      />
                       <VectorLayer 
                         layerName="survey" 
                         source={surveySource}  
                         style={surveyStyles.setSurveyStyle}
-                      ></VectorLayer> 
-
-                      
-                      
-
+                      />
                   </Layers>
 
                   <Overlays>

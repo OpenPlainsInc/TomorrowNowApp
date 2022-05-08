@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Mar 30 2022
+ * Last Modified: Sun May 08 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -69,7 +69,7 @@
 // https://www.mrlc.gov/data-services-page
 import TileWMS from 'ol/source/TileWMS'
 
-const ned3DepSource = (params) => {
+export const ned3DepSource = (params) => {
  
      // https://apps.nationalmap.gov/services/
     // https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer?request=GetCapabilities&service=WMS
@@ -110,6 +110,3 @@ const ned3DepSource = (params) => {
       })
     return tileWMS
 }
-
-
-export default ned3DepSource

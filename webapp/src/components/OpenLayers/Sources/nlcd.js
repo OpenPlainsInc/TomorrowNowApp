@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Apr 06 2022
+ * Last Modified: Sun May 08 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -36,7 +36,7 @@
 // https://www.mrlc.gov/data-services-page
 import TileWMS from 'ol/source/TileWMS'
 import TileWMSSource from './TileWMS'
-const nlcdSource = (params) => {
+export const nlcdSource = (params) => {
     let yearOptions = {
         '2019':'2019',
         '2016':'2016',
@@ -86,6 +86,3 @@ const nlcdSource = (params) => {
       
     return tileWMS
 }
-
-
-export default nlcdSource

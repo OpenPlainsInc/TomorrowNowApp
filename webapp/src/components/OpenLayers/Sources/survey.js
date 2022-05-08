@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon May 02 2022
+ * Last Modified: Sun May 08 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,12 +34,11 @@
 // 'https://services1.arcgis.com/aT1T0pU1ZdpuDk1t/ArcGIS/rest/services/'
 // '0/query?f=json&returnGeometry=true&inSR=102100&outFields=*&outSR=4326&where=1=1`'
 import EsriJSON from 'ol/format/EsriJSON';
-import {fromLonLat} from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 import {tile as tileStrategy} from 'ol/loadingstrategy';
 import {createXYZ} from 'ol/tilegrid';
 
-const survery = ((onAddFeature)=> {
+export const survey = ((onAddFeature)=> {
 
     const serviceUrl = 'https://services1.arcgis.com/aT1T0pU1ZdpuDk1t/ArcGIS/rest/services/' +
     'survey123_571499fe84ac4125abe48b793b9970a3_stakeholder/FeatureServer/'
@@ -96,7 +95,5 @@ const survery = ((onAddFeature)=> {
 
       return vectorSource
 })
-
-export default survery
 
 

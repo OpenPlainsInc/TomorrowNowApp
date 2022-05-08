@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Mar 30 2022
+ * Last Modified: Sun May 08 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -102,7 +102,7 @@
 // https://www.mrlc.gov/data-services-page
 import TileWMS from 'ol/source/TileWMS'
 
-const naipSource = (params) => {
+export const naipSource = (params) => {
  
      // https://services.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/MapServer?f=pjson
      // https://services.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/MapServer
@@ -140,6 +140,3 @@ const naipSource = (params) => {
       })
     return tileWMS
 }
-
-
-export default naipSource

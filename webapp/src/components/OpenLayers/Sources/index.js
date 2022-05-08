@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Apr 06 2022
+ * Last Modified: Sun May 08 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -35,18 +35,23 @@ import vector from "./vector";
 import xyz from "./xyz";
 import osm from "./osm";
 import GeoTIFFSource from "./GeoTIFF"
-import { nlcdSource as nlcd } from "./nlcd";
-import { ned3DepSource as ned3dep } from "./ned3dep";
-import { naipSource as naip } from "./naip";
+import { nlcdSource } from "./nlcd";
+import { ned3DepSource } from "./ned3dep";
+import { naipSource } from "./naip";
 import VectorSource from "./VectorSource";
+import { hucBoundaries, hucStyle } from "./hucBoundaries";
+import { survey } from "./survey"
 
 export {
 	vector,
 	xyz,
 	osm,
-    nlcd,
-    ned3dep,
-    naip,
+    nlcdSource,
+    ned3DepSource,
+    naipSource,
+    hucBoundaries,
+    hucStyle,
     GeoTIFFSource,
-    VectorSource
+    VectorSource,
+    survey
 };

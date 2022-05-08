@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Apr 07 2022
+ * Last Modified: Sun May 08 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,7 +33,7 @@
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 import colorbrewer from "../Colors/colorbrewer";
 // const colorScheme = colorbrewer.asRGBA('RdYlBu', 5)
-const colorScheme = colorbrewer.asRGBA('RdBu', 5)
+const colorScheme = colorbrewer.asRGBA('RdBu', 5).reverse()
 
 
 

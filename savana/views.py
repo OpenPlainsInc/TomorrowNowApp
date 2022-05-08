@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri May 06 2022                                               #
+# Last Modified: Sun May 08 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -515,7 +515,7 @@ def rDrain(request):
                     },
                     {
                         "param": "memory",
-                        "value": "5000"
+                        "value": "10000"
                     },
                     {
                         "param": "extent",
