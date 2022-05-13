@@ -9,6 +9,7 @@ version: "3.8"
 volumes:
    geoserver-data:
    geo-db-data:
+   settings:
 services:
   
   db:
@@ -18,6 +19,7 @@ services:
       # - pg_tileserv_db:/var/lib/postgresql/data
     ports:
       - "5431:5432"
+    restart: always
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -32,9 +34,14 @@ services:
     volumes:
       - ./actinia-core-data/grassdb:/actinia_core/grassdb:Z
       - ./actinia-core-data/userdata:/actinia_core/userdata
+      - ./actinia/pgpass:/mnt/pgpass
+      - ./actinia-core-data/geodata_dir:/mnt/geodata
+      - ./actinia-core-data/workspace/temp_db:/actinia_core/workspace/temp_db
+      - ./actinia-core-data/workspace/tmp:/actinia_core/workspace/tmp
       - ./actinia-core-data/resources:/actinia_core/resources:Z
 
       # - *services-volume
+    restart: always
     ports:
       - "8088:8088"
       - "5439:5432"
@@ -131,20 +138,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - api
-  
-  terracotta:
-    build:
-      context: ./terracotta
-      dockerfile: Dockerfile
-    volumes:
-      - ./terracotta/data:/app/data
-      # - <<: *services-volume
-      #   target: ./app/data
-    ports:
-      - 5000:5000
-      - 5001:5001
-        
+      - api    
   titiler:
     build:
       context: ./titiler
@@ -155,63 +149,34 @@ services:
       - actinia-core
 
   # Only turn on when needed
-  wireshark:
-    image: lscr.io/linuxserver/wireshark
-    container_name: wireshark
-    cap_add:
-      - NET_ADMIN
-    network_mode: bridge
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
-    # volumes:
-    #   - /path/to/config:/config
-    ports:
-      #HOST:CONTAINER
-      - 3050:3000
-    restart: unless-stopped
-
-  geoserver-postgis:
-    # build:
-    #   context: ./geoserver
-    #
-    image: kartoza/postgis:14-3.1
-    volumes:
-      - geo-db-data:/var/lib/postgresql
-    ports:
-      # - ${POSTGRES_PORT}:5432
-      - 32767:5432
-    env_file:
-      - ./geoserver/.env
-    # environment:
-    #   - POSTGRES_DB=${POSTGRES_DB}
-    #   - POSTGRES_USER=${POSTGRES_USER}
-    #   - POSTGRES_PASS=${POSTGRES_PASS}
-    #   - ALLOW_IP_RANGE=${ALLOW_IP_RANGE}
-    #   - FORCE_SSL=TRUE
-    restart: on-failure
-    healthcheck:
-      test: "exit 0"
+  # wireshark:
+  #   image: lscr.io/linuxserver/wireshark
+  #   container_name: wireshark
+  #   cap_add:
+  #     - NET_ADMIN
+  #   network_mode: bridge
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=America/New_York
+  #   ports:
+  #     #HOST:CONTAINER
+  #     - 3050:3000
+  #   restart: unless-stopped
   geoserver:
+    # image: kartoza/geoserver:2.20.4
+    env_file:
+        - ./geoserver/.env
     build:
       context: ./geoserver
       dockerfile: Dockerfile
-    env_file:
-      - ./geoserver/.env
-    # image: kartoza/geoserver:2.20.3
     volumes:
-        - geoserver-data:/opt/geoserver/data_dir
+        - ./geoserver-data/data_dir:/opt/geoserver/data_dir
+        - ./geoserver-data/settings:/settings
+        - ./actinia-core-data:/opt/geoserver/actinia_data
     restart: on-failure
-    environment:
-      - GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
-      - GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
-      - GEOSERVER_ADMIN_PASSWORD=myawesomegeoserver
-      - GEOSERVER_ADMIN_USER=admin
-      - INITIAL_MEMORY=2G
-      - MAXIMUM_MEMORY=4G
     depends_on:
-      - geoserver-postgis
+      - db
         # condition: service_healthy
     healthcheck:
       test: curl --fail -s http://localhost:8080/ || exit 1
