@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Apr 27 2022                                               #
+# Last Modified: Tue May 10 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -232,6 +232,14 @@ DATABASES = {
         'NAME': env('POSTGRES_DBNAME'),
         'USER': env('POSTGRES_USER'),
         'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': env('POSTGRES_HOST'),
+        'PORT': env('POSTGRES_PORT')
+    },
+    'actinia': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': env('ACTINIA_POSTGRES_DBNAME'),
+        'USER': env('ACTINIA_POSTGRES_USER'),
+        'PASSWORD': env('ACTINIA_POSTGRES_PASSWORD'),
         'HOST': env('POSTGRES_HOST'),
         'PORT': env('POSTGRES_PORT')
     }
