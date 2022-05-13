@@ -18,7 +18,7 @@ import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
-// import GrassColors from '../../components/OpenLayers/Colors'
+
 // import utils from "../../components/OpenLayers/Colors/utils";
 import {TileDebug} from 'ol/source';
 // import Container from 'react-bootstrap/esm/Container';
@@ -32,15 +32,19 @@ import GrassColors from '../../components/OpenLayers/Colors'
 import utils from "../../components/OpenLayers/Colors/utils";
 import nlcdColors from "../../components/OpenLayers/Colors/nlcd"
 import WebGLTileLayer from "../../components/OpenLayers/Layers/WebGLTileLayer"
-import nlcdCOGSource from "../../components/OpenLayers/Sources/nlcdCog"
-import Reprojection from "../../components/OpenLayers/Views/Reprojection";
-import ActiniaGeoTiff from '../../components/OpenLayers/Sources/ActiniaGeoTiff';
+import {nlcdCOGTileGridSource as nlcdCOGSource, getColorMap as nlcdCogColors} from "../../components/OpenLayers/Sources/nlcdCog"
+import { Interactions, Draw } from '../../components/OpenLayers/Interactions';
+// import Reprojection from "../../components/OpenLayers/Views/Reprojection";
+// import ActiniaGeoTiff from '../../components/OpenLayers/Sources/ActiniaGeoTiff';
 import { NLCDLegend } from '../../components/Grass/Utils';
 import basinResponseSource from './basinResponseSource';
 import Overlays from '../../components/OpenLayers/Overlays/Overlays';
 import { AnimatedCanvasOverlay } from '../../components/OpenLayers/Overlays';
-import { hucBoundaries, survey, nlcdSource, ned3DepSource, VectorSource, hucStyle } from '../../components/OpenLayers/Sources';
-
+import { hucBoundaries, survey, nlcdSource, ned3DepSource, VectorSource, hucStyle, VectorTileSource } from '../../components/OpenLayers/Sources';
+import { VectorTileLayer } from '../../components/OpenLayers/Layers/VectorTileLayer';
+import { ChartsContainer } from '../../components/Grass/Charts/ChartsContainer';
+import { Charts, ChartTypes} from '../../components/Grass/Charts/ChartTypes';
+import { highlightSelected } from '../../components/OpenLayers/Filters/highlightSelected';
 
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
@@ -69,6 +73,7 @@ const Game = ({params}) => {
     const [basinWMSSource, setBasinWMSSource] = useState(savanaSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})) 
     const [basinElevationInfo, setBasinElevationInfo] = useState(null)
     const [loadingAnimation, setLoadingAnimation] = useState(false)
+    const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
 
 
     const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
@@ -151,7 +156,7 @@ const Game = ({params}) => {
        
           setSurveyData(Object.entries(grouped)
             .map((k, v) => {
-              console.log(k)
+         
               let newData = {}
               newData.name = k[0]
               newData[k[0]] = k[1].length
@@ -172,11 +177,17 @@ const Game = ({params}) => {
       console.log("VectorLayer Click Event:", e)
       setLoadingAnimation(true)
       const pixel = e.pixel
-      const feature = e.target.forEachFeatureAtPixel(pixel, function (feature) {
-        console.log(pixel, feature)
-        console.log('Geometry', feature.getGeometry())
+      const features = e.target.forEachFeatureAtPixel(pixel, feature => {
+        console.log('Feature', pixel, feature)
+        // console.log('Geometry', feature.getExtent())
+        // let hucExtent = feature.getExtent()
+        // setExtent(hucExtent)
         return feature;
       });
+
+      console.log("Clicked Features", features)
+      // let hucExtent = features.getExtent()
+      // setExtent(hucExtent)
       const view = e.target.getView()
       const extent = view.calculateExtent()
       console.log('extent', extent, 'resolution', view.getResolution())
@@ -227,7 +238,6 @@ const Game = ({params}) => {
       if (!surveySource) return;
       if (isSurveyDataLoaded) return;
       console.log("Survey Source: ", surveySource)
-      // surveySource.on('featuresloadend', onPostRenderEvent)
       let properties = surveySource.target.getFeatures().map(f => {
         return f.getProperties()
       })
@@ -407,7 +417,7 @@ const Game = ({params}) => {
 
       const nlcdTotalArea = (data) => {
         const areaList = data.filter(c=> c.catDetails).map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
-        console.log("Area List", areaList)
+        // console.log("Area List", areaList)
         return areaList.toFixed(2)
       }
   
@@ -420,12 +430,21 @@ const Game = ({params}) => {
                 
                   <Layers>
                       <TileLayer source={ned3DepSource({layer: 'Hillshade Multidirectional'})} opacity={1} ></TileLayer>
-                      <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
-                      {/* <TileLayer layerName="nlcd2019" source={nlcdCOGSource()} opacity={1}></TileLayer> */}
-                      {/* <WebGLTileLayer layerName="nlcd2019" source={nlcdCOGSource()} opacity={1}></WebGLTileLayer> */}
+                      {/* <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer> */}
+                      <TileLayer source={osm()} opacity={0.75}></TileLayer>
 
-                      {/* <TileLayer source={nlcdDataSouce}></TileLayer> */}
-                      <TileLayer source={osm()} opacity={0.5}></TileLayer>
+                      <WebGLTileLayer 
+                        layerName="nlcd2019" 
+                        preload={12}
+                        cacheSize={1024}
+                        // style={{color: nlcdColors.webGLColors}}
+                        // color={nlcdColors.webGLColors}
+                        source={nlcdCOGSource({layer: 2019})} 
+                        // onPostRender={highlightSelected}
+                        opacity={0.40} 
+                        zIndex={1}/>
+
+                      
                       <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
                       {
                         basinRaster ? 
@@ -434,27 +453,29 @@ const Game = ({params}) => {
                           style={basinStyle}
                           source={basinResponseSource()}
                         ></VectorLayer>
-                        // <TileLayer 
-                        //   source={basinWMSSource} 
-                        //   opacity={0.5}>
-                        // </TileLayer> 
+                    
                         : null
                       }
-              
-                      {/* {
-                        basinRaster ? 
-                          <ActiniaGeoTiff 
-                            rasterName={basinRaster} 
-                            mapsetName="basin_test"
-                            opacity={0.75}
-                          ></ActiniaGeoTiff> : null
-                      } */}
                     
-                      <VectorLayer
+                      {/* <VectorLayer
                         layerName="HUC12"
                         source={hucBoundaries("HUC12")}
                         style={hucStyle()}
+                      /> */}
+
+                      <VectorTileLayer 
+                        layerName="HUC12_VT"
+                        zIndex={1}
+                        minZoom={10}
+                        declutter={true}
+                        style={hucStyle()}
+                        source={
+                          VectorTileSource({
+                            baseUrl:`http://localhost:8600/geoserver/gwc/service/wmts`
+                          })
+                        }
                       />
+
                       <VectorLayer 
                         layerName="featureOverlayer" 
                         source={VectorSource()} 
@@ -464,33 +485,42 @@ const Game = ({params}) => {
                         layerName="survey" 
                         source={surveySource}  
                         style={surveyStyles.setSurveyStyle}
+                        zIndex={1}
                       />
+                      <VectorLayer
+                        layerName="point"
+                        source={pointSource}
+                        zIndex={1}
+                      />
+
+                     
                   </Layers>
 
                   <Overlays>
-                    <AnimatedCanvasOverlay visible={loadingAnimation}/>
+                    <AnimatedCanvasOverlay acanvas="Rain" visible={loadingAnimation}/>
+                    <AnimatedCanvasOverlay acanvas="Clouds" visible={loadingAnimation}/>
                   </Overlays>
 
                   <Events>
                     {/* <OnMapEvent eventName='postrender' eventHandler={onPostRenderEvent}></OnMapEvent> */}
                     <OnMapEvent eventName='click' eventHandler={surveyClickEvent}></OnMapEvent>
                     <OnMapEvent eventName='moveend' eventHandler={onMoveEventHandler}></OnMapEvent>
-                
+                    {/* <OnMapEvent eventName='pointermove' eventHandler={(e) => console.log()}></OnMapEvent> */}
                   </Events>
 
                   <Controls>
                       <FullScreenControl />
                       <ZoomSliderControl />
                       <ScaleLineControl />
-                    
-                      {/* <EditMapControl drawTypes={['Point']}/> */}
                   </Controls>
               
-
+                  <Interactions>
+                      <Draw source={pointSource}></Draw>
+                  </Interactions>
+                  {/* <Reprojection epsg=""></Reprojection>  */}
                 </Map>
               </Col>
              
-              {/* <Col md={1}></Col> */}
              
              <Col md={4} >                
                   { 
@@ -513,90 +543,14 @@ const Game = ({params}) => {
                       } 
                     </Card.Body>
                     <div style={{backgroundColor: "white"}}>
-                    <BarChart
-                      width={500}
-                      height={300}
-                      data={lineChartDataFormat(nlcdData)}
-                      // layout="horizontal"
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
-                      barSize={5}
-                    >
-                      <XAxis dataKey="year" scale="point" padding={{ left: 10, right: 10 }}  />
-                      <YAxis  />
-                      <Tooltip />
-                      {/* <Legend /> */}
-                      <CartesianGrid strokeDasharray="3 3" />
-                      {
-                           nlcdData.filter(y=>y.year ==='2016').map((d, idx) => (
-                            <Bar key={`cell-${idx}`} fill={d.color} dataKey={`${d.label}`}/>
-                        ))
-                        }
-                      
-                    </BarChart>
-                      <LineChart
-                        width={500}
-                        height={300}
-                        data={lineChartDataFormat(nlcdData)}
-                        margin={{
-                          top: 5,
-                          right: 30,
-                          left: 20,
-                          bottom: 5,
-                        }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis 
-                          tickCount={8}
-                          label={"year"}
-                          dataKey="year"
-                          type="number" 
-                          domain={[2001, 2019]}
-                          allowDuplicatedCategory={false} 
-                        />
-                        <YAxis />
-                        <Tooltip />
-                        {/* <Legend /> */}
-                        {
-                           nlcdData.filter(y=>y.year ==='2016').map((d, idx) => (
-                            <Line key={`cell-${idx}`} type="monotone" stroke={d.color} dataKey={`${d.label}`}/>
-                        ))
-                        }
-                    
-                      </LineChart>
-
-                      <AreaChart
-                        width={500}
-                        height={400}
-                        data={lineChartDataFormat(nlcdData)}
-                        margin={{
-                          top: 10,
-                          right: 30,
-                          left: 0,
-                          bottom: 0,
-                        }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis 
-                          tickCount={8}
-                          dataKey="year" 
-                          type="number" 
-                          domain={[2001, 2019]}
-                          allowDuplicatedCategory={false}
-                        />
-                        <YAxis />
-                        <Tooltip />
-                        {
-                           nlcdData.filter(y=>y.year ==='2016').map((d, idx) => (
-                            <Area key={`cell-${idx}`} type="monotone" dataKey={`${d.label}`} stackId="1" fill={d.color} stroke={d.color} />
-                        ))
-                        }
-                        
-                      </AreaChart>
+                    <ChartsContainer 
+                      options={[ChartTypes.BAR, ChartTypes.LINE, ChartTypes.AREA]}
+                      data={lineChartDataFormat(nlcdData)} 
+                      colorMap={nlcdData}>
+                    <Charts/>
+                    </ChartsContainer>
+                   
+            
                     
                     </div>
                     <Card.Footer>
@@ -657,7 +611,7 @@ const Game = ({params}) => {
                   <Col md={2}>
                   
                   <Card
-                  //  style={{ width: '20rem' }} 
+                  
                    className="bg-secondary-light text-dark">
                     
                     <Card.Body>

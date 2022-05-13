@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sun May 08 2022
+ * Last Modified: Wed May 11 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -35,7 +35,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {tile as tileStrategy} from 'ol/loadingstrategy';
 import {createXYZ} from 'ol/tilegrid';
-import { Style, Stroke } from 'ol/style';
+import { Style, Stroke, Fill } from 'ol/style';
 const HUCUNITS = {
     WBDLINE: 0,
     HUC2: 1, // Region
@@ -54,6 +54,9 @@ export const hucStyle = () => {
           color: 'rgba(52, 153, 204, 0.75)',
           width: 2,
         }),
+        fill: new Fill({
+            color: 'rgba(20,20,20,0.0)',
+        })
       })
 }
 

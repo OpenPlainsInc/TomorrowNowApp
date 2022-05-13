@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Apr 25 2022
+ * Last Modified: Thu May 12 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,6 +33,8 @@
 
 
 import Draw from "./Draw"
+import Interactions from "./Interactions"
 export {
-	Draw
+	Draw,
+	Interactions
 }

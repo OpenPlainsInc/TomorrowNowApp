@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 05 2022
+ * Last Modified: Tue May 10 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -37,7 +37,7 @@ import RasterCardImage from "./RasterCardImage";
 import GrassDataTypeSelect from "./GrassDataTypeSelect";
 import GrassRenderImage from "./GrassRenderImage";
 import NLCDLegend from "./NLCDLegend";
-// import useDataSource from "./useDataSource"
+import { useDataSource } from "./useDataSource"
 
 export {
 	GrassSelect,
@@ -46,5 +46,5 @@ export {
     GrassDataTypeSelect,
     GrassRenderImage,
     NLCDLegend,
-    // useDataSource,
+    useDataSource
 }

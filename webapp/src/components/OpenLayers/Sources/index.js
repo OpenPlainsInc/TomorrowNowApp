@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sun May 08 2022
+ * Last Modified: Tue May 10 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -41,6 +41,7 @@ import { naipSource } from "./naip";
 import VectorSource from "./VectorSource";
 import { hucBoundaries, hucStyle } from "./hucBoundaries";
 import { survey } from "./survey"
+import { VectorTileSource } from "./VectorTileSource";
 
 export {
 	vector,
@@ -53,5 +54,6 @@ export {
     hucStyle,
     GeoTIFFSource,
     VectorSource,
+    VectorTileSource,
     survey
 };

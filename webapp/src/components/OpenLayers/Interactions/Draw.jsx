@@ -13,7 +13,7 @@ import MapContext from "../MapContext";
 import OLTileLayer from "ol/layer/Tile";
 import OLDraw from 'ol/interaction/Draw';
 
-const Draw = ({ source, features=undefined, type="Point" }) => {
+const Draw = ({ source, features=undefined, type="Point", ...props }) => {
   const { map } = useContext(MapContext); 
   const DRAW_TYPES = [
       "Point", 
@@ -30,6 +30,7 @@ const Draw = ({ source, features=undefined, type="Point" }) => {
     if (!map) return;
     
     let draw = new OLDraw({
+      ...props,
       source,
       type,
     });

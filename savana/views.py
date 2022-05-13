@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun May 08 2022                                               #
+# Last Modified: Thu May 12 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,7 +30,6 @@
 #                                                                              #
 ###############################################################################
 
-import imp
 import os
 from django.core.serializers import serialize
 from django.http.response import Http404
@@ -424,7 +423,7 @@ def rDrain(request):
                         },
                         {
                             "param": "memory",
-                            "value": "3000"
+                            "value": "10000"
                         },
                         {
                             "param": "extent",
@@ -540,6 +539,10 @@ def rDrain(request):
                     {
                         "param": "drainage",
                         "value": "usgs_3dep_30m_direction"
+                    },
+                    {
+                        "param": "memory",
+                        "value": "10000"
                     }
                 ]
             },
@@ -580,7 +583,7 @@ def rDrain(request):
                     },
                     {
                         "param": "memory",
-                        "value": "1500"
+                        "value": "10000"
                     }
                 ],
                 "outputs": [

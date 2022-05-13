@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon May 02 2022
+ * Last Modified: Thu May 12 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,10 +29,73 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-
+const webGLColors =  [
+    // 'match',
+    // ['band', 1],
+    // // ['==', ['bandIndex', 1]],
+    // // 21,
+    // // "#decaca",
+    // // "fff"
+    "case",
+    // ['==', ['band', 'Layer_1'], 1],
+    // 'rgba(222, 197, 197, 1)', 
+    ['==', ['band', 1], 11],
+    "#476ba1",
+    ['==', ['band', 1], 12],
+    "#d1defa",
+    ['==', ['band', 1], 21],
+    "#decaca",
+    // "#6a329f", //Fake Color
+    ['==', ['band', 1], 22],
+    "#d99482",
+    ['==', ['band', 1], 23],
+    "#ee0000",
+    ['==', ['band', 1], 24],
+    "#ab0000",
+    ['==', ['band', 1], 31],
+    "#b3aea3",
+    ['==', ['band', 1], 32],
+    "#fafafa",
+    ['==', ['band', 'Layer_1'], 41],
+    'rgba(104, 171, 95, 1)',
+    ['==', ['band', 1], 42],
+    "#1c6330",
+    ['==', ['band', 1], 43],
+    "#b5ca8f",
+    ['==', ['band', 1], 51],
+    "#a68c30",
+    ['==', ['band', 1], 52],
+    "#ccba7d",
+    ['==', ['band', 1], 71],
+    "#e3e3c2",
+    ['==', ['band', 1], 72],
+    "#caca78",
+    ['==', ['band', 1], 73],
+    "#99c247",
+    ['==', ['band', 1], 74],
+    "#78ae94",
+    ['==', ['band', 1], 81],
+    "#dcd93d",
+    ['==', ['band', 1], 82],
+    "#ab7028",
+    ['==', ['band', 1], 90],
+    "#bad9eb",
+    ['==', ['band', 1], 91],
+    "#b5d4e6",
+    ['==', ['band', 1], 92],
+    "#b5d4e6",
+    ['==', ['band', 1], 93],
+    "#b5d4e6",
+    ['==', ['band', 1], 94],
+    "#b5d4e6",
+    ['==', ['band', 1], 95],
+    "#70a3ba",
+    'rgba(200,20,20,0.4)'
+]
 class NLCD {
     constructor(...categories) {
         this.categories = categories
+        this.webGLColors = webGLColors
         // this.families = families
     }
 
@@ -100,61 +163,6 @@ const nlcdCats = new NLCD(
 
 )
 
-const nlcd =  [
-    'case',
-    ['==', ['band', 1], 1], 
-    "#00fa00", 
-    ['==', ['band', 11], 11],
-    "#476ba1",
-    ['==', ['band', 12], 12],
-    "#d1defa",
-    ['==', ['band', 21], 21],
-    "#decaca",
-    ['==', ['band', 22], 22],
-    "#d99482",
-    ['==', ['band', 23], 23],
-    "#ee0000",
-    ['==', ['band', 24], 24],
-    "#ab0000",
-    ['==', ['band', 31], 31],
-    "#b3aea3",
-    ['==', ['band', 32], 32],
-    "#fafafa",
-    ['==', ['band', 41], 41],
-    "#68ab63",
-    ['==', ['band', 42], 42],
-    "#1c6330",
-    ['==', ['band', 43], 43],
-    "#b5ca8f",
-    ['==', ['band', 51], 51],
-    "#a68c30",
-    ['==', ['band', 52], 52],
-    "#ccba7d",
-    ['==', ['band', 71], 71],
-    "#e3e3c2",
-    ['==', ['band', 72], 72],
-    "#caca78",
-    ['==', ['band', 73], 73],
-    "#99c247",
-    ['==', ['band', 74], 74],
-    "#78ae94",
-    ['==', ['band', 81], 81],
-    "#dcd93d",
-    ['==', ['band', 82], 82],
-    "#ab7028",
-    ['==', ['band', 90], 90],
-    "#bad9eb",
-    ['==', ['band', 91], 91],
-    "#b5d4e6",
-    ['==', ['band', 92], 92],
-    "#b5d4e6",
-    ['==', ['band', 93], 93],
-    "#b5d4e6",
-    ['==', ['band', 94], 94],
-    "#b5d4e6",
-    ['==', ['band', 95], 95],
-    "#70a3ba",
-    '#fff'
-]
+
 
 export default nlcdCats

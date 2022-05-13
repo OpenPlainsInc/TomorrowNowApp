@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon May 02 2022
+ * Last Modified: Thu May 12 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -41,8 +41,8 @@ import {createXYZ} from 'ol/tilegrid';
 
 const basinResponseSource = ((onAddFeature)=> {
 
-    const serviceUrl = "http://localhost:8600/geoserver/actinia/ows?" + 
-        "service=WFS&version=1.0.0&request=GetFeature&typeName=actinia%3Apoint_basin_cloud&" +
+    const serviceUrl = "http://localhost:8600/geoserver/savana/ows?" + 
+        "service=WFS&version=1.0.0&request=GetFeature&typeName=savana%3Apoint_basin_cloud&" +
         "maxFeatures=50&outputFormat=application%2Fjson&srsName=EPSG:4326"
     const layer = 0
 

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Apr 05 2022
+ * Last Modified: Wed May 11 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,11 +33,13 @@
 import convolve from "./convolve"
 import kernels from './kernels'
 import normalize from "./normalize"
+import { highlightSelected } from "./highlightSelected"
 
 const filters = {
 	convolve,
 	kernels,
-    normalize
+    normalize,
+	highlightSelected
 }
 
 export default filters
