@@ -51,7 +51,7 @@ export default function HomeContainer() {
         <Container>
           <Row>
             <Col md={4}>
-              <Card style={{ width: '18rem' }}>
+              <Card style={{ width: '18rem', paddingTop: '1rem'}}>
                 <Card.Img variant="top" className="fa-solid fa-people-pulling fa-5x"/>
                 <Card.Body>
                   <Card.Title>Community Engagment</Card.Title>
@@ -60,12 +60,12 @@ export default function HomeContainer() {
                     You know the area where you work, live, and play best. 
                     So share your insights and let your knowledge make a positive impact in your community.
                   </Card.Text>
-                  <Button variant="primary">Engage Here</Button>
+                  <Button variant="secondary">Engage Here</Button>
                 </Card.Body>
               </Card>
             </Col>
             <Col md={4}>
-            <Card style={{ width: '18rem' }}>
+            <Card style={{ width: '18rem', paddingTop: '1rem'}}>
                 <Card.Img variant="top" src="" className="fa-solid fa-tree-city fa-5x" />
                 <Card.Body>
                   <Card.Title>Urban Development</Card.Title>
@@ -75,12 +75,12 @@ export default function HomeContainer() {
                     Sometimes you like it and sometimes you do not.
                     Either way its impacts can be felt in unexpected ways.
                   </Card.Text>
-                  <Button variant="primary">Build Something</Button>
+                  <Button variant="secondary">Build Something</Button>
                 </Card.Body>
               </Card>
             </Col>
             <Col md={4}>
-            <Card style={{ width: '18rem' }}>
+            <Card style={{ width: '18rem', paddingTop: '1rem'}}>
                 <Card.Img variant="top" src="" className="fa-solid fa-person-drowning fa-5x"/>
                 <Card.Body>
                   <Card.Title>Flooding</Card.Title>
@@ -89,7 +89,7 @@ export default function HomeContainer() {
                     Or, maybe that sounds great to you. No judgement. Well maybe alittle. 
                     Thankfully, we have you to help keep people dry in their living rooms and wet at the pool and lake.
                   </Card.Text>
-                  <Button variant="primary">Go for a Swim</Button>
+                  <Button variant="secondary">Go for a Swim</Button>
                 </Card.Body>
               </Card>
             </Col>

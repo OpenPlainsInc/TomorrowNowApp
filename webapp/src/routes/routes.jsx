@@ -3,16 +3,17 @@ import App from "../App"
 import GameRoutes from "./GameRoutes";
 import BoardRoutes from "./BoardRoutes"
 import DashboardRoutes from "./DashboardRoutes";
-import WorldRoutes from "./WorldRoutes"
 import HomeRoutres from "./HomeRoutes";
 import SettingsRoutes from "./SettingsRoutes";
 import ModuleRouters from "./ModuleRoutes";
+import AuthRoutes from "./AuthRoutes";
+
 const routes = (
     <Route path="/" element={<App />}>
+        {AuthRoutes}
         {HomeRoutres}
         {GameRoutes}
         {BoardRoutes}
-        {WorldRoutes}
         {DashboardRoutes}
         {ModuleRouters}
         {SettingsRoutes}

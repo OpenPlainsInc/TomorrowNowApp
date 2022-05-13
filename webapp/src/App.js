@@ -37,9 +37,9 @@ class App extends Component {
             <LinkContainer to="/game">
               <Nav.Link>Game</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/world">
+            {/* <LinkContainer to="/world">
               <Nav.Link>World</Nav.Link>
-            </LinkContainer>
+            </LinkContainer> */}
             <LinkContainer to="/board">
               <Nav.Link>Board</Nav.Link>
             </LinkContainer>
