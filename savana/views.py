@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu May 12 2022                                               #
+# Last Modified: Tue May 17 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -45,7 +45,7 @@ from .models import TestGCSResourceModel
 from .models import DrainRequest
 from .serializers import DrainRequestSerializer
 from django.core.files.base import ContentFile
-
+from django.core.cache import cache
 
 # from .serializers import WorldBorderSerializer
 from rest_framework import viewsets, generics
@@ -101,6 +101,9 @@ def gLocations(request):
     return JsonResponse({"error": "gLocations View: Fix Me"})
 
 
+@api_view(['POST', 'DELETE'])
+@permission_classes([AllowAny])
+@csrf_exempt
 def gLocation(request, location_name):
     """
     Create or Delete Location
@@ -113,6 +116,7 @@ def gLocation(request, location_name):
         data = request.data
         r = requests.post(url, auth=acp.auth(), json=data)
         print(f"Request URL: {url}")
+        cache.delete('grass_locations')
         return JsonResponse({"response": r.json()}, safe=False)
 
     if request.method == 'DELETE':
@@ -160,6 +164,9 @@ def gMapsets(request, location_name):
     return JsonResponse({"error": "gMapsets View: Fix Me"})
 
 
+@api_view(['POST', 'DELETE'])
+@permission_classes([AllowAny])
+@csrf_exempt
 def gMapset(request, location_name, mapset_name):
     """
     Create or Delete Mapset
@@ -167,7 +174,7 @@ def gMapset(request, location_name, mapset_name):
     POST /locations/{locations_name}/mapsets/{mapset_name}
     DELETE /locations/{locations_name}/mapsets/{mapset_name}
     """
-    url = f"{acp.baseUrl()}/locations/{location_name}/mapset/{mapset_name}"
+    url = f"{acp.baseUrl()}/locations/{location_name}/mapsets/{mapset_name}"
     if request.method == 'POST':
         r = requests.post(url, auth=acp.auth())
         print(f"Request URL: {url}")
@@ -385,8 +392,12 @@ def rDrain(request):
 
     if request.method == 'POST':
 
-        mapset_name = "basin_test"
-        url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/{mapset_name}/processing_async"
+        # mapset_name = "basin_test"
+        mapset_name = "hydro"
+
+        # url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/{mapset_name}/processing_async"
+        url = f"{acp.baseUrl()}/locations/CONUS/mapsets/{mapset_name}/processing_async"
+
         print(f"Actinia Request Url: {url}")
         # body_unicode = request.body.decode('utf-8')
         print(request.data)
@@ -394,7 +405,8 @@ def rDrain(request):
         point = Point(float(coords[0]), float(coords[1]), srid=4326)
         db_point = point
 
-        point.transform(ct=3358)
+        # point.transform(ct=3358)
+        point.transform(ct=5070)
         # point.transform(ct=6542)
         print("Point", point)
         t_coords = [str(t) for t in point]
@@ -404,8 +416,11 @@ def rDrain(request):
         extent_coords = request.data[0]['extent']
         extent_ne = Point(float(extent_coords[0]), float(extent_coords[1]), srid=4326)
         extent_sw = Point(float(extent_coords[2]), float(extent_coords[3]), srid=4326)
-        extent_ne.transform(ct=3358)
-        extent_sw.transform(ct=3358)
+        # extent_ne.transform(ct=3358)
+        # extent_sw.transform(ct=3358)
+
+        extent_ne.transform(ct=5070)
+        extent_sw.transform(ct=5070)
 
         minx, miny = extent_ne
         maxx, maxy = extent_sw
