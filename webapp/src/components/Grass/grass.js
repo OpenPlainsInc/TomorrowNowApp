@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sat May 07 2022
+ * Last Modified: Tue May 17 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -72,6 +72,47 @@ const Grass = {
             console.log("getLocation: error", e);
         }
     },
+    createLocation: (async (locationName, epsg) => {
+        /**
+        * Route: /locations/{location_name}/
+        */
+          try {
+            // let queryParams = {un: params.unId}
+            const url = new URL(`${API_HOST}/g/locations/${locationName}`)
+            let res = await fetch(url, { 
+                method: "POST",
+                body: JSON.stringify({epsg: epsg}),
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+            let data = await res.json();
+            let results = await data.process_results
+            console.log("createLocation: response:", data)
+            return results                         
+        } catch (e) {
+            console.log("getLocation: error", e);
+        }
+    }),
+    createMapset: (async (locationName, mapsetName) => {
+        /**
+         * Route: /locations/{location_name}/mapsets
+        */
+        try {
+            const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}`)
+            let res = await fetch(url, { 
+                method: "POST",
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+            let data = await res.json();
+            console.log("response:", data)
+            return data                    
+          } catch (e) {
+            console.log(e);
+        }
+    }),
     getLocations: (async () => {
         /**
         * Route: /locations/{location_name}/info

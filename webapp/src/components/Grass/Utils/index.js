@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue May 10 2022
+ * Last Modified: Tue May 17 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -38,7 +38,7 @@ import GrassDataTypeSelect from "./GrassDataTypeSelect";
 import GrassRenderImage from "./GrassRenderImage";
 import NLCDLegend from "./NLCDLegend";
 import { useDataSource } from "./useDataSource"
-
+import { GrassFormModal } from "./GrassFormModal";
 export {
 	GrassSelect,
     GrassLocalPagination,
@@ -46,5 +46,6 @@ export {
     GrassDataTypeSelect,
     GrassRenderImage,
     NLCDLegend,
-    useDataSource
+    useDataSource,
+    GrassFormModal
 }
