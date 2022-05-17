@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Th/04/yyyy 08:nn:55
+ * Last Modified: Tu/05/yyyy 04:nn:16
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -46,6 +46,7 @@ import GrassSelect from "../../components/Grass/Utils/GrassSelect";
 import Grass from "../../components/Grass/grass";
 import RasterCardImage from "../../components/Grass/Utils/RasterCardImage";
 import { GrassDataTypeSelect, GrassRenderImage } from "../../components/Grass/Utils";
+import { LayerItemCard } from "../../components/Grass/Layers/LayerItemCard";
 
 
 const Board = (props) => {
@@ -169,24 +170,13 @@ const Board = (props) => {
                 <Row key={rowdata.join()} className="d-flex flex-row bd-highlight mb-2">
                     {rowdata.map(raster => {
                         return( 
-
-                            <Col key={raster}  xs={6} md={3} lg={3}>
-                                <Card  key={raster} >
-                                    {/* <RasterCardImage rasterName={raster} locationName={locationValue} mapsetName={mapsetValue} /> */}
-                                    <GrassRenderImage layerType={dataTypeValue} layerName={raster} locationName={locationValue} mapsetName={mapsetValue}></GrassRenderImage>
-                                    <Card.Body>
-                                    <Card.Title>{raster}</Card.Title>
-                                    <Card.Text>
-                                    </Card.Text>
-                                    <LinkContainer to={`/board/location/${locationValue}/mapset/${mapsetValue}/raster/${raster}/map`}> 
-                                        <Card.Link >Map</Card.Link>
-                                    </LinkContainer>
-                                    <LinkContainer to={`/board/location/${locationValue}/mapset/${mapsetValue}/raster/${raster}`}> 
-                                        <Card.Link >Metadata</Card.Link>
-                                    </LinkContainer>
-                                    
-                                    </Card.Body>
-                                </Card>
+                            <Col key={raster}  xs={12} md={3} lg={3}>
+                              <LayerItemCard
+                                title={raster}
+                                datatype={dataTypeValue}
+                                locationName={locationValue}
+                                mapsetName={mapsetValue}
+                              /> 
                             </Col>
                         )
                     })}        

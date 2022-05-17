@@ -31,7 +31,6 @@ const GrassRenderImage = ({layerType, layerName, mapsetName, locationName, card=
                     data = await Grass.d.renderVector(locationName, mapsetName, layerName)
                 }
                 
-                console.log("image response:", data)
                 data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
                 const layerImage = data.response
                 setImage(layerImage)
