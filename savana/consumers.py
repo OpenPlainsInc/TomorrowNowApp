@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Apr 28 2022                                               #
+# Last Modified: Thu May 19 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -104,11 +104,12 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
         if message in ['accepted']:
             tasks.asyncResourceStatus.delay(user_id, resource_id)
         elif message in ['running']:
+            await self.send(text_data=json.dumps({
+                'message': message,
+                'resource_id': resource_id
+            }))
             tasks.asyncResourceStatus.delay(user_id, resource_id)
-            # await self.send(text_data=json.dumps({
-            #     'message': message,
-            #     'resource_id': resource_id
-            # }))
+            
         elif message == 'finished':
             resources = event['resources']
             resource_owner = acp.currentUser()

@@ -24,10 +24,8 @@ import {TileDebug} from 'ol/source';
 // import Container from 'react-bootstrap/esm/Container';
 import Events from '../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, AreaChart, Area, Funnel, LabelList, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-
-import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
 import GrassColors from '../../components/OpenLayers/Colors'
 import utils from "../../components/OpenLayers/Colors/utils";
 import nlcdColors from "../../components/OpenLayers/Colors/nlcd"
@@ -45,48 +43,35 @@ import { VectorTileLayer } from '../../components/OpenLayers/Layers/VectorTileLa
 import { ChartsContainer } from '../../components/Grass/Charts/ChartsContainer';
 import { Charts, ChartTypes} from '../../components/Grass/Charts/ChartTypes';
 import { highlightSelected } from '../../components/OpenLayers/Filters/highlightSelected';
-
+import { useActiniaAsyncProcess } from '../../components/Grass/Utils/useActiniaAsyncProcess';
+import { rDrain } from './rDrain';
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
 
 const Game = ({params}) => {
-    
-    const [center, setCenter] = useState([-78.6802,35.8408]);
+  const [center, setCenter] = useState([-78.6802,35.8408]);
     const [zoom, setZoom] = useState(11);
     const [basinRaster, setBasinRaster] = useState(null);
 
     const [projection, setProjection] = useState('EPSG:4326')
-    const [legend, setLegend] = useState(nlcdSource({LAYERS: "NLCD_2019_Land_Cover_L48"}).getLegendUrl())
     const [surveyData, setSurveyData] = useState([])
     const [extent, setExtent] = useState(null)
     const [source, setSource] = useState(null);
     const [view, setView] = useState(null)
     const [status, setStatus] = useState(null)
     const [resourceId, setResourceId] = useState(null)
-    const [dataRangeMin, setDataRangeMin] = useState(null)
-    const [dataRangeMax, setDataRangeMax] = useState(null)
-    const [socketUrl, setSocketUrl] = useState(null);
-    const [messageHistory, setMessageHistory] = useState(['test']);
-    const { sendMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(socketUrl, { share: false });
+    const {lastJsonMessage, messageHistory, wsState} = useActiniaAsyncProcess({resourceId, status})
     const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette())
     const [nlcdData, setNlcdData] = useState(null)
-    const [basinWMSSource, setBasinWMSSource] = useState(savanaSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})) 
     const [basinElevationInfo, setBasinElevationInfo] = useState(null)
     const [loadingAnimation, setLoadingAnimation] = useState(false)
     const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
+    const [selectedBasin, setSelectedBasin] = useState(null)
+    const [wms3depSource, setWms3depSource] = useState(ned3DepSource({layer: 'Hillshade Multidirectional'}))
 
 
     const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
     const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
-    const connectionStatus = {
-      [ReadyState.CONNECTING]: 'Connecting',
-      [ReadyState.OPEN]: 'Open',
-      [ReadyState.CLOSING]: 'Closing',
-      [ReadyState.CLOSED]: 'Closed',
-      [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-    }[readyState];
-    let _csrfToken = null;
-    const API_HOST = "http://localhost:8005/savana"
 
     const [tileStyle, setTileStyle] = useState({
       // color: GrassColors.utils.autoDetectPalette(params.rasterId),
@@ -107,6 +92,42 @@ const Game = ({params}) => {
     })
 
     const basinStyle = vectorStyles.Polygon
+
+    const onPointerMoveEnd = (e) => {
+      // "HUC12_VT"
+      console.log("onPointerMoveEnd: e", e)
+
+      if (selectedBasin !== null) {
+        selectedBasin.setStyle(undefined);
+        selectedBasin = null;
+      }
+
+      e.target.getLayers().forEach((el) => {
+
+        if (el.get('name') === "HUC12_VT") {
+          console.log("onPointerMoveEnd HUC12_VT", el)
+          e.map.forEachFeatureAtPixel(e.pixel, function (f) {
+            console.log("onPointerMoveEnd: feature", f)
+            // basinResponseSource.selectStyle.getFill().setColor(f.get('COLOR') || '#eeeeee');
+            // f.setStyle(basinResponseSource.selectStyle);
+            setSelectedBasin(f.getId())
+            el.getFeatures(feat =>{
+              if (f.getId() === feat.getId()) {
+                // return feat.setStyle(basinResponseSource.selectStyle)
+              }
+              else {
+                // return feat.setStyle(basinResponseSource.hucStyle)
+              }
+            })
+            return true;
+          });
+         
+        }
+      })
+    
+      
+    
+    }
 
   
     let groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
@@ -137,7 +158,6 @@ const Game = ({params}) => {
 
         if (el.get('name') === "nlcd2019") {
           console.log("onMove nlcd2019", el)
-          console.log("onMove nlcd2019")
         }
 
         if (el.get('name') === "survey") {
@@ -169,9 +189,6 @@ const Game = ({params}) => {
 
     }
 
-   
-  
- 
     let highlight;
     function surveyClickEvent(e) {
       console.log("VectorLayer Click Event:", e)
@@ -195,41 +212,15 @@ const Game = ({params}) => {
 
     
       let isMounted = true;   
-      async function rDrain(coords) {
-            setBasinRaster(null)
-            try {
-               
-                
-
-                let geojson = [{
-                  point: coords.join(','),
-                  extent: extent
-                }]
-
-                let url = new URL(`${API_HOST}/r/drain/`)
-                console.log(coords)
-                const res = await fetch(url, {
-                    method: "POST",
-                    body: JSON.stringify(geojson),
-                    headers: {
-                       
-                        'Content-Type': 'application/json'
-                    }
-                    
-                });
-                const data = await res.json();
-                console.log("response:", data)             
-                setResourceId(data.response.resource_id)
-                setStatus(data.response.status)
-               
-
-              } catch (e) {
-                console.log(e);
-            }
-            return () => { isMounted = false }
-
-        }
-        rDrain(e.coordinate)
+      async function runProcess(coords, extent) {
+        setBasinRaster(null)
+        let data = await rDrain(coords, extent)
+        console.log("response:", data)             
+        setResourceId(data.response.resource_id)
+        setStatus(data.response.status)
+        return () => { isMounted = false }
+      }
+      runProcess(e.coordinate, extent)
       
     }
 
@@ -259,47 +250,13 @@ const Game = ({params}) => {
       return surveyData
     }
 
-    // Get Websocket message history
-    useEffect(() => {
-      if (lastMessage !== null) {
-        setMessageHistory((prev) => prev.concat(lastMessage));
-      }
-    }, [lastMessage, setMessageHistory]);
-
-    // Open Websocket Connention for resource
-    useEffect(()=> {
-      if (!resourceId || !status) return;
-      console.log("Starting Websocket...")
-      console.log("Websocket: ResourceId Received...")
-      console.log(`Websocket: Resource Id: ${resourceId}`)
-      let resourceName = resourceId.replace(/-/g , '_')
-      console.log(`Websocket: Resource Name: ${resourceName}`)
-
-      setSocketUrl( `ws://localhost:8005/ws/savana/resource/${resourceName}/`)
-
-  },[source, status, resourceId])
-
-  // Send websocket status message to server
-  useEffect(()=> {
-      if (readyState != ReadyState.OPEN) return;
-      console.log("Sending Websocket Message: ", status)
-      sendMessage(JSON.stringify({message: status, resource_id: resourceId}))
-      setMessageHistory([{message: status, resource_id: resourceId}])
-  },[connectionStatus])
-
-  // Log last message from Websocket
-  useEffect(()=> {
-      if (readyState != ReadyState.OPEN) return;
-      console.log("Last Websocket Message", lastMessage)
-
-  },[lastMessage])
-
   // Set source data once data is finished
   useEffect(() => {
       if (!lastJsonMessage) return;
+      console.log("Last Message: ", lastJsonMessage)
       if (lastJsonMessage.message !== 'finished') return;
 
-      console.log("Last Message: ", lastJsonMessage)
+      console.log("Last Message Finished: ", lastJsonMessage)
       if (lastJsonMessage) {
           
           if (lastJsonMessage.process_log) {
@@ -372,7 +329,6 @@ const Game = ({params}) => {
               setNlcdData(rawnlcdData)
             console.log("Raw NLCD Summary Data", rawnlcdData)
           }
-          basinWMSSource.clear()
           setLoadingAnimation(false)
           setBasinRaster("point_basin")
 
@@ -381,59 +337,50 @@ const Game = ({params}) => {
   }, [lastJsonMessage]);
 
        
-              const lineChartDataFormat = (data) => {
-                // {
-              //   name: year: 2016
-              //   uv: 21:  some value
-              //   pv: 22: some value
-              //   amt: 23: some value
-
-              // }
-            
-                let finalFormat = []
-                let tmpYear = {}
+  const lineChartDataFormat = (data) => {  
+    let finalFormat = []
+    let tmpYear = {}
                
-                data.map(c => {
-                  if (!tmpYear.year) {
-                    tmpYear.year = c.year
-                  }
-                
-                  if (tmpYear.year !== c.year) {
-                    finalFormat.push(tmpYear)
-                    tmpYear = {
-                      year: c.year
-                    }
-                  }
-
-                  tmpYear[c.label] = c.area
-                  
-                })
-
-                // Add the last year
-                finalFormat.push(tmpYear)
-                console.log("lineChartDataFormat", finalFormat)
-                return finalFormat
-              }
-
-      const nlcdTotalArea = (data) => {
-        const areaList = data.filter(c=> c.catDetails).map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
-        // console.log("Area List", areaList)
-        return areaList.toFixed(2)
+    data.map(c => {
+      if (!tmpYear.year) {
+        tmpYear.year = c.year
       }
+    
+      if (tmpYear.year !== c.year) {
+        finalFormat.push(tmpYear)
+        tmpYear = {
+          year: c.year
+        }
+      }
+
+      tmpYear[c.label] = c.area
+                  
+    })
+
+    // Add the last year
+    finalFormat.push(tmpYear)
+    return finalFormat
+  }
+
+  const nlcdTotalArea = (data) => {
+    const areaList = data.filter(c=> c.catDetails).map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
+    return areaList.toFixed(2)
+  }
   
         return (
           <Container fluid className="bg-light text-dark">
               
             <Row>
               <Col md={6}>
+                {/* {lastJsonMessage} */}
                 <Map mapClass="map-fullscreen" center={center} zoom={zoom} projection='EPSG:4326'>
                 
                   <Layers>
-                      <TileLayer source={ned3DepSource({layer: 'Hillshade Multidirectional'})} opacity={1} ></TileLayer>
-                      {/* <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer> */}
+                      <TileLayer source={wms3depSource} opacity={1} ></TileLayer>
                       <TileLayer source={osm()} opacity={0.75}></TileLayer>
+                      <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
 
-                      <WebGLTileLayer 
+                      {/* <WebGLTileLayer 
                         layerName="nlcd2019" 
                         preload={12}
                         cacheSize={1024}
@@ -442,7 +389,7 @@ const Game = ({params}) => {
                         source={nlcdCOGSource({layer: 2019})} 
                         // onPostRender={highlightSelected}
                         opacity={0.40} 
-                        zIndex={1}/>
+                        zIndex={1}/> */}
 
                       
                       <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
@@ -451,7 +398,7 @@ const Game = ({params}) => {
                         <VectorLayer
                           layerName="basin"
                           style={basinStyle}
-                          source={basinResponseSource()}
+                          source={basinResponseSource.source()}
                         ></VectorLayer>
                     
                         : null
@@ -468,6 +415,7 @@ const Game = ({params}) => {
                         zIndex={1}
                         minZoom={10}
                         declutter={true}
+                        renderMode="vector"
                         style={hucStyle()}
                         source={
                           VectorTileSource({
@@ -505,7 +453,7 @@ const Game = ({params}) => {
                     {/* <OnMapEvent eventName='postrender' eventHandler={onPostRenderEvent}></OnMapEvent> */}
                     <OnMapEvent eventName='click' eventHandler={surveyClickEvent}></OnMapEvent>
                     <OnMapEvent eventName='moveend' eventHandler={onMoveEventHandler}></OnMapEvent>
-                    {/* <OnMapEvent eventName='pointermove' eventHandler={(e) => console.log()}></OnMapEvent> */}
+                    {/* <OnMapEvent eventName='pointermove' eventHandler={onPointerMoveEnd}></OnMapEvent> */}
                   </Events>
 
                   <Controls>
@@ -535,8 +483,8 @@ const Game = ({params}) => {
                       {basinElevationInfo ? basinElevationInfo.map(e=> {
                         return(
                           <>
-                          <Card.Subtitle>Mean Elevation (m) ({parseFloat(e.mean).toFixed(2)} sd {parseFloat(e.stddev).toFixed(2)})</Card.Subtitle>
-                          <Card.Subtitle>Min - Max Elevation (m) ({parseFloat(e.min).toFixed(2)} - {parseFloat(e.max).toFixed(2)})</Card.Subtitle>
+                          <Card.Subtitle>Mean Elevation ({parseFloat(e.mean).toFixed(2)} sd {parseFloat(e.stddev).toFixed(2)}) (m)</Card.Subtitle>
+                          <Card.Subtitle>Min - Max Elevation ({parseFloat(e.min).toFixed(2)}m - {parseFloat(e.max).toFixed(2)})m</Card.Subtitle>
                           </>
                         )
                       }): null

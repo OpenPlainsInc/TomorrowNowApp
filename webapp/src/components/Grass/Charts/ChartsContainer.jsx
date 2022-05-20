@@ -17,11 +17,6 @@ import {ChartTypes} from "./ChartTypes"
 
 export const ChartsContainer = ({children, options, data, colorMap, defaultValue = ChartTypes.LINE}) => {
     const [value, setValue] = useState(defaultValue)
-    useEffect(() => {
-        if (!children) return;
-        console.log("ChartsContainer", children)
-    }, [children])
-
     const handleChangeEvent = e => {
         setValue(e.target.value)
     }
@@ -31,10 +26,10 @@ export const ChartsContainer = ({children, options, data, colorMap, defaultValue
             <Row>
                 <InputGroup className="mb-3" style={{marginTop: 20}}>
                     <InputGroup.Text id="basic-addon1">Select Chart</InputGroup.Text>
-                    <Form.Control as="select" value={value} defaultValue={defaultValue} onChange={handleChangeEvent}>
-                    {options ? options.map((c, idx) => {
+                    <Form.Control as="select" value={value} onChange={handleChangeEvent}>
+                    {options ? options.map((c) => {
                             return(
-                                <option key={c + idx} value={c}>
+                                <option key={c} value={c}>
                                     {c}
                                 </option>
                             )

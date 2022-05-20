@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 11 2022
+ * Last Modified: Thu May 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -59,6 +59,26 @@ export const hucStyle = () => {
         })
       })
 }
+
+const selectStyle = new Style({
+  fill: new Fill({
+    color: '#eeeeee',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.7)',
+    width: 2,
+  }),
+});
+
+const stylize = (selectedFeatureId) => {
+  return (feature) => {
+    if (feature.getId() === selectedFeatureId) {
+      return selectStyle;
+    }
+    return hucStyle
+  }
+}
+
 
 export const hucBoundaries = (unit) => {
 

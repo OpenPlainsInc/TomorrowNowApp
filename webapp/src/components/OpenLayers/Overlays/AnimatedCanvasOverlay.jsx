@@ -51,9 +51,7 @@ const AnimatedCanvasOverlay = ({acanvas, visible}) => {
   }, [acanvas])
 
   useEffect(() => {
-    if (!map) return;
-    if (!animatedOverlayOptions) return;
-
+    if (!map || !animatedOverlayOptions) return;
     const animatedOverlay = new AnimatedCanvas(animatedOverlayOptions)
 
     animatedOverlay.setVisible(visible);

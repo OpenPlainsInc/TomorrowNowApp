@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 12 2022
+ * Last Modified: Thu May 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,7 +34,6 @@
 
 
 import GeoJSON from 'ol/format/GeoJSON';
-import {fromLonLat} from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 import {tile as tileStrategy} from 'ol/loadingstrategy';
 import {createXYZ} from 'ol/tilegrid';
@@ -47,7 +46,7 @@ const basinResponseSource = ((onAddFeature)=> {
     const layer = 0
 
     const geojsonFormat = new GeoJSON();
-    // async function fetchRasters() 
+ 
     const vectorSource = new VectorSource({
         loader: async (extent, resolution, projection, success, failure) => {
           const url = new URL(serviceUrl)
@@ -81,6 +80,6 @@ const basinResponseSource = ((onAddFeature)=> {
       return vectorSource
 })
 
-export default basinResponseSource
-
-
+export default {
+  source: basinResponseSource
+}
