@@ -11,64 +11,43 @@
 import { useContext, useEffect, useState } from "react";
 import MapContext from "../MapContext";
 import AnimatedCanvas from "ol-ext/overlay/AnimatedCanvas"
-import Rain  from "ol-ext/particule/Rain"
-import Cloud from "ol-ext/particule/Cloud"
+// import Rain  from "ol-ext/particule/Rain"
+// import Cloud from "ol-ext/particule/Cloud"
 
-const AnimatedCanvasOverlay = ({acanvas, visible}) => {
+
+/**
+ * 
+ * @param {acanvas} object animatedCanvas 
+ * @param {visible} boolean Set Visibilty
+ * @returns 
+ */
+
+export const AnimatedCanvasOverlay = ({acanvas, visible}) => {
   const { map } = useContext(MapContext); 
   const [overlay, setOverlay] = useState(null)
-  const [animatedOverlayOptions, setAnimatedOverlayOptions] = useState(null)
-
   
-  // https://github.com/Viglino/ol-ext/blob/master/examples/misc/map.animatedcanvas.html
   
-
-  useEffect(()=> {
-    if (!acanvas) return
-
-    const clouds = {
-      particule: Cloud,
-      density: 2,
-      angle: Math.PI/3,
-      speed: 2
-    }
-  
-    const rain = {
-      particule: Rain,
-      density: 1,
-      angle: 2 * Math.PI / 5,
-      speed: 5
-    };
-
-    if (acanvas === 'Rain') {
-      setAnimatedOverlayOptions(rain)
-    }
-  
-    if (acanvas === 'Clouds') {
-      setAnimatedOverlayOptions(clouds)
-    }
-
-  }, [acanvas])
-
   useEffect(() => {
-    if (!map || !animatedOverlayOptions) return;
-    const animatedOverlay = new AnimatedCanvas(animatedOverlayOptions)
+    if (!map) return;
+    // https://github.com/Viglino/ol-ext/blob/master/examples/misc/map.animatedcanvas.html
+    const animatedOverlay = new AnimatedCanvas(acanvas)
 
     animatedOverlay.setVisible(visible);
-    map.addOverlay(animatedOverlay);
     setOverlay(animatedOverlay)
+    animatedOverlay.setMap(map)
+    // map.addOverlay(animatedOverlay);
 
     return () => {
-      map.removeOverlay(animatedOverlay);
-      setOverlay(null)
+      if (map) {
+        map.removeOverlay(animatedOverlay);
+      }
     };
-  }, [map, animatedOverlayOptions]);
+  }, [map]);
 
   useEffect(()=>{
-    if (!map || !overlay) return;
+    if (!overlay) return;
     overlay.setVisible(visible);
   },[visible, overlay])
 
   return null;
 };
-export default AnimatedCanvasOverlay;

@@ -1,11 +1,11 @@
 /*
- * Filename: index.js
+ * Filename: chartDataFormat.js
  * Project: TomorrowNow
- * File Created: Saturday May 7th 2022
+ * File Created: Thursday May 19th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri May 20 2022
+ * Last Modified: Thu May 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,15 +30,28 @@
  * 
  */
 
-import {AnimatedCanvasOverlay} from "./AnimatedCanvasOverlay"
-import {animatedCanvas} from "./animatedCanvas"
-import { Overlay } from "./Overlay"
-import Overlays from "./Overlays"
 
-export {
-	Overlay,
-	Overlays,
-	AnimatedCanvasOverlay,
-	animatedCanvas
-}
+export const chartDataFormat = (data) => {  
+    let finalFormat = []
+    let tmpYear = {}
+               
+    data.map(c => {
+      if (!tmpYear.year) {
+        tmpYear.year = c.year
+      }
+    
+      if (tmpYear.year !== c.year) {
+        finalFormat.push(tmpYear)
+        tmpYear = {
+          year: c.year
+        }
+      }
 
+      tmpYear[c.label] = c.area
+                  
+    })
+
+    // Add the last year
+    finalFormat.push(tmpYear)
+    return finalFormat
+  }

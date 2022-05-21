@@ -1,11 +1,11 @@
 /*
  * Filename: index.js
  * Project: TomorrowNow
- * File Created: Saturday May 7th 2022
+ * File Created: Thursday May 19th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri May 20 2022
+ * Last Modified: Thu May 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,15 +30,14 @@
  * 
  */
 
-import {AnimatedCanvasOverlay} from "./AnimatedCanvasOverlay"
-import {animatedCanvas} from "./animatedCanvas"
-import { Overlay } from "./Overlay"
-import Overlays from "./Overlays"
 
-export {
-	Overlay,
-	Overlays,
-	AnimatedCanvasOverlay,
-	animatedCanvas
+import { chartDataFormat } from "./chartDataFormat";
+import { ChartsContainer } from "./ChartsContainer";
+import { ChartTypes } from "./ChartTypes";
+
+
+export default {
+    chartDataFormat,
+    ChartTypes,
+    ChartsContainer
 }
-

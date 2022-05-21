@@ -9,12 +9,12 @@
 
 
 import React, { useState, useEffect} from "react"
-import useWebSocket, { ReadyState } from 'react-use-websocket';
 import WebGLTileLayer from "../Layers/WebGLTileLayer"
 import GeoTIFFSource from "./GeoTIFF"
 import GrassColors from "../Colors";
 import utils from "../Colors/utils";
 import Grass from "../../Grass/grass"
+import { useActiniaAsyncProcess } from '../../Grass/Utils/useActiniaAsyncProcess';
 
 
 
@@ -34,17 +34,15 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     zIndex = 0 
 }) => {
  
-    const [socketUrl, setSocketUrl] = useState(null);
-    const [messageHistory, setMessageHistory] = useState(['test']);
-    const { sendMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(socketUrl, { share: false });
+   
     const [source, setSource] = useState(null);
     const [status, setStatus] = useState(null)
     const [resourceId, setResourceId] = useState(null)
-    const [dataRangeMin, setDataRangeMin] = useState(null)
-    const [dataRangeMax, setDataRangeMax] = useState(null)
+    const [dataRangeMin, setDataRangeMin] = useState(0)
+    const [dataRangeMax, setDataRangeMax] = useState(100)
     const [grassColorScheme, setGrassColorScheme] = useState(null)
 
-
+    const {lastJsonMessage, messageHistory, wsState} = useActiniaAsyncProcess({resourceId, status})
     // const [tileStyle, setTileStyle] = useState(style)
     const [tileStyle, setTileStyle] = useState({
         color: undefined,
@@ -70,18 +68,11 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     
     const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette(rasterName))
 
-    const connectionStatus = {
-        [ReadyState.CONNECTING]: 'Connecting',
-        [ReadyState.OPEN]: 'Open',
-        [ReadyState.CLOSING]: 'Closing',
-        [ReadyState.CLOSED]: 'Closed',
-        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-      }[readyState];
-
     const API_HOST = "http://localhost:8005/savana"
 
     // Request data from server
     useEffect(() => {
+        if (!rasterName || !mapsetName || !locationName) return;
         let isMounted = true; 
         async function fetchRasters() {
             try {
@@ -99,42 +90,9 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             return () => { isMounted = false }
         }
         fetchRasters()
-      }, [])
+      }, [rasterName, locationName, mapsetName])
 
-      // Get Websocket message history
-      useEffect(() => {
-        if (lastMessage !== null) {
-          setMessageHistory((prev) => prev.concat(lastMessage));
-        }
-      }, [lastMessage, setMessageHistory]);
-
-      // Open Websocket Connention for resource
-      useEffect(()=> {
-        if (!resourceId || !status) return;
-        console.log("Starting Websocket...")
-        console.log("Websocket: ResourceId Received...")
-        console.log(`Websocket: Resource Id: ${resourceId}`)
-        let resourceName = resourceId.replace(/-/g , '_')
-        console.log(`Websocket: Resource Name: ${resourceName}`)
-
-        setSocketUrl( `ws://localhost:8005/ws/savana/resource/${resourceName}/`)
-
-    },[source, status, resourceId])
-
-    // Send websocket status message to server
-    useEffect(()=> {
-        if (readyState != ReadyState.OPEN) return;
-        console.log("Sending Websocket Message: ", status)
-        sendMessage(JSON.stringify({message: status, resource_id: resourceId}))
-        setMessageHistory([{message: status, resource_id: resourceId}])
-    },[connectionStatus])
-
-    // Log last message from Websocket
-    useEffect(()=> {
-        if (readyState != ReadyState.OPEN) return;
-        console.log("Last Websocket Message", lastMessage)
-
-    },[lastMessage])
+     
 
     // Set source data once data is finished
     useEffect(() => {
@@ -145,8 +103,12 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             setStatus(data.message)
 
             const rastersData = `${API_HOST}/r/resource/${rasterName}/stream/${data.resource_id}`
-            setDataRangeMin(data.statistics.min)
-            setDataRangeMax(data.statistics.max)
+
+            if (data.statistics) {
+                setDataRangeMin(data.statistics.min)
+                setDataRangeMax(data.statistics.max)
+            }
+            
 
             let sourceOptions = {
                 sources: [{url: rastersData}], 

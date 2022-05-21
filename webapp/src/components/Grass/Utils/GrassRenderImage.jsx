@@ -7,7 +7,7 @@
  * Copyright (c) 2022 Corey White
  */
 
-import React, { useState, useEffect, useRef, Fragment} from "react"
+import React, { useState, useEffect } from "react"
 import Spinner from "react-bootstrap/Spinner"
 import Grass from "../grass";
 import Card from "react-bootstrap/Card"
@@ -17,8 +17,9 @@ import Image from "react-bootstrap/Image"
 const GrassRenderImage = ({layerType, layerName, mapsetName, locationName, card=true}) => {
     const [image, setImage] = useState(null)
     const [loading, setLoading] = useState(true)
-
+    // useDataSource
     useEffect(() => {
+        if (!layerType || !layerName || !mapsetName || !locationName) return;
         let isMounted = true; 
         (async () => {
             // if (!isMounted) return null;
@@ -46,7 +47,7 @@ const GrassRenderImage = ({layerType, layerName, mapsetName, locationName, card=
 
      
       return (
-        <Fragment >
+        <>
             {
                 loading ? 
                 <Spinner as="span" animation="border" role="status" variant="secondary" className="bg-dark text-light" >
@@ -56,7 +57,7 @@ const GrassRenderImage = ({layerType, layerName, mapsetName, locationName, card=
                 card ? <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} className="bg-dark text-light"/> :
                 <Image as="img" fluid={true} src={image ? image.imgurl : ""} className="bg-dark text-light"></Image>
             }
-        </Fragment>
+        </>
       )
 
 };

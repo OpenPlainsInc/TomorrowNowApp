@@ -50,7 +50,7 @@ const WebGLTileLayer = ({
       opacity
     });
     console.log("WebGLTileLayer", tileLayer)
-    // map.setView(source.getView()) // Need to figure out what to do about this with mismatched projetions
+    map.setView(source.getView()) // Need to figure out what to do about this with mismatched projetions
     map.addLayer(tileLayer);
     tileLayer.setZIndex(zIndex);
     tileLayer.set('name', layerName)
@@ -96,16 +96,15 @@ const WebGLTileLayer = ({
 
   // Set MinZoom
   useEffect(() => {
-    if (!source || !layer || !minZoom) return;
+    if (!layer || !minZoom) return;
       layer.setMinZoom(minZoom)
-  }, [source, layer, minZoom])
+  }, [layer, minZoom])
 
   // Set MaxZoom
   useEffect(() => {
-    if (!source || !layer || !maxZoom) return;
-      console.log(`Current max zoom: ${layer.getMaxZoom()}, new max zoom ${maxZoom}`)
+    if (!layer || !maxZoom) return;
       layer.setMaxZoom(maxZoom)
-  }, [source, layer, maxZoom])
+  }, [layer, maxZoom])
 
   return null;
 };

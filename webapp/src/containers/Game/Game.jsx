@@ -37,11 +37,12 @@ import { Interactions, Draw } from '../../components/OpenLayers/Interactions';
 import { NLCDLegend } from '../../components/Grass/Utils';
 import basinResponseSource from './basinResponseSource';
 import Overlays from '../../components/OpenLayers/Overlays/Overlays';
-import { AnimatedCanvasOverlay } from '../../components/OpenLayers/Overlays';
+import { AnimatedCanvasOverlay, animatedCanvas } from '../../components/OpenLayers/Overlays';
 import { hucBoundaries, survey, nlcdSource, ned3DepSource, VectorSource, hucStyle, VectorTileSource } from '../../components/OpenLayers/Sources';
 import { VectorTileLayer } from '../../components/OpenLayers/Layers/VectorTileLayer';
 import { ChartsContainer } from '../../components/Grass/Charts/ChartsContainer';
 import { Charts, ChartTypes} from '../../components/Grass/Charts/ChartTypes';
+import { chartDataFormat } from '../../components/Grass/Charts/chartDataFormat';
 import { highlightSelected } from '../../components/OpenLayers/Filters/highlightSelected';
 import { useActiniaAsyncProcess } from '../../components/Grass/Utils/useActiniaAsyncProcess';
 import { rDrain } from './rDrain';
@@ -50,30 +51,26 @@ import { rDrain } from './rDrain';
 
 const Game = ({params}) => {
   const [center, setCenter] = useState([-78.6802,35.8408]);
-    const [zoom, setZoom] = useState(11);
-    const [basinRaster, setBasinRaster] = useState(null);
-
-    const [projection, setProjection] = useState('EPSG:4326')
-    const [surveyData, setSurveyData] = useState([])
-    const [extent, setExtent] = useState(null)
-    const [source, setSource] = useState(null);
-    const [view, setView] = useState(null)
-    const [status, setStatus] = useState(null)
-    const [resourceId, setResourceId] = useState(null)
-    const {lastJsonMessage, messageHistory, wsState} = useActiniaAsyncProcess({resourceId, status})
-    const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette())
-    const [nlcdData, setNlcdData] = useState(null)
-    const [basinElevationInfo, setBasinElevationInfo] = useState(null)
-    const [loadingAnimation, setLoadingAnimation] = useState(false)
-    const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
-    const [selectedBasin, setSelectedBasin] = useState(null)
-    const [wms3depSource, setWms3depSource] = useState(ned3DepSource({layer: 'Hillshade Multidirectional'}))
-
-
-    const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
-    const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
-
-    const [tileStyle, setTileStyle] = useState({
+  const [zoom, setZoom] = useState(11);
+  const [basinRaster, setBasinRaster] = useState(null);
+  const [projection, setProjection] = useState('EPSG:4326')
+  const [surveyData, setSurveyData] = useState([])
+  const [extent, setExtent] = useState(null)
+  const [source, setSource] = useState(null);
+  const [view, setView] = useState(null)
+  const [status, setStatus] = useState(null)
+  const [resourceId, setResourceId] = useState(null)
+  const {lastJsonMessage, messageHistory, wsState} = useActiniaAsyncProcess({resourceId, status})
+  const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette())
+  const [nlcdData, setNlcdData] = useState(null)
+  const [basinElevationInfo, setBasinElevationInfo] = useState(null)
+  const [loadingAnimation, setLoadingAnimation] = useState(false)
+  const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
+  const [selectedBasin, setSelectedBasin] = useState(null)
+  const [wms3depSource, setWms3depSource] = useState(ned3DepSource({layer: 'Hillshade Multidirectional'}))
+  const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
+  const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
+  const [tileStyle, setTileStyle] = useState({
       // color: GrassColors.utils.autoDetectPalette(params.rasterId),
       color: undefined,
       exposure: ['var', 'exposure'],
@@ -89,7 +86,7 @@ const Game = ({params}) => {
           color: undefined,
           level: 0
         }
-    })
+  })
 
     const basinStyle = vectorStyles.Polygon
 
@@ -124,9 +121,6 @@ const Game = ({params}) => {
          
         }
       })
-    
-      
-    
     }
 
   
@@ -156,10 +150,6 @@ const Game = ({params}) => {
       console.log(e.target.getLayers())
       e.target.getLayers().forEach((el) => {
 
-        if (el.get('name') === "nlcd2019") {
-          console.log("onMove nlcd2019", el)
-        }
-
         if (el.get('name') === "survey") {
         
           let properties = []
@@ -170,9 +160,6 @@ const Game = ({params}) => {
           if (!properties) return;
 
           let grouped = groupBy(properties,'how_serious_is_this_problem')
-
-
-          console.log("Grouped", properties, )
        
           setSurveyData(Object.entries(grouped)
             .map((k, v) => {
@@ -325,7 +312,7 @@ const Game = ({params}) => {
               })
 
        
-              lineChartDataFormat(rawnlcdData)
+              // chartDataFormat(rawnlcdData)
               setNlcdData(rawnlcdData)
             console.log("Raw NLCD Summary Data", rawnlcdData)
           }
@@ -335,32 +322,6 @@ const Game = ({params}) => {
          
       }
   }, [lastJsonMessage]);
-
-       
-  const lineChartDataFormat = (data) => {  
-    let finalFormat = []
-    let tmpYear = {}
-               
-    data.map(c => {
-      if (!tmpYear.year) {
-        tmpYear.year = c.year
-      }
-    
-      if (tmpYear.year !== c.year) {
-        finalFormat.push(tmpYear)
-        tmpYear = {
-          year: c.year
-        }
-      }
-
-      tmpYear[c.label] = c.area
-                  
-    })
-
-    // Add the last year
-    finalFormat.push(tmpYear)
-    return finalFormat
-  }
 
   const nlcdTotalArea = (data) => {
     const areaList = data.filter(c=> c.catDetails).map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
@@ -372,7 +333,6 @@ const Game = ({params}) => {
               
             <Row>
               <Col md={6}>
-                {/* {lastJsonMessage} */}
                 <Map mapClass="map-fullscreen" center={center} zoom={zoom} projection='EPSG:4326'>
                 
                   <Layers>
@@ -445,8 +405,8 @@ const Game = ({params}) => {
                   </Layers>
 
                   <Overlays>
-                    <AnimatedCanvasOverlay acanvas="Rain" visible={loadingAnimation}/>
-                    <AnimatedCanvasOverlay acanvas="Clouds" visible={loadingAnimation}/>
+                    <AnimatedCanvasOverlay acanvas={animatedCanvas.rain} visible={loadingAnimation}/>
+                    <AnimatedCanvasOverlay acanvas={animatedCanvas.clouds} visible={loadingAnimation}/>
                   </Overlays>
 
                   <Events>
@@ -474,16 +434,14 @@ const Game = ({params}) => {
                   { 
                     nlcdData ? 
                   <Row className="bg-alert text-dark">
-                  
                     <Card bg="bg-secondary-light" text="dark">
-                    
                     <Card.Body>
                       <Card.Title>Upstream Land Use Characteristics</Card.Title>
                       <Card.Subtitle>Total Area ({nlcdTotalArea(nlcdData)} km<sup>2</sup>)</Card.Subtitle>
                       {basinElevationInfo ? basinElevationInfo.map(e=> {
                         return(
                           <>
-                          <Card.Subtitle>Mean Elevation ({parseFloat(e.mean).toFixed(2)} sd {parseFloat(e.stddev).toFixed(2)}) (m)</Card.Subtitle>
+                          <Card.Subtitle><icon className="fa-solid fa-signal"></icon>Mean Elevation ({parseFloat(e.mean).toFixed(2)} sd {parseFloat(e.stddev).toFixed(2)}) (m)</Card.Subtitle>
                           <Card.Subtitle>Min - Max Elevation ({parseFloat(e.min).toFixed(2)}m - {parseFloat(e.max).toFixed(2)})m</Card.Subtitle>
                           </>
                         )
@@ -493,13 +451,10 @@ const Game = ({params}) => {
                     <div style={{backgroundColor: "white"}}>
                     <ChartsContainer 
                       options={[ChartTypes.BAR, ChartTypes.LINE, ChartTypes.AREA]}
-                      data={lineChartDataFormat(nlcdData)} 
+                      data={chartDataFormat(nlcdData)} 
                       colorMap={nlcdData}>
                     <Charts/>
                     </ChartsContainer>
-                   
-            
-                    
                     </div>
                     <Card.Footer>
                       <Card.Text>
