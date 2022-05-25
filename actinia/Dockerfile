@@ -1,8 +1,8 @@
-FROM mundialis/actinia-core:4.0.0 as actinia
+FROM mundialis/actinia-core:4.0.1 as actinia
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
-ENV ACTINIA_CORE_VERSION=4.0.0
+ENV ACTINIA_CORE_VERSION=4.0.1
 
 # USER root
 
@@ -41,15 +41,15 @@ ARG WHEEL_NAME=actinia_module_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-module-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
-ARG PLUGIN_VERSION=0.1.0
-ARG WHEEL_NAME=actinia_stac_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
-RUN curl -L --output /build/${WHEEL_NAME} \
-    https://github.com/mundialis/actinia-stac-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
+# ARG PLUGIN_VERSION=0.1.0
+# ARG WHEEL_NAME=actinia_stac_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
+# RUN curl -L --output /build/${WHEEL_NAME} \
+#     https://github.com/mundialis/actinia-stac-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
-ENV PLUGIN_VERSION=1.0.0
-ARG WHEEL_NAME=actinia_tiling_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
-RUN curl -L --output /build/${WHEEL_NAME} \
-    https://github.com/mundialis/actinia-tiling-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
+# ENV PLUGIN_VERSION=1.0.0
+# ARG WHEEL_NAME=actinia_tiling_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
+# RUN curl -L --output /build/${WHEEL_NAME} \
+#     https://github.com/mundialis/actinia-tiling-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
 ENV ACTINIA_API_VERSION=3.1.0
 ARG WHEEL_NAME=actinia_api-${ACTINIA_API_VERSION}-py3-none-any.whl
@@ -73,6 +73,6 @@ RUN mkdir -p /home/user/gcp/
 COPY gcp_keys/gcp_tomorrownow_dev_key.json /home/user/gcp/gcp_tomorrownow_dev_key.json
 
 COPY actinia.cfg /etc/default/actinia
-# COPY start.sh /src/start.sh
+COPY start.sh /src/start.sh
 CMD ["/src/start.sh"]
 # USER user
