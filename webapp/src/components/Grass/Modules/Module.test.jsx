@@ -7,13 +7,24 @@
  * Copyright (c) 2022 Corey White
  */
 
-
 import { render, screen } from '@testing-library/react';
+import {Router} from 'react-router-dom'
+// import { shallow } from "enzyme"
+import {createMemoryHistory} from 'history';
+import '@testing-library/jest-dom';
 import Module from './Module';
+// https://testing-library.com/docs/react-testing-library/example-intro
 
-test('renders module component', () => {
-  render(<Module moduleName="r.basin" />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+describe("Module", ()=> {
+  test('renders GRASS module component', () => {
+    const history = createMemoryHistory()
+    render(
+      <Router location={history.location} navigator={history}>
+        <Module moduleName="r.basin" />
+      </Router>
+    )
+    const linkElement = screen.getByText(/r.basin/i);
+    expect(linkElement).toBeInTheDocument();
+  });
 });
-

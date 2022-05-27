@@ -1,7 +1,10 @@
 import React, { useRef, useState, useEffect } from "react"
 import "./Map.scss";
 import MapContext from "./MapContext";
-import * as ol from "ol";
+import {
+  Map as OLMap,
+  View as OLView 
+} from "ol"
 
 
 
@@ -11,7 +14,8 @@ const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map"
  
   // on component mount
   useEffect(() => {
-    let view = new ol.View({ 
+    if (!center || !zoom || !projection) return;
+    let view = new OLView({ 
       zoom, 
       center,
       projection 
@@ -23,34 +27,34 @@ const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map"
       overlays: [],
       view: view
     };
-    let mapObject = new ol.Map(options);
+
+    let mapObject = new OLMap(options);
     mapObject.setTarget(mapRef.current);
     setMap(mapObject);
    
     return () => mapObject.setTarget(undefined);
-  },[]);
+  },[center, zoom, projection]);
 
   // view change handler
   useEffect(() => {
-    if (!map && !altView){
-      return
-    } else {
-      map.setView(altView.getView())
-      console.log("altView", altView)
-      console.log("map + view", map.getView())
-    }
-   
-  }, [altView]);
+    if (!map || !altView) return;
+    map.setView(altView.getView())
+    console.log("altView", altView)
+    console.log("map + view", map.getView())
+  }, [map, altView]);
+
   // zoom change handler
   useEffect(() => {
     if (!map) return;
     map.getView().setZoom(zoom);
-  }, [zoom]);
+  }, [map, zoom]);
+
   // center change handler
   useEffect(() => {
     if (!map) return;
     map.getView().setCenter(center)
-  }, [center])
+  }, [map, center])
+
   return (
     <MapContext.Provider value={{ map }}>
       <div ref={mapRef} className={mapClass}>

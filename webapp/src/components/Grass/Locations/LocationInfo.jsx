@@ -25,11 +25,12 @@ import React, { } from "react"
 
 
 export const LocationInfo = ({ name, projection, region}) => {
-  const {name, projection, region} = grassLocation || {};
 
-  return grassLocation ? (
-    <>
-    <h3>{name}</h3>
-    </>
-  ) : <p>Loading...</p>
+  return (
+    <div>
+      <h2 data-testid="locationNameText">{name}</h2>
+      <h3>{projection}</h3>
+      <h3>{region}</h3>
+    </div>
+  )
 }

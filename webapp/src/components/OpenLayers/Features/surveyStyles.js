@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sun May 08 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,98 +29,59 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-'use strict';
+
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 import colorbrewer from "../Colors/colorbrewer";
-// const colorScheme = colorbrewer.asRGBA('RdYlBu', 5)
+
+// The defined color scheme
 const colorScheme = colorbrewer.asRGBA('RdBu', 5).reverse()
 
-
-
-const styleCache = {
-    'unserious': new Style({
-        image: new CircleStyle({
-            radius: 5,
-            fill: new Fill({
-                color: colorScheme[0],
-              }),
-            stroke: new Stroke({
-              color: 'black',
-              width: 0.5,
-            }),
-          }),
-    }),
-    "somewhat_unserious": new Style({
-        image: new CircleStyle({
-            radius: 5,
-            fill: new Fill({
-                color: colorScheme[1],
-              }),
-            stroke: new Stroke({
-              color: 'black',
-              width: 0.5,
-            }),
-          }),
-    }),
-    'neutral': new Style({
-       image: new CircleStyle({
-        radius: 5,
-        fill: new Fill({
-            color: colorScheme[2],
-          }),
-        stroke: new Stroke({
-          color: 'black',
-          width: 0.5,
-        }),
+/**
+ * Base style for survey point data.
+ * @param {String} fillColor 
+ * @returns {Style} Return a openlayers style object with distict fill color.
+ */
+const baseStye = fillColor => {
+  return new Style({
+    image: new CircleStyle({
+      radius: 5,
+      fill: new Fill({
+        color: fillColor,
       }),
-    }),
-    'somewhat_serious': new Style({
-        image: new CircleStyle({
-            radius: 5,
-            fill: new Fill({
-                color: colorScheme[3],
-              }),
-            stroke: new Stroke({
-              color: 'black',
-              width: 0.5,
-            }),
-          }),
-    }),
-    'serious': new Style({
-        image: new CircleStyle({
-            radius: 5,
-            fill: new Fill({
-                color: colorScheme[4],
-              }),
-            stroke: new Stroke({
-              color: 'black',
-              width: 0.5,
-            }),
-          }),
-    }),
-    'selected': new Style({
-        image: new CircleStyle({
-            radius: 5,
-            fill: new Fill({
-                color: 'yellow',
-              }),
-            stroke: new Stroke({
-              color: 'black',
-              width: 0.5,
-            }),
-          }),
+      stroke: new Stroke({
+        color: 'black',
+        width: 0.5,
+      }),
     })
-  };
-
-  const setSurveyStyle = (feature) => {
-    const classify = feature.get("how_serious_is_this_problem");
-    // console.log("setSurvey: ",feature, classify, styleCache[classify])
-    return styleCache[classify];
-  }
-
-
-export default {
-    styleCache,
-    setSurveyStyle,
-    colorScheme
+  })
 }
+
+/**
+ * Defined style mapping from survey data to color scheme
+ */
+const styleCache = {
+  'unserious': baseStye(colorScheme[0]),
+  'somewhat_unserious': baseStye(colorScheme[1]),
+  'neutral': baseStye(colorScheme[2]),
+  'somewhat_serious': baseStye(colorScheme[3]),
+  'serious':baseStye(colorScheme[4]),
+  'selected': baseStye('yellow'),
+};
+
+/**
+ * Helper function that sets feature color based on features properties data.
+ * @param {ol/Feature} feature - Openlayers Feature 
+ * @returns {ol/Style} 
+ */
+const setSurveyStyle = (feature) => {
+  const classify = feature.get("how_serious_is_this_problem");
+  return styleCache[classify];
+}
+
+const surveyStyles = {
+  colorScheme,
+  styleCache,
+  setSurveyStyle
+}
+
+export default surveyStyles;

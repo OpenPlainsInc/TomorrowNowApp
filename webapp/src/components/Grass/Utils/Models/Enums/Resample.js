@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -32,7 +32,7 @@
 
 
 /**
- * @description Resampling method to use for reprojection of raster map (default: nearest).
+ * Class representing enumeration of resampling methods to use for reprojection of raster map.
  * @param {String} name The resampling methed
  */
  export class Resample {

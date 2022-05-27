@@ -9,9 +9,9 @@ import VectorLayer from "../../components/OpenLayers/Layers/VectorLayer"
 import osm from "../../components/OpenLayers/Sources/osm"
 import savanaSource from "../../components/OpenLayers/Sources/savana"
 import Controls from "../../components/OpenLayers/Controls/Controls";
-import { ScaleLineControl, ZoomSliderControl, FullScreenControl, RotateControl, EditMapControl } from "../../components/OpenLayers/Controls";
+import { ScaleLineControl, ZoomSliderControl, FullScreenControl } from "../../components/OpenLayers/Controls";
 import surveyStyles from '../../components/OpenLayers/Features/surveyStyles';
-import vectorStyles from '../../components/OpenLayers/Features/Styles'
+import { styles as vectorStyles } from '../../components/OpenLayers/Features/Styles'
 import GeoTIFFSource from '../../components/OpenLayers/Sources/GeoTIFF'
 // import Form from 'react-bootstrap/Form'
 import Container from 'react-bootstrap/esm/Container';
@@ -46,6 +46,7 @@ import { chartDataFormat } from '../../components/Grass/Charts/chartDataFormat';
 import { highlightSelected } from '../../components/OpenLayers/Filters/highlightSelected';
 import { useActiniaAsyncProcess } from '../../components/Grass/Utils/useActiniaAsyncProcess';
 import { rDrain } from './rDrain';
+import { ProjectionInfoModel } from  "../../components/Grass/Utils/Models"
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
 
@@ -87,7 +88,7 @@ const Game = ({params}) => {
           level: 0
         }
   })
-
+  console.log("ProjectionInfoModel", ProjectionInfoModel.searchEpsg('4326'))
     const basinStyle = vectorStyles.Polygon
 
     const onPointerMoveEnd = (e) => {
@@ -265,7 +266,7 @@ const Game = ({params}) => {
                  }, {});
                  return obj
               })
-            console.log("tmpBasinElevationInfo", tmpBasinElevationInfo)
+            
             setBasinElevationInfo(tmpBasinElevationInfo)
             // Cat, Label, area, cells, %
             let rawnlcdData = lastJsonMessage.process_log
@@ -339,17 +340,16 @@ const Game = ({params}) => {
                       <TileLayer source={wms3depSource} opacity={1} ></TileLayer>
                       <TileLayer source={osm()} opacity={0.75}></TileLayer>
                       <TileLayer source={nlcdSource({LAYERS: 'mrlc_display:NLCD_2019_Land_Cover_L48'})} opacity={0.5}></TileLayer>
-
-                      {/* <WebGLTileLayer 
+                       {/* <WebGLTileLayer 
                         layerName="nlcd2019" 
                         preload={12}
                         cacheSize={1024}
                         // style={{color: nlcdColors.webGLColors}}
                         // color={nlcdColors.webGLColors}
                         source={nlcdCOGSource({layer: 2019})} 
-                        // onPostRender={highlightSelected}
+                        onPostRender={highlightSelected}
                         opacity={0.40} 
-                        zIndex={1}/> */}
+                        zIndex={1}/>  */}
 
                       
                       <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -43,6 +43,11 @@ import { ExceptionTracebackModel } from "./ExceptionTracebackModel";
 import { UrlModel } from "./UrlModel";
 import { ApiInfoModel } from "./ApiInfoModel";
 import { LocationResponseModel } from "./LocationResponseModel";
+import { SimpleResponseModel } from "./SimpleResponseModel"
+import { MapsetInfoModel } from "./MapsetInfoModel";
+import { RegionModel } from "./RegionModel";
+import { MapsetInfoResponseModel } from "./MapsetInfoResponseModel";
+import { ProjectionInfoModel } from "./ProjectionInfoModel";
 export {
     GrassModule,
     ProcessLog,
@@ -56,5 +61,10 @@ export {
     ExceptionTracebackModel,
     UrlModel,
     ApiInfoModel,
-    LocationResponseModel
+    LocationResponseModel,
+    SimpleResponseModel,
+    MapsetInfoModel,
+    RegionModel,
+    MapsetInfoResponseModel,
+    ProjectionInfoModel
 }

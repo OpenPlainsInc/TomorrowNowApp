@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Apr 06 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,11 +33,11 @@
 
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 
-export default {
+const styles = {
   Point: new Style({
     image: new CircleStyle({
       radius: 10,
-      fill: null,
+      fill: "blue",
       stroke: new Stroke({
         color: "magenta",
       }),
@@ -63,3 +63,5 @@ export default {
     }),
   }),
 };
+
+export { styles }

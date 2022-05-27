@@ -1,11 +1,11 @@
 /*
- * Filename: Settings.test.js
+ * Filename: EpsgSearchResponse.js
  * Project: TomorrowNow
- * File Created: Friday April 8th 2022
+ * File Created: Thursday May 26th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Apr 08 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,5 +29,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+import { EpsgInfo } from "./EpsgInfo";
 
+/**
+ * Class representing json search response from epsg.io
+ */
+ export class EpsgSearchResponse {
+    /**
+     * Create a EpsgSearchResponse object
+     * @param {String} status - Resposne status e.g. "ok"
+     * @param {Number} number_result - The number of return results.
+     * @param {Array.<EpsgInfo} [results = []] List of return epsg info.
+     */
+    constructor({status, number_result, results}) {
+        this.status = status;
+        this.number_result = number_result;
+        this.results = results.map(r => new EpsgInfo({...r}));
+    }
 
+    // *getResults() {
+    //     for (const result of this.results) {
+    //         yield new EpsgInfo({...result})
+    //     }
+    // }
+}

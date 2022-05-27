@@ -7,4 +7,11 @@
  * Copyright (c) 2022 Corey White
  */
 
+import React, {useState} from "react";
 
+export const Mapset = ({locationName, mapsetName}) => {
+
+    return (
+        <div>{`${locationName}: ${mapsetName}`}</div>
+    )
+}

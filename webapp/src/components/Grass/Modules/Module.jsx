@@ -12,7 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import {useParams, useLocation } from "react-router-dom";
 import './module.scss';
-import Container from 'react-bootstrap/esm/Container';
+import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 import Card from 'react-bootstrap/Card'
 import Grass from '../grass'
@@ -37,10 +37,10 @@ const Module = ({moduleName}) => {
 
   const filterSectionParams = (params, section) => {
     let filterdParams = params.filter(f => {
-      if (section == 'optional' && f.optional){
+      if (section === 'optional' && f.optional){
         return f
       }
-      else if (section == 'required' && !f.optional) {
+      else if (section === 'required' && !f.optional) {
         return f
       }
       else {
@@ -64,11 +64,11 @@ const Module = ({moduleName}) => {
   }
 
   useEffect(() => {
-    if (!module) return;
+    if (!module || !activeSubsection) return;
       let params = module.parameters;
       setModuleParams(params)
       setSectionParams(filterSectionParams(params, activeSubsection))
-  }, [module])
+  }, [module, activeSubsection])
 
   useEffect(() => {
     if (!moduleParams || !activeSubsection) return;

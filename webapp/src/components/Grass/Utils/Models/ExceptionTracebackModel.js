@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,13 +34,13 @@
  * @description Response schema that contains python3 exception information of the called endpoint
  * @param {String} message The message that was send with the exception.
  * @param {String} type The type of the exception
- * @param {Array} traceback The full traceback of the exception
+ * @param {Array} [traceback = []] The full traceback of the exception
  */
 export class ExceptionTracebackModel {
-    constructor(message, type, traceback) {
+    constructor(message, type, traceback = []) {
         this.message = message;
         this.type = type;
-        this.traceback = traceback;
+        this.traceback = [...traceback];
     }
 }
 

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,20 +34,20 @@
  * @description Actinia class that defines the model for the Unix process information
  * @param {String} id The ID of the executable
  * @param {String} executable The name of the executable
- * @param {Array.<String>} parameter The parameter of the executable
- * @param {String} stdout The stdout output of the executable
- * @param {Array.<String>} stderr The stderr output of the executable as list of strings
- * @param {Number} return_code The return code of the executable
- * @param {Number} [run_time = NaN] The runtime of the executable in seconds
- * @param {Number} [mapset_size = NaN] The size of the mapset in bytes
+ * @param {Array.<String>} [parameter = []] The parameter of the executable
+ * @param {String} [stdout = null] The stdout output of the executable
+ * @param {Array.<String>} [stderr = []] The stderr output of the executable as list of strings
+ * @param {Number} [return_code = null] The return code of the executable
+ * @param {Number} [run_time = null] The runtime of the executable in seconds
+ * @param {Number} [mapset_size = null] The size of the mapset in bytes
  */
  export class ProcessLog {
-    constructor(id, executable, parameter, stdout, stderr, retun_code, run_time=NaN, mapset_size=undefined) {
+    constructor(id, executable, parameter=[], stdout=null, stderr=[], retun_code=null, run_time=null, mapset_size=null) {
         this.id = id; 
         this.executable = executable;
-        this.parameter = parameter;
+        this.parameter = [...parameter];
         this.stdout = stdout;
-        this.stderr = stderr;
+        this.stderr = [...stderr];
         this.retun_code = retun_code;
         this.run_time = run_time;
         this.mapset_size = mapset_size;

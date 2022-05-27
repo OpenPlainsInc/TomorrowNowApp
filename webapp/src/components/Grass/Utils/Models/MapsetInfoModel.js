@@ -1,7 +1,7 @@
 /*
- * Filename: RequestStatus.js
+ * Filename: MapsetInfoModel.js
  * Project: TomorrowNow
- * File Created: Wednesday May 25th 2022
+ * File Created: Thursday May 26th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,22 +30,16 @@
  * 
  */
 
+import { RegionModel } from "./RegionModel";
+
 /**
- * @description The status of the resource, values: accepted, running, finished, terminated, error
- * @param {String} name - The the status response string.
+ * Schema for projection and region information from a specific mapset.
+ * @param {String} projection - The location projection WKT string.
+ * @param {RegionModel} region - 
  */
- export class RequestStatus {
-    static accepted = new RequestStatus('accepted');
-    static running = new RequestStatus('running');
-    static finished = new RequestStatus('finished');
-    static terminated = new RequestStatus('terminated');
-    static error = new RequestStatus('error');
-
-    constructor(name) {
-        this.name = name;
-    }
-
-    toString() {
-        return `RequestStatus.${this.name}`
+export class MapsetInfoModel {
+    constructor(projection, region = null) {
+        this.projection = projection;
+        this.region = region ? new RegionModel(region) : region
     }
 }

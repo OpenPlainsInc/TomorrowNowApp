@@ -1,7 +1,7 @@
 /*
- * Filename: RequestStatus.js
+ * Filename: SimpleResponseModel.js
  * Project: TomorrowNow
- * File Created: Wednesday May 25th 2022
+ * File Created: Thursday May 26th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,22 +30,21 @@
  * 
  */
 
+import { RequestStatus } from "./Enums";
+
+
 /**
- * @description The status of the resource, values: accepted, running, finished, terminated, error
- * @param {String} name - The the status response string.
+ * @Actinia
+ * Response schema that is used in cases that no asynchronous run was performed
  */
- export class RequestStatus {
-    static accepted = new RequestStatus('accepted');
-    static running = new RequestStatus('running');
-    static finished = new RequestStatus('finished');
-    static terminated = new RequestStatus('terminated');
-    static error = new RequestStatus('error');
-
-    constructor(name) {
-        this.name = name;
-    }
-
-    toString() {
-        return `RequestStatus.${this.name}`
+export class SimpleResponseModel {
+    /**
+     * Create a SimpleResponseModel instance
+     * @param {String} status - The status of the resource, values: accepted, running, finished, terminated, error
+     * @param {String} message - A simple message to describes the status of the resource
+     */
+    constructor(status, message) {
+        this.status = RequestStatus[status];
+        this.message = message;
     }
 }

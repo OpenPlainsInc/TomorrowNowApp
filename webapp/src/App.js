@@ -6,22 +6,8 @@ import Navbar from "react-bootstrap/Navbar"
 import Nav from "react-bootstrap/Nav"
 
 // import Jumbotron from 'react-bootstrap/Jumbotron'
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      viewCompleted: false,
-      activeItem: {
-        title: "",
-        description: "",
-        completed: false
-      },
-      todoList: [],
-      mainMap: undefined
-      };
-  }
+const App = () => {
 
-    render() {
       return (
         // <main className="content">
             
@@ -51,9 +37,7 @@ class App extends Component {
             </LinkContainer>
           </Nav>
 
-          <Nav className="justify-content-end" 
-          // activeKey="/home"
-          >
+          <Nav className="justify-content-end">
             <LinkContainer to="/settings">
               <Nav.Link>Settings</Nav.Link>
             </LinkContainer>
@@ -73,7 +57,6 @@ class App extends Component {
       </main>
 
       )
-    }
   }
   
 export default App;

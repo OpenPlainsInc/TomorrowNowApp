@@ -1,9 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import MapContext from "../MapContext";
 import OLVectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { Style, Stroke } from "ol/style";
-import surveyStyles from "../Features/surveyStyles"
+
 
 const VectorLayer = ({ layerName, source, style, zIndex = 0, handleClickEvent=null }) => {
   const { map } = useContext(MapContext);

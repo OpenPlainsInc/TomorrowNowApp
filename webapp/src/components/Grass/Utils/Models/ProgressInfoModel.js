@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu May 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,15 +31,16 @@
  */
 
 /**
- * @class
- * @description This class defines the model for progress information.
- * @param {Number} step The current processing step
- * @param {Number} num_of_steps The total number of processing steps
- * @param {Number} sub_step The current sub step of …current processing step
- * @param {Number} num_of_sub_steps The total number of sub …current processing step
- * 
+ * This class defines the model for progress information.
  */
 export class ProgressInfoModel {
+    /**
+     * Create a ProgressInfoModel
+     * @param {Number} step - The current processing step.
+     * @param {Number} num_of_steps - The total number of processing steps.
+     * @param {Number} sub_step - The current sub step of …current processing step.
+     * @param {Number} num_of_sub_steps - The total number of sub …current processing step.
+     */
     constructor(step, num_of_steps, sub_step = undefined, num_of_sub_steps = undefined) {
         this.step = step;
         this.num_of_steps = num_of_steps;

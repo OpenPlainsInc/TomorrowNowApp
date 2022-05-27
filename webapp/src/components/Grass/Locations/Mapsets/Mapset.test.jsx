@@ -7,4 +7,16 @@
  * Copyright (c) 2022 Corey White
  */
 
-
+import { Mapset } from "./Mapset"
+import React from "react";
+import { render } from '@testing-library/react'
+import '@testing-library/jest-dom'
+// https://testing-library.com/docs/react-testing-library/example-intro
+describe("Mapset", ()=> {
+    const locationName = "nc_spm_08"
+    const mapsetName = "PERMANENT"
+    it("Mapset loads with initial state of null", () => {
+        const { container } = render(<Mapset locationName={locationName} mapsetName={mapsetName} />);
+        expect(container.textContent).toBe(`${locationName}: ${mapsetName}`);
+    });
+})
