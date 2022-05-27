@@ -25,7 +25,6 @@ import {TileDebug} from 'ol/source';
 import Events from '../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
 import GrassColors from '../../components/OpenLayers/Colors'
 import utils from "../../components/OpenLayers/Colors/utils";
 import nlcdColors from "../../components/OpenLayers/Colors/nlcd"
@@ -46,7 +45,7 @@ import { chartDataFormat } from '../../components/Grass/Charts/chartDataFormat';
 import { highlightSelected } from '../../components/OpenLayers/Filters/highlightSelected';
 import { useActiniaAsyncProcess } from '../../components/Grass/Utils/useActiniaAsyncProcess';
 import { rDrain } from './rDrain';
-import { ProjectionInfoModel } from  "../../components/Grass/Utils/Models"
+import { parsers } from '../../components/Grass/Utils';
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
 
@@ -58,9 +57,9 @@ const Game = ({params}) => {
   const [surveyData, setSurveyData] = useState([])
   const [extent, setExtent] = useState(null)
   const [source, setSource] = useState(null);
-  const [view, setView] = useState(null)
-  const [status, setStatus] = useState(null)
-  const [resourceId, setResourceId] = useState(null)
+  const [view, setView] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [resourceId, setResourceId] = useState(null);
   const {lastJsonMessage, messageHistory, wsState} = useActiniaAsyncProcess({resourceId, status})
   const [tileColor, setTileColor] = useState(GrassColors.utils.autoDetectPalette())
   const [nlcdData, setNlcdData] = useState(null)
@@ -88,7 +87,6 @@ const Game = ({params}) => {
           level: 0
         }
   })
-  console.log("ProjectionInfoModel", ProjectionInfoModel.searchEpsg('4326'))
     const basinStyle = vectorStyles.Polygon
 
     const onPointerMoveEnd = (e) => {
@@ -124,29 +122,9 @@ const Game = ({params}) => {
       })
     }
 
-  
-    let groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
-      // reduce runs this anonymous function on each element of `data` (the `item` parameter,
-      // returning the `storage` parameter at the end
-      return data.reduce(function(storage, item) {
-        // get the first instance of the key by which we're grouping
-        var group = item[key];
-        
-        // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
-        storage[group] = storage[group] || []
-        
-        // add this item to its group within `storage`
-        storage[group].push(item);
-        
-        // return the updated storage to the reduce function, which will then loop through the next 
-        return storage; 
-      }, {}); // {} is the initial value of the storage
-    };
-
     function onMoveEventHandler(e) {
       const view = e.target.getView()
       const _extent = view.calculateExtent()
-      console.log('extent', _extent, 'resolution', view.getResolution())
       setExtent(extent)
       console.log(e.target.getLayers())
       e.target.getLayers().forEach((el) => {
@@ -160,7 +138,7 @@ const Game = ({params}) => {
           console.log("onMoveEnd properites: ", properties)
           if (!properties) return;
 
-          let grouped = groupBy(properties,'how_serious_is_this_problem')
+          let grouped = parsers.groupBy(properties,'how_serious_is_this_problem')
        
           setSurveyData(Object.entries(grouped)
             .map((k, v) => {
@@ -177,7 +155,6 @@ const Game = ({params}) => {
 
     }
 
-    let highlight;
     function surveyClickEvent(e) {
       console.log("VectorLayer Click Event:", e)
       setLoadingAnimation(true)
@@ -224,7 +201,7 @@ const Game = ({params}) => {
       
       if (!properties.length) return;
       console.log("Survey Source Properties: ", properties)
-      let grouped = groupBy(properties,'how_serious_is_this_problem')
+      let grouped = parsers.groupBy(properties,'how_serious_is_this_problem')
   
       setSurveyData(Object.entries(grouped)
         .map((k, v) => {

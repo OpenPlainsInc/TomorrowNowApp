@@ -22,17 +22,17 @@ import AnimatedCanvas from "ol-ext/overlay/AnimatedCanvas"
  * @returns 
  */
 
-export const AnimatedCanvasOverlay = ({acanvas, visible}) => {
+export const AnimatedCanvasOverlay = ({acanvas, visible=false}) => {
   const { map } = useContext(MapContext); 
   const [overlay, setOverlay] = useState(null)
   
   
   useEffect(() => {
-    if (!map) return;
+    if (!map || !acanvas) return;
     // https://github.com/Viglino/ol-ext/blob/master/examples/misc/map.animatedcanvas.html
     const animatedOverlay = new AnimatedCanvas(acanvas)
 
-    animatedOverlay.setVisible(visible);
+    // animatedOverlay.setVisible(visible);
     setOverlay(animatedOverlay)
     animatedOverlay.setMap(map)
     // map.addOverlay(animatedOverlay);
@@ -42,7 +42,7 @@ export const AnimatedCanvasOverlay = ({acanvas, visible}) => {
         map.removeOverlay(animatedOverlay);
       }
     };
-  }, [map]);
+  }, [map, acanvas]);
 
   useEffect(()=>{
     if (!overlay) return;

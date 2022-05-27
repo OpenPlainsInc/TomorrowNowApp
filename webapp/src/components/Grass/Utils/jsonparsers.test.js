@@ -1,7 +1,7 @@
 /*
- * Filename: index.js
+ * Filename: jsonparsers.test.js
  * Project: TomorrowNow
- * File Created: Thursday April 28th 2022
+ * File Created: Friday May 27th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,29 +30,32 @@
  * 
  */
 
-
-import GrassLocalPagination from "./GrassLocalPagination";
-import GrassSelect from "./GrassSelect";
-import RasterCardImage from "./RasterCardImage";
-import GrassDataTypeSelect from "./GrassDataTypeSelect";
-import GrassRenderImage from "./GrassRenderImage";
-import NLCDLegend from "./NLCDLegend";
-import { useDataSource } from "./useDataSource"
-import { GrassFormModal } from "./GrassFormModal";
 import { groupBy } from "./jsonparsers"
 
-const parsers = {
-    groupBy
-}
+describe("jsonparsers", ()=> {
 
-export {
-	GrassSelect,
-    GrassLocalPagination,
-    RasterCardImage,
-    GrassDataTypeSelect,
-    GrassRenderImage,
-    NLCDLegend,
-    useDataSource,
-    GrassFormModal,
-    parsers
-}
+    describe('groupBy', ()=> {
+        const mockData = [
+            {"a": 1, "b": 2, "c": 3},
+            {"a": 1, "b": 20, "c": 30},
+            {"a": 4, "b": 5, "c": 6}
+        ]
+
+        test("group groups key values data by key", ()=> {
+            const expectedResult = {
+                "1": [
+                    {"a": 1, "b": 2, "c": 3},
+                    {"a": 1, "b": 20, "c": 30}
+                ], 
+                "4": [
+                    {"a": 4, "b": 5, "c": 6}
+                ]
+            }
+            const groupedData = groupBy(mockData, "a")
+            // Check that the data properly transformed
+            expect(groupedData).toMatchObject(expectedResult)
+            // Check that the original object didn't mutate
+            expect(mockData.length).toBe(3)
+        }) 
+    })
+})

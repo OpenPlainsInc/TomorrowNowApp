@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 26 2022
+ * Last Modified: Fri May 27 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,46 +30,26 @@
  * 
  */
 
-
-class InputParameter {
-
-}
-class OutputParameter {
-
-}
-
-
- 
-
-
-
-
-
-
-
 /**
- * @description Filters process logs by a defined GRASS executable 
- * @param {Array.<ProcessLog>} processLogs Array of process logs 
- * @param {String} executable 
- * @returns Actinia executable object
+ * Groups object data by key
+ * @param {Array<Object>} data - Data that needs to be grouped
+ * @param {String} key - The object key value to group by
+ * @returns {Object} - The grouped data.
  */
-export const filterActiniaProcessLog = (processLogs, executable) => {
-    return processLogs.filter(f => f.executable === executable)
-}
-
-
-/**
- * 
- * @param {*} executable 
- * @param {*} sep 
- * @returns Json object of univar statistics output
- */
-export const univarJson = (executable, sep="|") => {
-   return executable.map(e => {
-    let rows = e.stdout.split('\n').map(a=> a.split(sep))
-    const obj = rows[0].reduce((accumulator, element, index) => {
-        return {...accumulator, [element]: rows[1][index]};
-    }, {});
-    return obj
-   })
-}
+export const groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
+    // reduce runs this anonymous function on each element of `data` (the `item` parameter,
+    // returning the `storage` parameter at the end
+    return data.reduce(function(storage, item) {
+      // get the first instance of the key by which we're grouping
+      var group = item[key];
+      
+      // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
+      storage[group] = storage[group] || []
+      
+      // add this item to its group within `storage`
+      storage[group].push(item);
+      
+      // return the updated storage to the reduce function, which will then loop through the next 
+      return storage; 
+    }, {}); // {} is the initial value of the storage
+  };

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 26 2022
+ * Last Modified: Fri May 27 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,12 +33,6 @@
 import { ProjectionInfoModel } from './ProjectionInfoModel';
 import { EpsgSearchResponse } from './EpsgSearchResponse';
 import { EpsgInfo } from './EpsgInfo';
-// import fetchMock from 'jest-fetch-mock'
-
-// import {rest} from 'msw';
-// import {setupServer} from 'msw/node';
-
-// const EPSGIO_BASE_URL = "https://epsg.io/"
 
 const MOCK_EPSG_RESPONSE = {
     "status": "ok", 
@@ -60,20 +54,11 @@ const MOCK_EPSG_RESPONSE = {
     ]
 }
 
-// global.fetch = jest.fn(() => Promise.resolve({
-//     json: () => Promise.resolve(MOCK_EPSG_RESPONSE)
-// }));
-
-
-
 describe("ProjectionInfoModel", ()=> {
-    // beforeEach(() => {
-    //     fetch.resetMocks()
-    // })
-
+ 
     const wgs84 = {epsg: "4326"}
     const projectionInfo = new ProjectionInfoModel(wgs84)
-    let projDetails;
+ 
     test("Return instance of ProjectionInfoModel", ()=> {
         expect(projectionInfo instanceof ProjectionInfoModel).toBeTruthy()
     })
@@ -86,12 +71,6 @@ describe("ProjectionInfoModel", ()=> {
         expect(typeof projectionInfo.projectionDetails).toBe('object')
     })
 
-
-    // beforeEach(async () => {
-    //     projDetails = await projectionInfo.fetchDetails();
-    //     console.log(projDetails)
-    // });
-
     test('ProjectionInfoModel.searchEpsg(4326) searches epsg.io and returns data', async () => {
         const fetchMock = jest
             .spyOn(global, 'fetch')
@@ -99,7 +78,7 @@ describe("ProjectionInfoModel", ()=> {
             Promise.resolve({ json: () => Promise.resolve({...MOCK_EPSG_RESPONSE}) })
         )
         const json = await ProjectionInfoModel.searchEpsg(wgs84.epsg)
-
+        console.log(fetchMock)
         // expect(fetchMock).toHaveBeenCalledWith("https://epsg.io/?format=json&q=4326")
 
         expect(json instanceof EpsgSearchResponse).toBeTruthy()
