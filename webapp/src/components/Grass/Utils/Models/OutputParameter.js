@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Fri May 27 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -37,8 +37,8 @@ import { ExportParam } from "./ExportParam";
  * @description Parameter definition of a GRASS GIS module that should be executed in the actinia environment. Parameters can be of type input or output. A GRASS GIS module will be usually called like: <p>g.region raster=elevation30m@PERMANENT</p> The GRASS GIS module *g.region* parameter *raster* has the value *elevation30m@PERMANENT*. This is reflected by the *param* and *value* properties that can specify input and output parameters.
  * @param {String} param The name of a GRASS GIS module parameter like *map* or *elevation*. 
  * @param {String} value The value of the GRASS GIS module parameter. Raster, vector and STDS inputs must contain the mapset name in their id: *slope@PERMANENT*, if they are not located in the working mapset. Do not contain the mapset name in map names that are processed, since the mapsets are generated on demand using random names. Outputs are not allowed to contain mapset names.Files that are created in the process chain to exchange data can be specified using the *$file::unique_id* identifier. The **unique_id** will be replaced with a temporary file name, that is available in the whole process chain at runtime. The **unique_id**  is the identifier that can be used by different modules in a process chain to access the same temporary file or to prepare it for export.
- * @param {ExportParam} [output = undefined] The raster, vector or text file export parameter.
- * @param {STACMetadata} [metadata = undefined] The STAC file export parameter.
+ * @param {Object | ExportParam} [output = undefined] The raster, vector or text file export parameter.
+ * @param {Object | STACMetadata} [metadata = undefined] The STAC file export parameter.
  */
 export class OutputParameter {
     constructor(param, value, output=undefined, metadata=undefined) {
@@ -46,5 +46,14 @@ export class OutputParameter {
         this.value = value;
         this.output = output;
         this.metadata = metadata;
+
+        if (typeof output === 'object' && !(output instanceof ExportParam)) {
+            this.output = new ExportParam(...output);
+        }
+
+        if (typeof metadata === 'object' && !(output instanceof STACMetadata)) {
+            this.metadata = new STACMetadata(...metadata);
+        }
+        
     }
 }

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 26 2022
+ * Last Modified: Fri May 27 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -47,9 +47,4 @@ import { EpsgInfo } from "./EpsgInfo";
         this.results = results.map(r => new EpsgInfo({...r}));
     }
 
-    // *getResults() {
-    //     for (const result of this.results) {
-    //         yield new EpsgInfo({...result})
-    //     }
-    // }
 }
