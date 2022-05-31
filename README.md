@@ -1,5 +1,8 @@
 # TomorrowNowAPP
 
+[![react-savana-tests](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/node.js.yml/badge.svg)](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/node.js.yml)
+[![django-savana-tests](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/django.yml/badge.svg)](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/django.yml)
+
 > **Disclaimer:** The TomorrowNow project is currently in an experimental phase and therefore breaking changes and project restructuring will occur without notice. We recommend waiting until the first stable version is released before considering using the project in any form.
 
 ## Getting Started
@@ -9,16 +12,14 @@ Docker compose containers and client port bindings. Currently we are comparing d
 | Service  | Description | Port |
 | -----------   | ----------- | -------- |
 | api           | Django 4.0  | 8005     |
-| actinia | Actinia 4.0 | 8088     |
+| actinia | Actinia 4.01 | 8088     |
 | webapp      | React       | 3000     |
 | db      | Postgresql + PostGIS | 5431 |
 | actinia-redis | redis | 6379 |
 | django-redis-cache |  redis | 6370 |
 | celery_worker |  celery | NA |
-| terracotta | Terracotta | 5000 |
 | titiler | titiler | 7000 |
 | geoserver | geoserver | 8600 |
-|geoserver-postgis|  Postgresql + PostGIS | 32767 |
 
 ### Start app
 
