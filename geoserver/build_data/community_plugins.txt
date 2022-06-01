@@ -41,7 +41,6 @@ opensearch-eo-plugin
 ows-simulate-plugin
 pgraster-plugin
 qos-plugin
-s3-geotiff-plugin
 saml-plugin
 sec-keycloak-plugin
 sec-oauth2-geonode-plugin
@@ -51,8 +50,6 @@ sec-oauth2-openid-connect-plugin
 smart-data-loader-plugin
 solr-plugin
 taskmanager-core-plugin
-taskmanager-s3-plugin
-wfs3-plugin
 wms-eo-plugin
 wmts-styles-plugin
 wps-remote-plugin
