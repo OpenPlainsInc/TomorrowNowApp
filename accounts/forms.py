@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: gcs_bucket_cors.py                                                 #
+# Filename: forms.py                                                           #
 # Project: TomorrowNow                                                         #
-# File Created: Friday March 18th 2022                                         #
+# File Created: Tuesday May 31st 2022                                          #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed May 11 2022                                               #
+# Last Modified: Tue May 31 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,49 +30,21 @@
 #                                                                              #
 ###############################################################################
 
-# https://cloud.google.com/storage/docs/configuring-cors#storage_cors_configuration-python
-from google.cloud import storage
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+
+from .models import CustomUser
 
 
-def cors_configuration(bucket_name):
-    """Set a bucket's CORS policies configuration."""
-    # bucket_name = "your-bucket-name"
+class CustomUserCreationForm(UserCreationForm):
 
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    bucket.cors = [
-        {
-            "origin": ["*"],
-            "responseHeader": [
-                "Content-Type",
-                "Access-Control-Allow-Origin",
-                "x-goog-resumable"],
-            "method": ['GET'],
-            "maxAgeSeconds": 3600
-        }
-    ]
-    bucket.patch()
-
-    print("Set CORS policies for bucket {} is {}".format(bucket.name, bucket.cors))
-    return bucket
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email")
 
 
-def remove_cors_configuration(bucket_name):
-    """Remove a bucket's CORS policies configuration."""
-    # bucket_name = "your-bucket-name"
+class CustomUserChangeForm(UserChangeForm):
 
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    bucket.cors = []
-    bucket.patch()
-
-    print("Remove CORS policies for bucket {}.".format(bucket.name))
-    return bucket
-
-
-def main():
-    cors_configuration('tomorrownow-actinia-dev')
-
-
-if __name__ == "__main__":
-    main()
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email")

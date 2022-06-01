@@ -4,9 +4,9 @@
             "*"
         ],
         "responseHeader": [
-            "Content-Type"
+            "Content-Type", "Accept-Ranges", "Content-Range", "Content-Encoding", "Content-Length","Access-Control-Allow-Origin","Access-Control-Allow-Methods","Range", "x-goog-resumable"
         ],
-        "method": ["GET"],
+        "method": ["GET", "HEAD", "OPTIONS"],
         "maxAgeSeconds": 3600
     }
 ]

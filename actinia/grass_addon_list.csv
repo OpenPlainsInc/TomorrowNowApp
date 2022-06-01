@@ -6,10 +6,5 @@ r.stream.distance,
 r.basin,
 r.in.usgs,
 r.futures,
-r.futures.pga,
-r.futures.potential,
-r.futures.potsurface,
-r.futures.demand,
-r.futures.devpressure,
 r.sample.category
 

@@ -8,6 +8,7 @@ django-filter>=21.1
 django-guardian>=2.4.0
 django-debug-toolbar>=3.2
 django-extensions>=3.1
+djangorestframework-guardian>=0.3.0
 djangorestframework-gis>=0.18
 redis>=4.0
 hiredis>=2.0

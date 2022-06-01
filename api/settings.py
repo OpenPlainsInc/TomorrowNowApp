@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue May 10 2022                                               #
+# Last Modified: Tue May 31 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -88,13 +88,20 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_gis',
-    # 'guardian',
+    'guardian',
     'django_filters',
     'django_extensions',
-    'debug_toolbar'
+    'debug_toolbar',
+    'accounts'
 ]
 
+AUTH_USER_MODEL = "accounts.CustomUser"
+
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
@@ -105,10 +112,10 @@ REST_FRAMEWORK = {
 }
 
 # Add Later
-# AUTHENTICATION_BACKENDS = (
-#     'django.contrib.auth.backends.ModelBackend', # default
-#     'guardian.backends.ObjectPermissionBackend',
-# )
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # default
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 
 MIDDLEWARE = [

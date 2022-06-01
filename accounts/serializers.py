@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: gcs_bucket_cors.py                                                 #
+# Filename: serializers.py                                                     #
 # Project: TomorrowNow                                                         #
-# File Created: Friday March 18th 2022                                         #
+# File Created: Tuesday May 31st 2022                                          #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed May 11 2022                                               #
+# Last Modified: Tue May 31 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,49 +30,47 @@
 #                                                                              #
 ###############################################################################
 
-# https://cloud.google.com/storage/docs/configuring-cors#storage_cors_configuration-python
-from google.cloud import storage
+from django.contrib.auth import authenticate
+
+from rest_framework import serializers
 
 
-def cors_configuration(bucket_name):
-    """Set a bucket's CORS policies configuration."""
-    # bucket_name = "your-bucket-name"
+class LoginSerializer(serializers.Serializer):
+    """
+    This serializer defines two fields for authentication:
+      * username
+      * password.
+    It will try to authenticate the user with when validated.
+    """
+    username = serializers.CharField(
+        label="Username",
+        write_only=True
+    )
+    password = serializers.CharField(
+        label="Password",
+        # This will be used when the DRF browsable API is enabled
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True
+    )
 
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    bucket.cors = [
-        {
-            "origin": ["*"],
-            "responseHeader": [
-                "Content-Type",
-                "Access-Control-Allow-Origin",
-                "x-goog-resumable"],
-            "method": ['GET'],
-            "maxAgeSeconds": 3600
-        }
-    ]
-    bucket.patch()
+    def validate(self, attrs):
+        # Take username and password from request
+        username = attrs.get('username')
+        password = attrs.get('password')
 
-    print("Set CORS policies for bucket {} is {}".format(bucket.name, bucket.cors))
-    return bucket
-
-
-def remove_cors_configuration(bucket_name):
-    """Remove a bucket's CORS policies configuration."""
-    # bucket_name = "your-bucket-name"
-
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    bucket.cors = []
-    bucket.patch()
-
-    print("Remove CORS policies for bucket {}.".format(bucket.name))
-    return bucket
-
-
-def main():
-    cors_configuration('tomorrownow-actinia-dev')
-
-
-if __name__ == "__main__":
-    main()
+        if username and password:
+            # Try to authenticate the user using Django auth framework.
+            user = authenticate(request=self.context.get('request'),
+                                username=username, password=password)
+            if not user:
+                # If we don't have a regular user, raise a ValidationError
+                msg = 'Access denied: wrong username or password.'
+                raise serializers.ValidationError(msg, code='authorization')
+        else:
+            msg = 'Both "username" and "password" are required.'
+            raise serializers.ValidationError(msg, code='authorization')
+        # We have a valid user, put it in the serializer's validated_data.
+        # It will be used in the view.
+        attrs['user'] = user
+        return attrs

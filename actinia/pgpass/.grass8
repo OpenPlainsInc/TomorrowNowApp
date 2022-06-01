@@ -1,2 +1,1 @@
-pg|gis|actinia||db|5555
-pg|gis|actinia||localhost|5555
+pg|actinia|actinia||db|5432
