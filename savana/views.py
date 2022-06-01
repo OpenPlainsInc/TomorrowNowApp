@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue May 17 2022                                               #
+# Last Modified: Wed Jun 01 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -64,8 +64,8 @@ import base64
 from .utils import actinia as acp
 
 
-def csrf(request):
-    return JsonResponse({'csrfToken': get_token(request)})
+# def csrf(request):
+#     return JsonResponse({'csrfToken': get_token(request)})
 
 
 def ping(request):
@@ -220,7 +220,6 @@ def gListRasters(request, location_name, mapset_name):
           f"{mapset_name}/raster_layers"
     r = requests.get(url, auth=acp.auth())
     print(f"Request URL: {url}")
-    print(r)
     return JsonResponse({"response": r.json()}, safe=False)
 
 

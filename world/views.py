@@ -19,7 +19,7 @@ from .models import WorldBorder
 longitude = -80.191788
 latitude = 25.761681
 
-user_location = GEOSGeometry('POINT(-96.876369 29.905320)', srid=4326) #GEOSGeometry(f'Point({longitude}, {latitude})', srid=4326)
+user_location = GEOSGeometry('POINT(-96.876369 29.905320)', srid=4326)
 
 
 def index(request):

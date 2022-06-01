@@ -8,7 +8,7 @@ from . import views
 app_name = 'savana'
 
 urlpatterns = [
-    path('csrf/', views.csrf),
+    # path('csrf/', views.csrf),
     path('ping/', views.ping),
     path('g/locations/', cache_page(60 * 15, key_prefix="grass_locations")(views.gLocations), name="ListLocations"),
     path('g/locations/<str:location_name>', views.gLocation, name="Location"),
