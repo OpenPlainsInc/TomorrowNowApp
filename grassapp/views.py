@@ -11,8 +11,9 @@ from .models import Choice, Question
 from .serializers import QuestionSerializer
 
 
-def _template_name(tmpname): 
+def _template_name(tmpname):
     return f'grassapp/{tmpname}.html'
+
 
 ### Generic Views
 class IndexView(generic.ListView):
@@ -44,6 +45,7 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = _template_name('results')
 
+
 class QuestionsAPIView(generics.ListCreateAPIView):
     search_fields = ['question_text']
     filter_backends = (filters.SearchFilter,)
@@ -66,6 +68,7 @@ class QuestionsAPIView(generics.ListCreateAPIView):
 # def results(request, question_id):
 #     question = get_object_or_404(Question, pk=question_id)
 #     return render(request, 'grassapp/results.html', {'question': question})
+
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
