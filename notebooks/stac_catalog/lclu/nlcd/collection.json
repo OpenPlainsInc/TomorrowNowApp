@@ -1,0 +1,80 @@
+{
+  "type": "Collection",
+  "id": "nlcd",
+  "stac_version": "1.0.0",
+  "description": "NLCD datasets 2001 - 2019",
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2001_cog/nlcd_2001_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2004_cog/nlcd_2004_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2006_cog/nlcd_2006_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2008_cog/nlcd_2008_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2011_cog/nlcd_2011_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2013_cog/nlcd_2013_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2016_cog/nlcd_2016_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/nlcd_2019_cog/nlcd_2019_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "parent",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": [],
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -2493045.0,
+          177285.0,
+          2342655.0,
+          3310005.0
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2001-01-01T00:00:00Z",
+          "2019-01-01T00:00:00Z"
+        ]
+      ]
+    }
+  },
+  "license": "proprietary"
+}

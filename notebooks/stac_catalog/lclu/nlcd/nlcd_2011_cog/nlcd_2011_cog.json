@@ -1,0 +1,67 @@
+{
+  "type": "Feature",
+  "stac_version": "1.0.0",
+  "id": "nlcd_2011_cog",
+  "properties": {
+    "datetime": "2011-01-01T00:00:00Z"
+  },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          2342655.0,
+          177285.0
+        ],
+        [
+          2342655.0,
+          3310005.0
+        ],
+        [
+          -2493045.0,
+          3310005.0
+        ],
+        [
+          -2493045.0,
+          177285.0
+        ],
+        [
+          2342655.0,
+          177285.0
+        ]
+      ]
+    ]
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "collection",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/collection.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "parent",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/stac_catalog/lclu/nlcd/collection.json",
+      "type": "application/json"
+    }
+  ],
+  "assets": {
+    "image": {
+      "href": "gs://tomorrownow-actinia-dev/nlcd/nlcd_2011_cog.tif",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Geotiff"
+    }
+  },
+  "bbox": [
+    -2493045.0,
+    177285.0,
+    2342655.0,
+    3310005.0
+  ],
+  "stac_extensions": [],
+  "collection": "nlcd"
+}
