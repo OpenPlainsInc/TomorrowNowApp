@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Jun 01 2022
+ * Last Modified: Fri Jun 03 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,10 +29,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import React, {useState} from "react"
 
-const BASE_API = 'http://localhost:8005'
-
+import { settings } from "../../Settings"
 
 /**
  * Log user in using their credentials
@@ -44,7 +42,7 @@ export const login = async({username, password}) => {
     try {
         let data = {username, password}
         console.log("Attempting Login", username, password)
-        let url = new URL(`${BASE_API}/accounts/login/`)
+        let url = new URL(`${settings.AUTH_BASE_URL}/login/`)
         let response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -54,16 +52,14 @@ export const login = async({username, password}) => {
             body: JSON.stringify(data)
         })
 
-
-
         let res = await response
         if (res.status === 202) {
-            return {redirect: true}
+            return {auth: true, redirect: true}
         }
         
         if (res.status === 400) {
             let json = res.json()
-            return json
+            return {...json, auth: false, redirect: false}
         }
     }
     catch (e) {
@@ -73,25 +69,23 @@ export const login = async({username, password}) => {
     }
 }
 
-const authContext = React.createContext();
 
-export const useAuth = () => {
-    const [authed, setAuthed] = React.useState(false);
+/**
+ * Logs user out of current session and navigates back to login view from current view.
+ */
+export const logout = () => {
 
-    return {
-        authed,
-        login() {
-          return new Promise((res) => {
-            setAuthed(true);
-            res();
-          });
-        },
-        logout() {
-          return new Promise((res) => {
-            setAuthed(false);
-            res();
-          });
-        },
-    };
-    
 }
+
+
+export const isAuthValid = () => {
+
+}
+
+const admin = {
+    login,
+    logout,
+    isAuthValid
+}
+
+export default admin;

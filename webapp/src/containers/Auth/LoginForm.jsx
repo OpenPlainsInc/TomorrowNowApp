@@ -11,10 +11,10 @@ import React from "react";
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import Row from "react-bootstrap/Row"
-import { login } from "./admin"
 import { LinkContainer } from "react-router-bootstrap"
 import {useForm, Controller} from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../components/Grass/Utils/Auth/useAuth";
 
 /**
  * LoginForm component 
@@ -23,13 +23,13 @@ import { useNavigate } from "react-router-dom";
 export const LoginForm = () => {
   const { handleSubmit, control, reset, setError, clearErrors, formState: { isValid, isSubmitting, errors } } = useForm();
   let navigate = useNavigate();
+  let auth = useAuth();
 
   const onSubmit = async (data, e) => {
       e.preventDefault()
       clearErrors()
-      let loginResponse = await login(data)
-      
-      if (loginResponse.redirect) {
+      let loginResponse = await auth.login(data)
+      if (loginResponse.auth && loginResponse.redirect) {
         return navigate('/dashboard', {replace: true})
       }
 

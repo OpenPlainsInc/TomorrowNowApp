@@ -12,15 +12,8 @@ import Grass from "../grass"
 import { useDataSource } from "../Utils"
 
 export const LocationLoader = ({locationId, children}) => {
-    // const [grassLocation, setGrassLocation] = useState(null)
-    const grassLocation = useDataSource(Object.assign(response, {name: locationId}))
-
-    // useEffect(() => {
-    //   (async ()=> {
-    //     let response = await Grass.getLocation(locationId)
-    //     setGrassLocation(Object.assign(response, {name: locationId}))
-    //   })()
-    // }, [locationId])
+    
+    const grassLocation = useDataSource({getDataFunc: Grass.getLocation, params: [locationId]})
 
     return (
       <>

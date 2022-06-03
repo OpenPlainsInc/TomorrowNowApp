@@ -32,8 +32,7 @@ const Module = ({moduleName}) => {
   const [activeSubsection, setActiveSubsection] = useState('required');
   const [sectionParams, setSectionParams] = useState([]);
   console.log("Module", location)
-  const module = useDataSource(Grass.g.modules.get(moduleName))
-  console.log("Module Data", module)
+  const module = useDataSource({getDataFunc: Grass.g.modules.get, params: [moduleName]})
 
   const filterSectionParams = (params, section) => {
     let filterdParams = params.filter(f => {
@@ -64,11 +63,11 @@ const Module = ({moduleName}) => {
   }
 
   useEffect(() => {
-    if (!module || !activeSubsection) return;
-      let params = module.parameters;
+    if (!module.data || !activeSubsection) return;
+      let params = module.data.parameters;
       setModuleParams(params)
       setSectionParams(filterSectionParams(params, activeSubsection))
-  }, [module, activeSubsection])
+  }, [module.data, activeSubsection])
 
   useEffect(() => {
     if (!moduleParams || !activeSubsection) return;
@@ -81,7 +80,7 @@ const Module = ({moduleName}) => {
             <Card>
               <Card.Body>
                 <Card.Title>{moduleName}</Card.Title>
-                <Card.Text>{module ? module.description : ""}</Card.Text>
+                <Card.Text>{module.data ? module.data.description : ""}</Card.Text>
               </Card.Body>
             </Card>
               
@@ -103,8 +102,8 @@ const Module = ({moduleName}) => {
           </Row>
 
           <Row>
-            { module && sectionParams ?
-              <ModuleForm moduleName={module.name} moduleParams={sectionParams}></ModuleForm>
+            { module.data && sectionParams ?
+              <ModuleForm moduleName={module.data.name} moduleParams={sectionParams}></ModuleForm>
             : null}
           </Row>
           

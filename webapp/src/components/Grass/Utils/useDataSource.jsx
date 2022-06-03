@@ -6,21 +6,42 @@
  * 
  * Copyright (c) 2022 Corey White
  */
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 
-export const useDataSource = getDataFunc => {
+
+/**
+ * Custom hook to fetch data from API.
+ * @param {Object}
+ * @param {Function} Object.getDataFunc - Grass.js request function
+ * @param {Array} Object.params - Array of parameters required by the request function.
+ * 
+ * @returns { Object } - Returns an object containing the response data, loading status and sever response errors.
+ * 
+ */
+export const useDataSource = ({getDataFunc, params}) => {
     const [data, setData] = useState(null)
+    const [ isloading, setIsLoading ] = useState(false)
+    const [ errors, setErrors ] = useState(null)
 
     useEffect(()=> {
         if (!getDataFunc) return;
-
-        let isMounted = true;
+        if (data || isloading || errors) return;
+    
         (async () => {
-            let result = await getDataFunc          
-            setData(result)
+            try {
+                setIsLoading(true)
+                let result = await getDataFunc(...params)    
+                console.log(result)      
+                setData(result)
+            } catch (errs) {
+                setErrors(errs)
+            } finally {
+                setIsLoading(false)
+            }
+            
         })()
-        return () => { isMounted = false } 
-    }, [])
+       
+      }, [getDataFunc, params, data, isloading, errors])
 
-    return data;
+    return {data, errors, isloading };
 }

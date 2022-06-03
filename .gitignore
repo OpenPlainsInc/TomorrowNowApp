@@ -138,3 +138,8 @@ wps/*~
 
 # terracotta
 terracotta/data
+
+
+# geoserver
+
+geoserver-data/*

@@ -19,7 +19,7 @@ import { useDataSource } from '../../Utils/useDataSource';
 const ModuleRasterParam = ({param, control}) => {
     const [subtype, setSubtype] = useState(null);
     console.log("ModuleRasterParam", param.name)
-    const options = useDataSource(Grass.getRasterLayers('nc_spm_08', 'PERMANENT'))
+    const options = useDataSource({getDataFunc: Grass.getRasterLayers, params: ['nc_spm_08', 'PERMANENT']})
 
     const {
         field: { onChange, onBlur, name, value, ref },
@@ -47,7 +47,7 @@ const ModuleRasterParam = ({param, control}) => {
             <Form.Control name={name} as="select" value={value} onChange={onChange} ref={ref}>
                 <option>Select Raster</option>
 
-                {options ? options.map((c) => {
+                {options.data ? options.data.map((c) => {
                     return(
                     <option key={c} value={c}>
                         {c}
