@@ -21,3 +21,8 @@ class LoginView(views.APIView):
         user = serializer.validated_data['user']
         login(request, user)
         return Response(None, status=status.HTTP_202_ACCEPTED)
+
+
+# class LogoutView(views.APIView):
+    
+#     permission_classes = (permissions.)

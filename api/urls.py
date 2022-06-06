@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
+# from django.contrib.auth.models import User, Group
 from django.urls import include, path
 
 urlpatterns = [
@@ -23,6 +24,7 @@ urlpatterns = [
     path('grassapp/', include('grassapp.urls')),
     path('accounts/', include('accounts.urls')),
     path('admin/', admin.site.urls),
+    # path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
