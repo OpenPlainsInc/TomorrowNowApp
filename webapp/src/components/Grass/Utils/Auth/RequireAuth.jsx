@@ -7,13 +7,12 @@
  * Copyright (c) 2022 Corey White
  */
 
-import { useAuth } from "./useAuth"
+import useAuth from "./useAuth"
 import { Navigate, useLocation } from "react-router-dom"
 
 export const RequireAuth = ({ children }) => {
     const { authed } = useAuth();
     const location = useLocation();
-
 
     return authed === true ? (
         children

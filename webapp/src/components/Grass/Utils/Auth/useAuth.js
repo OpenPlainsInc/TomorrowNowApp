@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Jun 03 2022
+ * Last Modified: Mon Jun 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,25 +31,35 @@
  */
 
 import React, { useState } from "react"
+import AuthContext from "./AuthContext";
 import admin from "./admin";
-const authContext = React.createContext();
-
+import { useLocalStorage } from "../useLocalStorage";
 
 /**
  * Auth hook to authenticate user and restrict routes
  * @returns
  */
-export const useAuth = () => {
-    const [authed, setAuthed] = useState(false);
+function useAuth() {
+    // const [authed, setAuthed] = useState(false);
+    const [authed, setAuthed] = useLocalStorage('authed', false)
+    const login = async ({username, password}) => {
+      let res = await admin.login({username, password})
+      // Set the auth state from the response
+      setAuthed(res.auth)
+      return res
+    }
+
+    const logout = async () => {
+      let res = await admin.logout()
+      // Set the auth state from the response
+      setAuthed(false);
+      return res
+    }
+
+
     return {
         authed,
-        async login({username, password}) {
-          // Attempt log in for user 
-          let res = await admin.login({username, password})
-          // Set the auth state from the response
-          setAuthed(res.auth)
-          return res
-        },
+        login,
         logout() {
           return new Promise((res) => {
             setAuthed(false);
@@ -60,12 +70,14 @@ export const useAuth = () => {
     
 }
 
+// Passes AuthContext into childern so they recieve updates in context.
+// Updating AuthContext will trigger a rerender in all subscribed components. 
 export function AuthProvider({ children }) {
   const auth = useAuth();
-
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  console.log(auth)
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }
 
 export default function AuthConsumer() {
-  return React.useContext(authContext);
+  return React.useContext(AuthContext);
 }

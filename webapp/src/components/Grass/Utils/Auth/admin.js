@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Jun 03 2022
+ * Last Modified: Mon Jun 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -81,6 +81,31 @@ export const logout = () => {
 export const isAuthValid = () => {
 
 }
+
+function getCookie(name) {
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+export const useCSRFTtoken = () => {
+    const csrftoken = getCookie('csrftoken');
+    return csrftoken;
+} 
 
 const admin = {
     login,

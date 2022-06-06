@@ -14,7 +14,7 @@ import Row from "react-bootstrap/Row"
 import { LinkContainer } from "react-router-bootstrap"
 import {useForm, Controller} from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../components/Grass/Utils/Auth/useAuth";
+import useAuth from "../../components/Grass/Utils/Auth/useAuth";
 
 /**
  * LoginForm component 
@@ -23,12 +23,11 @@ import { useAuth } from "../../components/Grass/Utils/Auth/useAuth";
 export const LoginForm = () => {
   const { handleSubmit, control, reset, setError, clearErrors, formState: { isValid, isSubmitting, errors } } = useForm();
   let navigate = useNavigate();
-  let auth = useAuth();
-
+  let { login } = useAuth();
   const onSubmit = async (data, e) => {
       e.preventDefault()
       clearErrors()
-      let loginResponse = await auth.login(data)
+      let loginResponse = await login(data)
       if (loginResponse.auth && loginResponse.redirect) {
         return navigate('/dashboard', {replace: true})
       }
