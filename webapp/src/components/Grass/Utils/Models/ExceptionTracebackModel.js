@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 26 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -37,7 +37,7 @@
  * @param {Array} [traceback = []] The full traceback of the exception
  */
 export class ExceptionTracebackModel {
-    constructor(message, type, traceback = []) {
+    constructor({message, type, traceback = []}) {
         this.message = message;
         this.type = type;
         this.traceback = [...traceback];

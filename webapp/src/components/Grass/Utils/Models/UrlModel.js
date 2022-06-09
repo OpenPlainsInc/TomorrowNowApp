@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -36,7 +36,7 @@
  * @param {Array} [resources=null] A list of URLs to generated resources, that may be GeoTiff files, vector files, ASCII files or png images
  */
 export class UrlModel {
-    constructor(status, resources=null) {
+    constructor({status, resources=null}) {
         this.status = status;
         this.resources = resources;
     }

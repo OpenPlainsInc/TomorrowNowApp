@@ -1,26 +1,27 @@
 /*
- * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Locations/LocationLoader.jsx
+ * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/Grass/Locations/LocationsLoader.jsx
  * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
- * Created Date: Thursday, May 5th 2022, 1:56:39 pm
+ * Created Date: Wednesday, June 8th 2022, 8:16:56 pm
  * Author: Corey White
  * 
  * Copyright (c) 2022 Corey White
  */
 
+
 import React from "react"
 import Grass from "../grass"
 import { useDataSource } from "../Utils"
 
-export const LocationLoader = ({locationId, children}) => {
+export const LocationsLoader = ({children}) => {
     
-    const grassLocation = useDataSource({getDataFunc: Grass.getLocation, params: [locationId]})
+    const grassLocations = useDataSource({getDataFunc: Grass.getLocations})
 
     return (
       <>
         {
           React.Children.map(children, child => {
             if (React.isValidElement(child)) {
-              return React.cloneElement(child, {locationId, grassLocation})
+              return React.cloneElement(child, {grassLocations})
             }
             return child
           })

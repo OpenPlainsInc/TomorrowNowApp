@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -43,6 +43,15 @@
 
     constructor(name) {
         this.name = name;
+    }
+
+    validate() {
+        if (!Object.keys(StdoutFormat).includes(this.name)) throw Error(`Stdout format '${this.name}' is not a valid option`)
+        return this.name
+    }
+
+    toList() {
+        return Object.keys(StdoutFormat).forEach(option => option)
     }
 
     toString() {

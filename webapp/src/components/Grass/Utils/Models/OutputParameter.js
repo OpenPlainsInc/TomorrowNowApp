@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri May 27 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -41,7 +41,7 @@ import { ExportParam } from "./ExportParam";
  * @param {Object | STACMetadata} [metadata = undefined] The STAC file export parameter.
  */
 export class OutputParameter {
-    constructor(param, value, output=undefined, metadata=undefined) {
+    constructor({param, value, output=undefined, metadata=undefined}) {
         this.param = param;
         this.value = value;
         this.output = output;

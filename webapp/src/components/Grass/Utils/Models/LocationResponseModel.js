@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -38,8 +38,16 @@ import { RequestStatus } from "./Enums";
  * @param {Array.<String>} locations The list of locations in the GRASS database
  */
 export class LocationResponseModel {
-    constructor(status, locations) {
-        this.status = status;
+    constructor({status, locations}) {
+        this.status = new RequestStatus(status).validate();
         this.locations = locations;
+    }
+
+    hash() {
+        return this.locations.map(loc => `#${loc}`)
+    }
+
+    locationIdFromHash(locationHash) {
+        return locationHash.substring(1)
     }
 }

@@ -18,7 +18,7 @@ import { useState, useEffect } from 'react';
  * @returns { Object } - Returns an object containing the response data, loading status and sever response errors.
  * 
  */
-export const useDataSource = ({getDataFunc, params}) => {
+export const useDataSource = ({getDataFunc, params = []}) => {
     const [data, setData] = useState(null)
     const [ isloading, setIsLoading ] = useState(false)
     const [ errors, setErrors ] = useState(null)

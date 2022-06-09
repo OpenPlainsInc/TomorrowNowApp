@@ -16,8 +16,12 @@ import {useForm, Controller} from "react-hook-form";
                                                                       
 
 
-export const GrassFormModal = ({heading, actionType, show=false, handleClose, resource, sourceLocation}) => {
+export const GrassFormModal = ({heading, actionType, show=false, handleClose, resource, sourceLocation, sourceMapset=null}) => {
     const { handleSubmit, control, reset } = useForm();
+
+    const isDeleteAction = () => {
+      return actionType === 'Delete';
+    }
 
     const onSubmit = data => {
         console.log("Form Data:", data);
@@ -29,6 +33,10 @@ export const GrassFormModal = ({heading, actionType, show=false, handleClose, re
           if (heading === "Mapset" && actionType === "Create") {
             let response = await resource()(sourceLocation, data.mapset_name)
             console.log("onSubmit create mapset: response", response)
+          }
+          if (heading === "Mapset" && actionType === "Delete") {
+            let response = await resource()(sourceLocation, sourceMapset)
+            console.log("onSubmit delete mapset: response", response)
           }
 
           handleClose()
@@ -86,7 +94,7 @@ export const GrassFormModal = ({heading, actionType, show=false, handleClose, re
             </>
             :
 
-           (heading === 'Mapset' && actionType === 'Create') ? 
+           (heading === 'Mapset') ? 
             <>
            <Form.Group className="mb-3" controlId="EPSG">
               <Form.Label>Location Name</Form.Label>
@@ -107,10 +115,11 @@ export const GrassFormModal = ({heading, actionType, show=false, handleClose, re
                   <Form.Control
                   ref={ref}
                   type="text"
-                  placeholder="name"
+                  placeholder={isDeleteAction() ? sourceMapset : "Mapset Name" }
                   value={value}
                   onChange={onChange}
                   autoFocus
+                  disabled={isDeleteAction()}
                 />)}
               />
             </Form.Group>
@@ -125,7 +134,7 @@ export const GrassFormModal = ({heading, actionType, show=false, handleClose, re
               Close
             </Button>
             <Button variant="primary" type="submit">
-              Create
+              {actionType}
             </Button>
           </Modal.Footer>
           </Form>

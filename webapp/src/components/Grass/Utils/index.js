@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri May 27 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -39,10 +39,11 @@ import GrassRenderImage from "./GrassRenderImage";
 import NLCDLegend from "./NLCDLegend";
 import { useDataSource } from "./useDataSource"
 import { GrassFormModal } from "./GrassFormModal";
-import { groupBy } from "./jsonparsers"
+import { groupBy, parserProjection } from "./jsonparsers"
 
 const parsers = {
-    groupBy
+    groupBy,
+    parserProjection
 }
 
 export {

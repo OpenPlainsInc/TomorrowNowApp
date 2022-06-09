@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 26 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -58,41 +58,38 @@ import { SimpleResponseModel } from "./SimpleResponseModel";
      * @param {String} accept_datetime The acceptance timestamp of the response in human readable format
      * @param {Number} timestamp The current timestamp in seconds of the response
      * @param {Number} time_delta The time delta of the processing in seconds
-     * @param {String} datatime The current timestamp of the response in human readable format
+     * @param {String} datetime The current timestamp of the response in human readable format
      * @param {Number|null} [http_code = null] The HTTP code of the response
      * @param {UrlModel|null} [urls = null]
      * @param {ApiInfoModel|null} [api_info = null]
      */ 
-    constructor(status, user_id, resource_id, accept_timestamp, accept_datetime, timestamp, time_delta, datatime, process_log=null, process_chain_list=null, process_results=null, progress=null, message=null, exception=null, http_code = null, urls = null, api_info = null) {
+    constructor({status, user_id, resource_id, accept_timestamp, accept_datetime, timestamp, time_delta, datetime, process_log=null, process_chain_list=null, process_results=null, progress=null, message=null, exception=null, http_code = null, urls = null, api_info = null}) {
         super(status, message);
-        this.userId = user_id;
-        this.resourceId = resource_id;
-        this.acceptTimestamp = accept_timestamp;
         this.acceptDatetime = new Date(accept_datetime);
-        this.timestamp = timestamp;
-        this.timeDelta = time_delta;
-        this.datatime = new Date(datatime); 
-        this.processLogs = process_log;
-        this.processChainList = process_chain_list;
-        this.processResults = process_results;
-        this.progress = progress ? new ProgressInfoModel(...progress) : progress;
-        this.exception = exception ? new ExceptionTracebackModel(...exception) : exception;
+        this.acceptTimestamp = accept_timestamp;
+        this.apiInfo = api_info ? new ApiInfoModel({...api_info}) : api_info;
+        this.datetime = new Date(datetime);
+        this.exception = exception ? new ExceptionTracebackModel({...exception}) : exception;
         this.httpCode = http_code;
-        this.urls = urls ? new UrlModel(...urls) : urls;
-        this.apiInfo = api_info ? new ApiInfoModel(api_info) : api_info;
+        this.processChainList = process_chain_list.map(this.__serializeProcessChain);
+        this.processLogs = process_log.map(p => new ProcessLog({...p}));
+        this.processResults = process_results;
+        this.progress = progress ? new ProgressInfoModel({...progress}) : progress;
+        this.resourceId = resource_id;
+        this.timeDelta = time_delta;
+        this.timestamp = timestamp;
+        this.urls = urls ? new UrlModel({...urls}) : urls;
+        this.userId = user_id; 
     }
 
-    *getProcess_log() {
-        for (const processLog of this.processLogs) {
-            yield ProcessLog(...processLog)
+    __serializeProcessChain(process) {
+        let processList = {}
+        for (const prop in process) {
+            processList[prop] = new GrassModule({...process[prop]})
         }
+        return processList
     }
 
-    *getProcess_chain_list() {
-        for (const processChainList of this.process_chain_list) {
-            yield GrassModule(...processChainList)
-        }
-    }
 
     /**
      * Filters process logs by a defined GRASS executable

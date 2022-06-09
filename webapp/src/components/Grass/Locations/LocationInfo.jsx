@@ -20,17 +20,31 @@
  */
 
 
-import React, { } from "react"
+import React, { useState, useEffect } from "react"
+import { parserProjection } from "../Utils/jsonparsers"
 // import "./location.scss";
 
+export const LocationInfo = ({locationId, grassLocation}) => {
+  const [locationInfo, setLocationInfo] = useState(null)
+  let errors = grassLocation.errors
 
-export const LocationInfo = ({ name, projection, region}) => {
+  useEffect(() => {
+    if (!grassLocation.data || locationInfo) return;
+      setLocationInfo(grassLocation.data.processResults)
+  }, [grassLocation, locationInfo])
 
   return (
     <div>
-      <h2 data-testid="locationNameText">{name}</h2>
-      <h3>{projection}</h3>
-      <h3>{region}</h3>
+    { 
+
+      locationInfo ?
+          <>
+            <h1 data-testid="locationNameText">{locationId}</h1>
+            <code>{JSON.stringify(parserProjection(locationInfo.projection, ","), null, 2)}</code>
+            <pre>{JSON.stringify(locationInfo.region, null, 2)}</pre>
+          </>
+      : errors ? <p>{errors}</p> : <></>
+    }
     </div>
   )
 }

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -40,7 +40,7 @@
  * @param {String} [post_url = undefined] The post URL
  */
 export class ApiInfoModel {
-    constructor(endpoint, method, path, request_url, post_url=undefined) {
+    constructor({endpoint, method, path, request_url, post_url=undefined}) {
         this.endpoint = endpoint;
         this.method = method;
         this.path = path;

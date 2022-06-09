@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -38,8 +38,8 @@ import { StdoutParser } from "./StdoutParser";
  * @description The definition of a single GRASS GIS module and its inputs, outputs and flags. This module will be run in a location/mapset environment and is part of a process chain. The stdout and stderr output of modules that were run before this module in the process chain can be used as stdin for this module. The stdout of a module can be automatically transformed in list, table or key/value JSON representations in the HTTP response.
  * @param {String} id A unique id to identify …stdin in other modules.
  * @param {String} module The name of the GRASS GIS module (r.univar, r.slope.aspect, v.select, ...) that should be executed. Use as module names \"importer\" or \"exporter\" to import or export raster layer, vector layer or other file based data without calling a GRASS GIS module.
- * @param {Array.<InputParameter>} [inputs = undefined] A list of input parameters of a GRASS GIS module.
- * @param {Array.<OutputParameter>} [outputs = undefined] A list of output parameters of a GRASS GIS module.
+ * @param {Array.<InputParameter>} [inputs = []] A list of input parameters of a GRASS GIS module.
+ * @param {Array.<OutputParameter>} [outputs = []] A list of output parameters of a GRASS GIS module.
  * @param {String} [flags = undefined] The flags that should be set for the GRASS GIS module.
  * @param {String} [stdin = undefined] Use the stdout output of a GRASS GIS module or executable of the process chain as input for this module. Refer to the module/executable output as *id::stderr* or *id::stdout*, the \"id\" is the unique identifier of a GRASS GIS module definition.
  * @param {StdoutParser} [stdout = undefined]
@@ -49,14 +49,14 @@ import { StdoutParser } from "./StdoutParser";
  * @param {Boolean} [interface_description = false] Set True to print interface description and exit.
  */
 export class GrassModule {
-    constructor(id, module, inputs=undefined, outputs=undefined, flags=undefined, stdin=undefined, stdout=undefined, overwrite=false, verbose=false, superquiet=false, interface_description=false) {
+    constructor({id, module, inputs=[], outputs=[], flags=undefined, stdin=undefined, stdout=undefined, overwrite=false, verbose=false, superquiet=false, interface_description=false}) {
         this.id = id;
         this.module = module;
-        this.inputs = inputs;
-        this.outputs = outputs;
+        this.inputs = inputs.map(i => new InputParameter({...i}));
+        this.outputs = outputs.map(o => new OutputParameter({...o}));
         this.flags = flags;
         this.stdin = stdin;
-        this.stdout = stdout;
+        this.stdout = stdout ? new StdoutParser({...stdout}) : undefined;
         this.overwrite = overwrite;
         this.verbose = verbose;
         this.superquiet = superquiet;

@@ -29,14 +29,14 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
   useEffect(() => {
     let isMounted = true;
     (async () => {
-      if (selectionType == "locations") {
+      if (selectionType === "locations") {
         setValue(location)
         setInputLabel("Location")
         let data =  await Grass.getLocations()
         console.log("locations", data.response)
         setOptions(data.response.locations)
       }
-      else if (selectionType == "mapsets") {
+      else if (selectionType === "mapsets") {
         setValue(mapset)
         setInputLabel("Mapset")
         let data =  await Grass.locations.location.mapsets.getMapsets(location)
@@ -68,7 +68,7 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
     if (modalAction === 'Create' && inputLabel === 'Location') return Grass.createLocation;
     // if (modalAction === 'Delete' && inputLabel === 'Location') return Grass.deleteLocation;
     if (modalAction === 'Create' && inputLabel === 'Mapset') return Grass.createMapset;
-    // if (modalAction === 'Delete' && inputLabel === 'Mapset') return Grass.deleteMapset;
+    if (modalAction === 'Delete' && inputLabel === 'Mapset') return Grass.deleteMapset;
   }
 
   return (
@@ -76,7 +76,7 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
     <InputGroup className="mb-3" style={{marginTop: 20}}>
         <DropdownButton variant="secondary-light"  title={inputLabel} id="bg-vertical-dropdown-1">
           <Dropdown.Item eventKey="1" onClick={ (e)=> openModal(e, "Create")}>Create {inputLabel}</Dropdown.Item>
-          <Dropdown.Item eventKey="2">Delete {inputLabel}</Dropdown.Item>
+          <Dropdown.Item eventKey="2" onClick={ (e)=> openModal(e, "Delete")}>Delete {inputLabel}</Dropdown.Item>
         </DropdownButton>
         <Form.Control as="select" value={value} onChange={handleSeletionEvent}>
         {options ? options.map((c, idx) => {
@@ -96,6 +96,7 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
         handleClose={() => setShowModal(false)}
         resource={selectResource}
         sourceLocation={location}
+        sourceMapset={mapset}
       ></GrassFormModal>
     </>
   )

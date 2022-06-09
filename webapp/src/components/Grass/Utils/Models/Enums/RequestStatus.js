@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 26 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -40,9 +40,19 @@
     static finished = new RequestStatus('finished');
     static terminated = new RequestStatus('terminated');
     static error = new RequestStatus('error');
+    static success = new RequestStatus('success');
 
     constructor(name) {
         this.name = name;
+    }
+
+    toList() {
+        return Object.keys(RequestStatus).forEach(option => option)
+    }
+
+    validate() {
+        if (!Object.keys(RequestStatus).includes(this.name)) throw Error(`Server response status '${this.name}' is not a valid option`)
+        return this.name
     }
 
     toString() {

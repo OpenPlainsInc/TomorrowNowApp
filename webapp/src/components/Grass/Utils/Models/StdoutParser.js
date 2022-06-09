@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -40,9 +40,9 @@ import { StdoutFormat } from "./Enums";
  * @param {String} delimiter The delimiter that should be used to parse table, list and key/value module output. Many GRASS GIS  modules use by default \"|\" in tables and \"=\" in key/value pairs. A new line \"\\n\" is always the delimiter between rows in the output.
  */
 export class StdoutParser {
-    constructor(id, format, delimiter) {
+    constructor({id, format, delimiter}) {
         this.id = id;
-        this.format = StdoutFormat(format);
+        this.format = new StdoutFormat(format).validate();
         this.delimiter = delimiter
     }
 }

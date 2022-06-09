@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed May 25 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -39,7 +39,7 @@
  * @example 
  */
 export class InputParameter {
-    constructor(param, value, import_descr=undefined) {
+    constructor({param, value, import_descr=undefined}) {
         this.param = param;
         this.value = value;
         this.importDescr = import_descr;

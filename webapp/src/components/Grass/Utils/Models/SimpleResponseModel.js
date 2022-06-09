@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 26 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -44,7 +44,7 @@ export class SimpleResponseModel {
      * @param {String} message - A simple message to describes the status of the resource
      */
     constructor(status, message) {
-        this.status = RequestStatus[status];
+        this.status = new RequestStatus(status).validate();
         this.message = message;
     }
 }

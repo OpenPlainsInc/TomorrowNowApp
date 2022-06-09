@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue May 17 2022
+ * Last Modified: Thu Jun 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,6 +29,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+
+import { ProcessResponseModel } from "./Utils/Models/ProcessResponseModel";
 
 const API_HOST = "http://localhost:8005/savana"
 
@@ -64,10 +66,9 @@ const Grass = {
                 }
             });
             let data = await res.json();
-            let results = await data.process_results
+            
             console.log("getLocation: response:", data)
-            // console.log("getLocation: results:", results)
-            return results                         
+            return new ProcessResponseModel({...data.response})                        
         } catch (e) {
             console.log("getLocation: error", e);
         }
@@ -102,6 +103,25 @@ const Grass = {
             const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}`)
             let res = await fetch(url, { 
                 method: "POST",
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+            let data = await res.json();
+            console.log("response:", data)
+            return data                    
+          } catch (e) {
+            console.log(e);
+        }
+    }),
+    deleteMapset: (async (locationName, mapsetName) => {
+        /**
+         * Route: /locations/{location_name}/mapsets/{mapset_name}
+        */
+        try {
+            const url = new URL(`${API_HOST}/g/locations/${locationName}/mapsets/${mapsetName}`)
+            let res = await fetch(url, { 
+                method: "DELETE",
                 headers: {
                 'Content-Type': 'application/json'
                 }

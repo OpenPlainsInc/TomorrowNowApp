@@ -35,6 +35,9 @@ export const TopNavbar = () => {
             <LinkContainer to="/board">
               <Nav.Link>Board</Nav.Link>
             </LinkContainer>
+            <LinkContainer to="/locations">
+              <Nav.Link>Locations</Nav.Link>
+            </LinkContainer>
             <LinkContainer to="/modules/g">
               <Nav.Link>Modules</Nav.Link>
             </LinkContainer>
