@@ -21,7 +21,7 @@ Docker compose containers and client port bindings. Currently we are comparing d
 | titiler | titiler | 7000 |
 | geoserver | geoserver | 8600 |
 
-### Confiugration
+### Configuration
 
 #### Settings
 
