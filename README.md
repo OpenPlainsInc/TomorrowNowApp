@@ -28,7 +28,7 @@ Docker compose containers and client port bindings. Currently we are comparing d
 Update the settings file
 
 * actinia/.sample.actinia.env -> .actinia.env
-* actinia/.sample.actinia.cfg -> actinia.cfg
+* actinia/sample.actinia.cfg -> actinia.cfg
 * api/.sample.env -> .env
 * geoserver/.sample.env -> .env
 
