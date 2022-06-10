@@ -188,7 +188,7 @@ services:
       - 8643:8443
 
   # nginx:
-  #   image: nginx
+  #   image: nginx:1.22.0
   #   volumes:
   #     - ./nginx/geoserver:/etc/nginx/conf.d:ro
   #   logging:

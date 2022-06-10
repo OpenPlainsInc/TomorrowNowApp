@@ -289,12 +289,12 @@ CACHES = {
 # These are development values only never push to prod server.
 ACTINIA = {
     #actinia-user create -r superadmin -u django-api -w c@kna663A -g api-super
-    'user': 'django-api',
-    'password': 'c@kna663A',
-    'group': 'api-super',
-    'role': 'superadmin',
-    'HOST': 'actinia-core',
-    'PORT': 8088,
+    # 'user': 'django-api',
+    # 'password': 'c@kna663A',
+    # 'group': 'api-super',
+    # 'role': 'superadmin',
+    # 'HOST': 'actinia-core',
+    # 'PORT': 8088,
     'ACTINIA_USER': env('ACTINIA_USER'),
     'ACTINIA_PASSWORD': env('ACTINIA_PASSWORD'),
     'ACTINIA_VERSION': env('ACTINIA_VERSION'),
