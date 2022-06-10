@@ -1,0 +1,17 @@
+<layer>
+  <name>huc_12</name>
+  <id>LayerInfoImpl--15206a99:180bf2affcc:-7feb</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--15206a99:180bf2affcc:-7ffe</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--15206a99:180bf2affcc:-7fec</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-05-13 20:53:04.498 UTC</dateCreated>
+  <dateModified>2022-05-13 20:53:48.331 UTC</dateModified>
+</layer>
