@@ -141,9 +141,11 @@ terracotta/data
 
 
 # geoserver
-
 geoserver-data/*
 
 # Actinia
 actinia/actinia.cfg
 actinia/.actinia.env
+
+# Redis
+*.rdb
