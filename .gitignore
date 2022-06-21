@@ -121,8 +121,8 @@ GitHub.sublime-settings
 node_modules
 
 # Actinia
-# actinia-core-data
-actinia-core-data
+actinia-core-data/
+
 # Google Cloud
 gcp_keys
 
@@ -149,3 +149,6 @@ actinia/.actinia.env
 
 # Redis
 *.rdb
+
+# Postgres Database Data
+data/
