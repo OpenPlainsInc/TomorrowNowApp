@@ -32,6 +32,11 @@ Update the settings file
 * api/.sample.env -> .env
 * geoserver/.sample.env -> .env
 
+##### TODO
+
+* Setup docker-compose-dev-local.yml
+* Fix GCP in actinia/Dockerfile
+
 ### Start app
 
 ```bash

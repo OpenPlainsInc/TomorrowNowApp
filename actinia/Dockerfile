@@ -68,9 +68,9 @@ RUN pip3 install /build/*
 # in alpine-build / alpine-runtime images, but check for updates here.
 RUN pip3 install -r /src/actinia_core/requirements.txt
 
-# # Copy Google Creds
-RUN mkdir -p /home/user/gcp/
-COPY gcp_keys/gcp_tomorrownow_dev_key.json /home/user/gcp/gcp_tomorrownow_dev_key.json
+# # # Copy Google Creds
+# RUN mkdir -p /home/user/gcp/
+# COPY gcp_keys/gcp_tomorrownow_dev_key.json /home/user/gcp/gcp_tomorrownow_dev_key.json
 
 COPY actinia.cfg /etc/default/actinia
 COPY start.sh /src/start.sh
