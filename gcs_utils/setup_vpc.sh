@@ -1,0 +1,3 @@
+gcloud compute networks create tomorrownow --project=rapid-dsm --description=VPC\ for\ TomorrowNow\ Application\ Stack --subnet-mode=custom --mtu=1460 --bgp-routing-mode=regional
+
+gcloud compute networks subnets create tomorrownow-public-test-subnet --project=rapid-dsm --description=Public\ test\ subnet\ for\ TomorrowNow\ application\  --range=10.0.0.0/8 --stack-type=IPV4_ONLY --network=tomorrownow --region=us-east1 --enable-private-ip-google-access

@@ -1,6 +1,0 @@
-name: ETRS89 / UTM zone 32N
-datum: etrs89
-ellps: grs80
-proj: utm
-zone: 32
-no_defs: defined
