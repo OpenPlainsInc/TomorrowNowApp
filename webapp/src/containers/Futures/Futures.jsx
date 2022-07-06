@@ -7,4 +7,11 @@
  * Copyright (c) 2022 Corey White
  */
 
-
+import { Outlet } from "react-router-dom";
+export default function Futures() {
+    return (
+      <main style={{ padding: "1rem 0" }}>
+        <Outlet />
+      </main>
+    );
+  }

@@ -44,6 +44,9 @@ export const TopNavbar = () => {
             <LinkContainer to="/dashboard">
               <Nav.Link>Dashboard</Nav.Link>
             </LinkContainer>
+            <LinkContainer to="/futures">
+              <Nav.Link>Futures</Nav.Link>
+            </LinkContainer>
           </Nav>
 
           <Nav className="justify-content-end">

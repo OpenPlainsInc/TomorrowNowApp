@@ -8,7 +8,7 @@ import SettingsRoutes from "./SettingsRoutes";
 import ModuleRouters from "./ModuleRoutes";
 import AuthRoutes from "./AuthRoutes";
 import LocationRoutes from "./LocationRoutes";
-
+import FuturesRoutes from "./FuturesRouts";
 
 const routes = (
     <Route path="/" element={<App />}>
@@ -17,6 +17,7 @@ const routes = (
         {GameRoutes}
         {BoardRoutes}
         {DashboardRoutes}
+        {FuturesRoutes}
         {LocationRoutes}
         {ModuleRouters}
         {SettingsRoutes}
