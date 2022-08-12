@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Jun 06 2022                                               #
+# Last Modified: Thu Aug 11 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -159,7 +159,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://192.168.1.242:3000',
     'http://localhost:7000',
 ]
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
 
 # CORS_ALLOWED_ORIGIN_REGEXES are regular expressions that match domains
 # that can make requests. This setting is especially useful if you have many domains.

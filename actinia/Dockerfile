@@ -1,14 +1,15 @@
-FROM mundialis/actinia-core:4.1.0 as actinia
+FROM mundialis/actinia-core:4.2.1 as actinia
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
-ENV ACTINIA_CORE_VERSION=4.1.0
+ENV ACTINIA_CORE_VERSION=4.2.1
 
 # USER root
 
 # Install R libraies needed for FUTURES
-# RUN apt-get install -y r-base
-# RUN R -e "install.packages(c('MuMIn', 'lme4', 'optparse', 'snow'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN apk add --update cmake R R-dev
+
+RUN R -e "install.packages(c('MuMIn', 'lme4', 'optparse', 'snow'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 RUN pip3 install scipy
 
@@ -51,7 +52,7 @@ ARG WHEEL_NAME=actinia_tiling_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-tiling-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
-ENV ACTINIA_API_VERSION=3.1.0
+ENV ACTINIA_API_VERSION=3.3.0
 ARG WHEEL_NAME=actinia_api-${ACTINIA_API_VERSION}-py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-api/releases/download/${ACTINIA_API_VERSION}/${WHEEL_NAME}
@@ -67,6 +68,8 @@ RUN pip3 install /build/*
 # Duplicate install actinia_core requirements. They are already included
 # in alpine-build / alpine-runtime images, but check for updates here.
 RUN pip3 install -r /src/actinia_core/requirements.txt
+
+
 
 # # # Copy Google Creds
 # RUN mkdir -p /home/user/gcp/

@@ -11,8 +11,8 @@ Docker compose containers and client port bindings. Currently we are comparing d
 
 | Service  | Description | Port |
 | -----------   | ----------- | -------- |
-| api           | Django 4.0  | 8005     |
-| actinia | Actinia 4.01 | 8088     |
+| api           | Django 4.2.1  | 8005     |
+| actinia | Actinia 4.1.0 | 8088     |
 | webapp      | React       | 3000     |
 | db      | Postgresql + PostGIS | 5431 |
 | actinia-redis | redis | 6379 |

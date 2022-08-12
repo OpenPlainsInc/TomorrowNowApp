@@ -6,5 +6,6 @@ r.stream.distance,
 r.basin,
 r.in.usgs,
 r.futures,
-r.sample.category
+r.sample.category,
+r.object.geometry
 

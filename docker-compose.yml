@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 # https://stackoverflow.com/questions/44284484/docker-compose-share-named-volume-between-multiple-containers
 # x-services-volume:
