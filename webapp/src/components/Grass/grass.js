@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Jun 09 2022
+ * Last Modified: Mon Aug 15 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -236,10 +236,10 @@ const Grass = {
         }
     },
     d: {
-        renderRaster: (async (locationName, mapsetName, rasterName)=> {
+        renderRaster: (async (locationName, mapsetName, rasterName, aboutController=null)=> {
             try {
                 let url = new URL(`${API_HOST}/r/locations/${locationName}/mapsets/${mapsetName}/raster_layers/${rasterName}/render`)
-                const res = await fetch(url);
+                const res = await fetch(url, {signal: aboutController.signal});
                 return await res.json();
             } catch (e) {
                 console.log(e);

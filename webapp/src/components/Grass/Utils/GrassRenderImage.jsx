@@ -16,31 +16,34 @@ import Image from "react-bootstrap/Image"
 
 const GrassRenderImage = ({layerType, layerName, mapsetName, locationName, card=true}) => {
     const [image, setImage] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     // useDataSource
     useEffect(() => {
+        setLoading(true)
+        const abortController = new AbortController()
         if (!layerType || !layerName || !mapsetName || !locationName) return;
-        let isMounted = true; 
         (async () => {
-            // if (!isMounted) return null;
             try {
                 let data = null;
                 if (layerType === 'raster') {
-                    data = await Grass.d.renderRaster(locationName, mapsetName, layerName)
+                    data = await Grass.d.renderRaster(locationName, mapsetName, layerName, abortController)
                 }
                 if (layerType === 'vector') {
                     data = await Grass.d.renderVector(locationName, mapsetName, layerName)
                 }
+                if (data) {
+                    data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
+                    const layerImage = data.response
+                    setImage(layerImage);
+                    setLoading(false)
+                }
                 
-                data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
-                const layerImage = data.response
-                setImage(layerImage)
+             
                
-                setLoading(false)
               } catch (e) {
                 console.log(e);
             }
-            return () => { isMounted = false }
+            return () => { abortController.abort() }
           })()
          
       },[layerType, layerName, mapsetName, locationName])

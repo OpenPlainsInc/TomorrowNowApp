@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tu/05/yyyy 04:nn:16
+ * Last Modified: Mo/08/yyyy 06:nn:35
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,34 +31,38 @@
  */
 
 
-import React, { useState, useEffect, useRef, Fragment} from "react"
-import {Outlet, Link } from "react-router-dom";
+import React, { useState, useEffect} from "react"
+import {useParams, useNavigate } from "react-router-dom";
+
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
-import Card from "react-bootstrap/Card"
-
 import FormControl from "react-bootstrap/FormControl"
 import InputGroup from "react-bootstrap/InputGroup"
-import {LinkContainer} from 'react-router-bootstrap'
-import Form from 'react-bootstrap/Form'
 import GrassSelect from "../../components/Grass/Utils/GrassSelect";
 import Grass from "../../components/Grass/grass";
-import RasterCardImage from "../../components/Grass/Utils/RasterCardImage";
-import { GrassDataTypeSelect, GrassRenderImage } from "../../components/Grass/Utils";
+import { GrassDataTypeSelect } from "../../components/Grass/Utils";
 import { LayerItemCard } from "../../components/Grass/Layers/LayerItemCard";
 
 
-const Board = (props) => {
-    const [rasters, setRasters] = useState([])
-    const [processChainList, setProcessChainList] = useState([])
-    const [filter, setFilter] = useState(null)
+const Board = () => {
+    let navigate = useNavigate()
+    let {locationId, mapsetId} = useParams();
+    const DEFAULT_LOCATION = "nc_spm_08"
+    const DEFAULT_MAPSET = "PERMANENT"
+    const [rasters, setRasters] = useState(null)
+    const [filter, setFilter] = useState(undefined)
     const [filteredRasters, setFilteredRasters]  = useState([])
     const [chunks, setChunks]  = useState([])
-    const [locationValue, setLocationValue]  = useState("nc_spm_08")
+    const [locationValue, setLocationValue]  = useState(locationId || DEFAULT_LOCATION)
     const [dataTypeValue, setDataTypeValue]  = useState("raster")
-    const [mapsetValue, setMapsetValue]  = useState("PERMANENT")
+    const [mapsetValue, setMapsetValue]  = useState(mapsetId  || DEFAULT_MAPSET)
 
+    useEffect(()=> {
+      if (!locationId || !mapsetId) {
+        navigate(`/board/location/${locationValue}/mapset/${mapsetValue}`);
+      }
+    }, [navigate, locationValue, mapsetValue, locationId, mapsetId])
 
     useEffect(() => {
         let isMounted = true; 
@@ -69,8 +73,11 @@ const Board = (props) => {
                 if (dataTypeValue === 'raster') {
                     data = await Grass.locations.location.mapsets.getRasterLayers(locationValue, mapsetValue)
                 }
-                if (dataTypeValue === 'vector') {
+                else if (dataTypeValue === 'vector') {
                     data = await Grass.v.layers(locationValue, mapsetValue)
+                }
+                else {
+                  throw new Error('Improper data type set')
                 }
 
                 console.log("Raster response:", data)
@@ -131,22 +138,25 @@ const Board = (props) => {
       },[mapsetValue,locationValue])
 
       function updateMapset(e) {
-        console.log("Update Mapset:", e)
         setRasters(null)
         setChunks([])
         let newValue = e.target.value
-        setMapsetValue(newValue)
+        console.log("Update Mapset and Params:", e, locationValue, newValue)
+        setMapsetValue(newValue);
+        navigate(`/board/location/${locationValue}/mapset/${newValue}`);
       }
 
       function updateLocation(e) {
-        console.log("Update Location:", e)
+        
         let newValue = e.target.value
         setRasters(null)
         setChunks([])
         // setProcessChainList([])
 
-        setMapsetValue("PERMANENT")
+        setMapsetValue(DEFAULT_MAPSET)
         setLocationValue(newValue)
+        console.log("Update Location and Params:", e, newValue, DEFAULT_MAPSET)
+        navigate(`/board/location/${newValue}/mapset/${DEFAULT_MAPSET}`);
         // fetchUpdate(locationValue, mapsetValue)
       }
 
@@ -159,11 +169,10 @@ const Board = (props) => {
       }
 
       const renderRasters = (rasters) => {
-        //   setFilteredRasters(rasters.filter(f => f.includes(filter) || filter === ""))
 
           console.log("renderRasters:",chunks )
           console.log("renderRasters Filter:",filter )
-          console.log("renderRasters Filter:",filteredRasters)
+          console.log("renderRasters Filtered Rasters:",filteredRasters)
 
           return chunks.map(rowdata => {
             return(

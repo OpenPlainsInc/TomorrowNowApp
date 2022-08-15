@@ -10,6 +10,7 @@ const BoardRoutes = (
   <Fragment>
     <Route path="board/location/:locationId/mapset/:mapsetId/raster/:rasterId/map" element={<BoardMap /> } />
     <Route path="board/location/:locationId/mapset/:mapsetId/raster/:rasterId" element={<BoardDetail /> } />
+    <Route path="board/location/:locationId/mapset/:mapsetId" element={<Board /> } />
     <Route path="board" element={<Board /> } />
     
   </Fragment>
