@@ -8,5 +8,5 @@ r.futures.calib development_start='urban_2001' development_end='urban_2016' subr
 # We will look at the calibration file. First line shows the parameters with lowest combined error:
 # !cat calib.csv
 # We will save the values from the first line to use them in the FUTURES call:
-# with open('calib.csv') as f:
+# with open('') as f:
 #     disc_factor, comp_mean, comp_range = f.readlines()[1].split(',')[:3]

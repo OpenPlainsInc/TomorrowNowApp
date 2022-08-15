@@ -1,4 +1,5 @@
-r.futures.parallelpga subregions='counties' developed='urban_2016' predictors='road_dens_perc,forest_smooth_perc,dist_to_water_km,slope,dist_to_interchanges_km' devpot_params='potential.csv' development_pressure='devpressure_30_05_01_2016' n_dev_neighbourhood=30 development_pressure_approach='gravity' gamma=0.5 scaling_factor=0.1 demand='demand.csv' discount_factor='disc_factor' compactness_mean='comp_mean' compactness_range='comp_range' patch_sizes='patches.csv' num_neighbors=4 seed_search='probability' output='final' nprocs=10, repeat=5
+g.region vector=counties@PERMANENT align=landuse_2016@PERMANENT
+r.futures.parallelpga subregions='counties' developed='urban_2016' predictors='road_dens_perc,forest_smooth_perc,dist_to_water_km,slope,dist_to_interchanges_km' devpot_params='potential.csv' development_pressure='devpressure_30_05_01_2016' n_dev_neighbourhood='30' development_pressure_approach='gravity' gamma='0.5' scaling_factor='0.1' demand='demand.csv' discount_factor='0.1' compactness_mean='0.0' compactness_range='0.1' patch_sizes='patches.csv' num_neighbors=4 seed_search='probability' output='final' nprocs='10' repeat='5'
                
 # In this example we postprocess data from multiple stochastic runs to see which land category is most impacted by urban growth.
 
