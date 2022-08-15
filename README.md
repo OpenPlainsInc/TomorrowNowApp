@@ -36,6 +36,8 @@ Update the settings file
 
 * Setup docker-compose-dev-local.yml
 * Fix GCP in actinia/Dockerfile
+* Run django migrations 
+* Auto create actinia postgres db and role
 
 ### Start app
 
