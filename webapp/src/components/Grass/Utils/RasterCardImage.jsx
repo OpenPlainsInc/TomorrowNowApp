@@ -7,7 +7,7 @@
  * Copyright (c) 2022 Corey White
  */
 
-import React, { useState, useEffect, useRef, Fragment} from "react"
+import React, { useState, useEffect } from "react"
 import Spinner from "react-bootstrap/Spinner"
 import Grass from "../grass";
 import Card from "react-bootstrap/Card"
@@ -19,10 +19,10 @@ const RasterCardImage = ({rasterName, mapsetName, locationName, card=true}) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        let isMounted = true; 
+        const abortController = new AbortController()
         async function fetchImage() {
             try {
-                const data = await Grass.d.renderRaster(locationName, mapsetName, rasterName)
+                const data = await Grass.d.renderRaster(locationName, mapsetName, rasterName, abortController)
                 console.log("image response:", data)
                 data.response.imgurl = `data:image/png;base64,${data.response.imagedata}`
                 const rasterImage = data.response
@@ -32,14 +32,14 @@ const RasterCardImage = ({rasterName, mapsetName, locationName, card=true}) => {
               } catch (e) {
                 console.log(e);
             }
-            return () => { isMounted = false }
+            return () => { abortController.abort() }
           }
           fetchImage()
       },[rasterName, mapsetName, locationName])
 
      
       return (
-        <Fragment >
+        <>
             {
                 loading ? 
                 <Spinner as="span" animation="border" role="status" variant="secondary" className="bg-dark text-light" >
@@ -49,7 +49,7 @@ const RasterCardImage = ({rasterName, mapsetName, locationName, card=true}) => {
                 card ? <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} className="bg-dark text-light"/> :
                 <Image as="img" fluid={true} src={image ? image.imgurl : ""} className="bg-dark text-light"></Image>
             }
-        </Fragment>
+        </>
       )
 
 };

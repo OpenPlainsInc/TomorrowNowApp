@@ -9,12 +9,13 @@
 import Card from 'react-bootstrap/Card'
 import { LinkContainer } from 'react-router-bootstrap'
 import { GrassRenderImage } from '../Utils'
+import './LayerItemCard.scss';
 
 export const LayerItemCard = ({title, datatype, locationName, mapsetName}) => {
 
     return (
         
-        <Card  key={title} >
+        <Card  key={title} className="grass-layer-card" >
             <GrassRenderImage layerType={datatype} layerName={title} locationName={locationName} mapsetName={mapsetName}></GrassRenderImage>
             <Card.Body>
                 <Card.Title>{title}</Card.Title>
