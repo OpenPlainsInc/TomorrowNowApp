@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mo/08/yyyy 06:nn:35
+ * Last Modified: We/08/yyyy 05:nn:21
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -57,6 +57,8 @@ const Board = () => {
     const [locationValue, setLocationValue]  = useState(locationId || DEFAULT_LOCATION)
     const [dataTypeValue, setDataTypeValue]  = useState("raster")
     const [mapsetValue, setMapsetValue]  = useState(mapsetId  || DEFAULT_MAPSET)
+    const [chunkSize, setChunkSize]  = useState(4)
+
 
     useEffect(()=> {
       if (!locationId || !mapsetId) {
@@ -97,18 +99,18 @@ const Board = () => {
         if (!rasters) return;
         setFilteredRasters(rasters.filter(f => f.includes(filter) || filter === ""))
         console.log("Set Filter", filteredRasters)
-        let _chunks = filteredRasters.length > 0 ? sliceIntoChunks(filteredRasters,4) : sliceIntoChunks(rasters,4)
+        let _chunks = filteredRasters.length > 0 ? sliceIntoChunks(filteredRasters, chunkSize) : sliceIntoChunks(rasters,4)
         setChunks(_chunks)
         console.log("Set Filter chunks", chunks)
 
-      },[rasters,filter])
+      },[rasters, filter, chunkSize])
 
 
       const sliceIntoChunks = (arr) => {
-        const chunkSize = 4
+        const _chunkSize = chunkSize
         const res = [];
-        for (let i = 0; i < arr.length; i += chunkSize) {
-            const _chunk = arr.slice(i, i + chunkSize);
+        for (let i = 0; i < arr.length; i += _chunkSize) {
+            const _chunk = arr.slice(i, i + _chunkSize);
             res.push(_chunk);
         }
         return res;
