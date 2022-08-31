@@ -3,6 +3,8 @@
 [![react-savana-tests](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/node.js.yml/badge.svg)](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/node.js.yml)
 [![django-savana-tests](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/django.yml/badge.svg)](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/django.yml)
 
+![OpenPlains](webapp/public/banner_v1_500px.png)
+
 > **Disclaimer:** The TomorrowNow project is currently in an experimental phase and therefore breaking changes and project restructuring will occur without notice. We recommend waiting until the first stable version is released before considering using the project in any form.
 
 ## Getting Started
