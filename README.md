@@ -38,19 +38,19 @@ Update the settings file
 
 * Setup docker-compose-dev-local.yml
 * Fix GCP in actinia/Dockerfile
-* Run django migrations 
+* Run django migrations
 * Auto create actinia postgres db and role
 
 ### Start app
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 ### Stop app
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## API
@@ -62,41 +62,41 @@ docker-compose down
 Run inside of web container
 
 ```bash
-docker-compose run api python manage.py startapp <appname>
+docker compose run api python manage.py startapp <appname>
 ```
 
 Creates or updates models and store changes as a migration
 
 ```bash
 # Create migrations
-docker-compose run api python manage.py makemigrations <appname>
+docker compose run api python manage.py makemigrations <appname>
 
 # Apply changes to database
-docker-compose run api python manage.py migrate
+docker compose run api python manage.py migrate
 ```
 
 ### Collect Static Files
 
 ```bash
-docker-compose run api python manage.py collectstatic
+docker compose run api python manage.py collectstatic
 ```
 
 ### View Django urls
 
 ```bash
-docker-compose run api python manage.py show_urls
+docker compose run api python manage.py show_urls
 ```
 
 ### Start Django Shell
 
 ```bash
-docker-compose run api python manage.py shell
+docker compose run api python manage.py shell
 ```
 
 #### Start Django Jupyter Notebook
 
 ```bash
-docker-compose run api python manage.py shell_plus --notebook
+docker compose run api python manage.py shell_plus --notebook
 ```
 
 ```python
@@ -107,7 +107,7 @@ actinia.locations()
 ### Testing
 
 ```bash
-docker-compose run api python manage.py test <appname>
+docker compose run api python manage.py test <appname>
 ```
 
 ## Front End (webapp/)
@@ -118,6 +118,6 @@ docker-compose run api python manage.py test <appname>
 
 ```bash
 
-docker-compose run webapp npm install
+docker compose run webapp npm install
 
 ```
