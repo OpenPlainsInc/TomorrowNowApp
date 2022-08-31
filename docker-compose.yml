@@ -147,36 +147,30 @@ services:
       - 7000:7000
     depends_on:
       - actinia-core
-
-  # Only turn on when needed
-  # wireshark:
-  #   image: lscr.io/linuxserver/wireshark
-  #   container_name: wireshark
-  #   cap_add:
-  #     - NET_ADMIN
-  #   network_mode: bridge
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=America/New_York
-  #   ports:
-  #     #HOST:CONTAINER
-  #     - 3050:3000
-  #   restart: unless-stopped
   geoserver:
-    # image: kartoza/geoserver:2.20.4
+    image: docker.osgeo.org/geoserver:2.21.1
     env_file:
         - ./geoserver/.env
     build:
-      context: ./geoserver
-      dockerfile: Dockerfile
+      args: 
+          - GEOSERVER_VERSION=2.21.1
+          - CORS_ENABLED=true
+          - CORS_ALLOWED_METHOD=GET,POST,PUT,HEAD,OPTIONS
+          - GEOSERVER_REQUIRE_FILE=/opt/geoserver/data_dir
+    environment:
+        - INSTALL_EXTENSIONS=true
+        - STABLE_EXTENSIONS=wps,csw,vectortiles,monitor,importer
+        - EXTRA_JAVA_OPTS=-Xms2G -Xmx4G
+        - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+        - GEOSERVER_REQUIRE_FILE=/opt/geoserver/data_dir/global.xml
     volumes:
         - ./geoserver-data/data_dir:/opt/geoserver/data_dir
         - ./geoserver-data/settings:/settings
         - ./actinia-core-data:/opt/geoserver/actinia_data
+        - ./geoserver/additional_libs:/opt/additional_libs:Z # by mounting this we can install libs from host on startup
     restart: on-failure
     depends_on:
-      - db
+        - db
         # condition: service_healthy
     healthcheck:
       test: curl --fail -s http://localhost:8080/ || exit 1
@@ -185,7 +179,6 @@ services:
       retries: 3
     ports:
       - 8600:8080
-      - 8643:8443
 
   # nginx:
   #   image: nginx:1.22.0
