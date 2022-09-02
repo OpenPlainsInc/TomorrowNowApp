@@ -18,6 +18,7 @@
     "react": "^17.0.2",
     "react-bootstrap": "^2.2.1",
     "react-dom": "^17.0.2",
+    "react-flow-renderer": "^10.3.16",
     "react-hook-form": "^7.30.0",
     "react-router-bootstrap": "^0.26.1",
     "react-router-dom": "^6.0.0",
@@ -25,10 +26,9 @@
     "react-spring": "^9.4.4",
     "react-use-websocket": "^3.0.0",
     "recharts": "^2.1.9",
-    "sass": "^1.49.9",
-    "web-vitals": "^1.0.1",
     "release-it": "^15.0.0",
-    "react-flow-renderer": "^10.3.16"
+    "sass": "^1.49.9",
+    "web-vitals": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -58,7 +58,7 @@
     ]
   },
   "jest": {
-    "transformIgnorePatterns": [ 
+    "transformIgnorePatterns": [
       "/node_modules/(?!ol).+\\.js$"
     ],
     "moduleNameMapper": {

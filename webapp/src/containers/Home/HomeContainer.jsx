@@ -7,8 +7,7 @@
  * Copyright (c) 2022 Corey White
  */
 
-import React, { Component } from "react"
-import {Outlet} from "react-router-dom";
+import React from "react"
 import {LinkContainer} from 'react-router-bootstrap'
 import Container from "react-bootstrap/Container"
 
@@ -29,6 +28,7 @@ export default function HomeContainer() {
            paddingRight:'0px',
            paddingLeft:'0px',
            backgroundImage: "url('home_banner_scaled.jpg')",
+          //  backgroundImage: "url('banner_v1_500px.png')",
            height: '500px',
            backgroundRepeat: "no-repeat",
            backgroundSize: "cover"
