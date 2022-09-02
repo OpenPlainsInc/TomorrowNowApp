@@ -151,18 +151,6 @@ services:
     image: docker.osgeo.org/geoserver:2.21.1
     env_file:
         - ./geoserver/.env
-    # build:
-    #   args: 
-          # - GEOSERVER_VERSION=2.21.1
-          # - CORS_ENABLED=true
-          # - CORS_ALLOWED_METHOD=GET,POST,PUT,HEAD,OPTIONS
-          # - GEOSERVER_REQUIRE_FILE=/opt/geoserver/data_dir
-    # environment:
-    #     - INSTALL_EXTENSIONS=true
-    #     - STABLE_EXTENSIONS=wps,csw,vectortiles,monitor,importer
-    #     - EXTRA_JAVA_OPTS=-Xms2G -Xmx4G
-    #     - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
-    #     - GEOSERVER_REQUIRE_FILE=/opt/geoserver/data_dir/global.xml
     volumes:
         - ./geoserver-data/data_dir:/opt/geoserver/data_dir
         - ./geoserver-data/settings:/settings
