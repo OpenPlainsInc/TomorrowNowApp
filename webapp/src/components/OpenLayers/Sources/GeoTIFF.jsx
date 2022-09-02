@@ -34,7 +34,6 @@ const GeoTIFFSource = ({
       }
 
     });
-    console.log(source)
     return source
 }
 
