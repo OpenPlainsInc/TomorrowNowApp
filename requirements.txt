@@ -23,3 +23,4 @@ notebook>=6.4.10
 pyparsing>=3.0.8
 pydot>=1.4.2
 Werkzeug>=2.1.1
+pystac-client>=0.5.0
