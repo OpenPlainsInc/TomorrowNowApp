@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useCallback } from "react";
 import MapContext from "../MapContext";
 import OLTileLayer from "ol/layer/Tile";
 
@@ -23,7 +23,7 @@ const TileLayer = ({ source, layerName=undefined, opacity=1.0, zIndex = 0, visib
         map.removeLayer(tileLayer);
       }
     };
-  }, [map]);
+  }, [map, extent,layerName,opacity,source,visible,zIndex]);
   return null;
 };
 export default TileLayer;
