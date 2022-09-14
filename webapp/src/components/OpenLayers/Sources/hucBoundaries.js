@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 19 2022
+ * Last Modified: Fri Sep 09 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -32,7 +32,6 @@
 
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
-import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {tile as tileStrategy} from 'ol/loadingstrategy';
 import {createXYZ} from 'ol/tilegrid';
 import { Style, Stroke, Fill } from 'ol/style';
@@ -58,6 +57,30 @@ export const hucStyle = () => {
             color: 'rgba(20,20,20,0.0)',
         })
       })
+}
+
+export const countyStyle = () => {
+  return new Style({
+      stroke: new Stroke({
+        color: 'rgba(94, 94, 94, 0.75)',
+        width: 3,
+      }),
+      fill: new Fill({
+          color: 'rgba(20,20,20,0.0)',
+      })
+    })
+}
+
+export const streamStyle = () => {
+  return new Style({
+      stroke: new Stroke({
+        color: 'rgba(44, 223, 255, 0.9)',
+        width: 2,
+      }),
+      fill: new Fill({
+        color: 'rgba(20,20,20,0.0)',
+    })
+    })
 }
 
 const selectStyle = new Style({

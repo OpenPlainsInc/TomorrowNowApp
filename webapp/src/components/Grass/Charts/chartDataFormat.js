@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 19 2022
+ * Last Modified: Fri Sep 02 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -48,7 +48,7 @@ export const chartDataFormat = (data) => {
       }
 
       tmpYear[c.label] = c.area
-                  
+      return c       
     })
 
     // Add the last year

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 19 2022
+ * Last Modified: Mon Sep 12 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -43,7 +43,6 @@ const basinResponseSource = ((onAddFeature)=> {
     const serviceUrl = "http://localhost:8600/geoserver/savana/ows?" + 
         "service=WFS&version=1.0.0&request=GetFeature&typeName=savana%3Apoint_basin_cloud&" +
         "maxFeatures=50&outputFormat=application%2Fjson&srsName=EPSG:4326"
-    const layer = 0
 
     const geojsonFormat = new GeoJSON();
  
@@ -80,6 +79,6 @@ const basinResponseSource = ((onAddFeature)=> {
       return vectorSource
 })
 
-export default {
-  source: basinResponseSource
-}
+let basinSource = basinResponseSource()
+
+export default basinSource

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sa/04/yyyy 04:nn:28
+ * Last Modified: Th/09/2022 10:nn:46
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -85,10 +85,11 @@ const Reprojection = ({epsg}) => {
                         proj4def: _proj4def,
                         bbox: _bbox
                       }
-                      setCode(_code)
-                      setName(_name)
-                      setProj4def(_proj4def)
-                      setBbox(_bbox)
+                      // setCode(_code)
+                      // setName(_name)
+                      // setProj4def(_proj4def)
+                      // setBbox(_bbox)
+                      setProjectionDetails(projDetails)
                     }
 
                   }
@@ -108,11 +109,16 @@ const Reprojection = ({epsg}) => {
 
 
     useEffect(()=>{
-        if (!map || !bbox || !code || !name || !proj4def) return;
+        if (!map || !projectionDetails|| !projectionDetails.bbox || !projectionDetails.proj4def || !projectionDetails.code) return;
           let currentViewProjection = map.getView().getProjection()
           console.log("Current Map View Projection:", currentViewProjection.getCode())
-          console.log(map, bbox, code, name, proj4def)
+          let code = projectionDetails.code;
+          let bbox = projectionDetails.bbox;
+          let name = projectionDetails.name;
+          let proj4def = projectionDetails.proj4def;
           console.log(`(${code}) ${name}`)
+          console.log(map, bbox, code, name, proj4def)
+
       
           const newProjCode = 'EPSG:' + code;
           proj4.defs(newProjCode, proj4def);
@@ -143,29 +149,7 @@ const Reprojection = ({epsg}) => {
           });
           setNewView(_newView)
           
-    },[map, bbox, code, name, proj4def])
-    
-    useEffect(()=>{
-
-      if (!map || !extent || !newView) return;
-      map.on('loadend', () => {
-        console.log(`Reprojecting: ${newView}`)
-        console.log(`New Extent: ${extent}`)
-        map.setView(newView);
-        newView.fit(extent);
-
-        // map.un('postcompose', () => {
-        //   console.log(`Reprojecting: ${newView}`)
-        //   console.log(`New Extent: ${extent}`)
-        //   map.setView(newView);
-        //   newView.fit(extent);
-        // })
-      })
-
-      
-    
-    
-    },[map, extent, newView])
+    },[map, projectionDetails])
 
     return (<div>{name}</div>)
   }

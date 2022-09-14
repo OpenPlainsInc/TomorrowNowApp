@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Aug 15 2022
+ * Last Modified: Wed Sep 07 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,7 +31,8 @@
  */
 
 import { ProcessResponseModel } from "./Utils/Models/ProcessResponseModel";
-
+import {MapsetInfoResponseModel} from "./Utils/Models/MapsetInfoResponseModel";
+import { SimpleResponseModel } from "./Utils/Models";
 const API_HOST = "http://localhost:8005/savana"
 
 
@@ -51,27 +52,41 @@ const clearLocalStorageData = () => {
     return localStorage.clear()
 }
 
+const _apiRequest = (async (url, method, successResponseClass, errorResponseClass, errorString, options={}) => {
+    try {
+        
+        let res = await fetch(url, { 
+            method: method,
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            ...options
+        });
+        let data = await res.json()
+        if (res.ok) return new successResponseClass({...data.response});
+        return new errorResponseClass({...data.response});              
+      } catch (err) {
+        console.error(`${errorString} ${err}`);
+    }
+})
+
 
 const Grass = {
     getLocation: async (locationName) => {
-        /**
-        * Route: /locations/{location_name}/info
-        */
-          try {
-            // let queryParams = {un: params.unId}
-            const url = new URL(`${API_HOST}/g/locations/${locationName}/info`)
-            let res = await fetch(url, { 
-                headers: {
-                'Content-Type': 'application/json'
-                }
-            });
-            let data = await res.json();
-            
-            console.log("getLocation: response:", data)
-            return new ProcessResponseModel({...data.response})                        
-        } catch (e) {
-            console.log("getLocation: error", e);
-        }
+        // /**
+        // * Route: /locations/{location_name}/info
+        // */
+        const url = new URL(`${API_HOST}/g/locations/${locationName}/info`)
+        const errorString = "Some error occured"
+        return _apiRequest(url, "GET", ProcessResponseModel, ProcessResponseModel, errorString)
+    },
+    deleteLocation: async (locationName) => {
+        // /**
+        // * Route: /locations/{location_name}/info
+        // */
+        const url = new URL(`${API_HOST}/g/locations/${locationName}`)
+        const errorString = "Some error occured"
+        return _apiRequest(url, "DELETE", SimpleResponseModel, SimpleResponseModel, errorString)
     },
     createLocation: (async (locationName, epsg) => {
         /**

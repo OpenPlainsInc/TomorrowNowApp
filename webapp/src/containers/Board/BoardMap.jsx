@@ -25,6 +25,7 @@ const BoardMap = (props) => {
     const [center, setCenter] = useState( [-79.19996595808385,36.00726441408235,7]);
     const [zoom, setZoom] = useState(1);
     const [opacity, setOpacity] = useState(0.75);
+    const [osmSource, setOsmSource] = useState(osm);
 
     const [tileStyle, setTileStyle] = useState({
         color: undefined,
@@ -67,14 +68,15 @@ const BoardMap = (props) => {
 
     // GRASS Projection 3358
     return (
-            <Container>
+            <Container className="vh-100 d-flex flex-column">
                 <h1>{params.rasterId}</h1>
                 <Row>
+                    <Col>
                 <Map  center={fromLonLat(center)} zoom={zoom}>
 
                     <Layers>
 
-                        <TileLayer source={osm()}></TileLayer>
+                        <TileLayer source={osmSource}></TileLayer>
                         <ActiniaGeoTiff 
                             rasterName={params.rasterId} 
                             mapsetName={params.mapsetId}
@@ -104,11 +106,12 @@ const BoardMap = (props) => {
                         <EditMapControl />
                     </Controls>
                     <Reprojection epsg='3358'></Reprojection> 
-                    {/* <Reprojection epsg='3357'></Reprojection>  */}
+                    {/* <Reprojection epsg='5070'></Reprojection>  */}
 
                 </Map>
-                </Row>
-                <Row>
+                </Col>
+               
+                <Col>
                 <Form style={{marginTop: 50}}>
                 <Form.Control as="select" value={colorPal} onChange={updateColor}>
                     {utils.defautColormaps.map((c, idx) =>{
@@ -208,6 +211,7 @@ const BoardMap = (props) => {
                     </Form.Group>
                  
                 </Form>
+                </Col>
                 </Row>
             </Container>
         

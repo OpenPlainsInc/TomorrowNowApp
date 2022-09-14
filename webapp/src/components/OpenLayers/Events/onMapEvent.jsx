@@ -26,7 +26,7 @@ import MapContext from "../MapContext";
 const OnMapEvent = ({eventName, eventHandler}) => {
   const { map } = useContext(MapContext); 
 
-  const isValidEvent = (eventName) => {
+  const _isValidEvent = (eventName) => {
     const defaultEvents = [
         'change',
         'change:layerGroup',
@@ -52,7 +52,7 @@ const OnMapEvent = ({eventName, eventHandler}) => {
 
   useEffect(() => {
     if (!map) return;
-    if (!isValidEvent(eventName)) {
+    if (!_isValidEvent(eventName)) {
         console.warn(`Provided map event name "${eventName}" is not a default map event`);
     }
     map.on(eventName, eventHandler)
@@ -61,7 +61,7 @@ const OnMapEvent = ({eventName, eventHandler}) => {
         map.un(eventName, eventHandler)
       }
     }
-  }, [map]);
+  }, [map, eventName, eventHandler]);
   return null;
 };
 export default OnMapEvent;

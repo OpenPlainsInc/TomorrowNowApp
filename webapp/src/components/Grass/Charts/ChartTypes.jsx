@@ -44,7 +44,7 @@ export const GrassBarChart = ({data, colorMap, width = 500, height = 300, toolti
         <CartesianGrid strokeDasharray="3 3" />
         {
             colorMap.filter(y=>y.year ==='2016').map((d, idx) => (
-              <Bar key={`cell-${idx}`} fill={d.color} dataKey={`${d.label}`}/>
+              <Bar key={`cell-${d.label}-${d.year}`} fill={d.color} dataKey={`${d.label}`}/>
            ))
         }
       </BarChart>
@@ -79,7 +79,7 @@ export const GrassLineChart = ({data, colorMap, width = 500, height = 300 , tool
         { legend ? <Legend /> : null } {/* <Legend /> */}
         {
            colorMap.filter(y=>y.year ==='2016').map((d, idx) => (
-            <Line key={`cell-${idx}`} type="monotone" stroke={d.color} dataKey={`${d.label}`}/>
+            <Line key={`cell-${d.label}`} type="monotone" stroke={d.color} dataKey={`${d.label}`}/>
         ))
         }
     
@@ -116,7 +116,7 @@ export const GrassAreaChart = ({data, colorMap, width = 500, height = 300, toolt
         { legend ? <Legend /> : null }
         {
             colorMap.filter(y=>y.year ==='2016').map((d, idx) => (
-                <Area key={`cell-${idx}`} type="monotone" dataKey={`${d.label}`} stackId="1" fill={d.color} stroke={d.color} />
+                <Area key={`cell-${d.label}`} type="monotone" dataKey={`${d.label}`} stackId="1" fill={d.color} stroke={d.color} />
             ))
         }
                         

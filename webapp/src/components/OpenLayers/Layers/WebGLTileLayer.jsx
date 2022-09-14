@@ -63,15 +63,15 @@ const WebGLTileLayer = ({
        
       }
     };
-  }, [map, source, style, zIndex = 0]);
+  }, [map, source, style, zIndex]);
 
   useEffect(()=>{
-    if (!map || !layer) return;
+    if (!layer) return;
     layer.setOpacity(opacity)
-  },[opacity])
+  },[layer, opacity])
 
   useEffect(()=> {
-    if (!map || !source || !style || !layer || !color) return;
+    if (!layer || !color) return;
       console.log("Style Change", {color, exposure, contrast, saturation, gamma })
       layer.updateStyleVariables({color, exposure, contrast, saturation, gamma });
 
@@ -83,7 +83,6 @@ const WebGLTileLayer = ({
       layer.on('postrender', onPostRender)
     }
     
-    layer.on('postcompose', onPostRender)
     map.on('pointermove', onPointerMove)
     return () => {
       if (layer) {

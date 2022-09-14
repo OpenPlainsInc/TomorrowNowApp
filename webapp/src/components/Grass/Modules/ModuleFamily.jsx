@@ -16,7 +16,7 @@ import './module.scss';
 import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Grass from '../grass'
+import grass from "@openplains/grass-js-client";
 import ModuleCard from './ModuleCard'
 import GrassLocalPagination from '../Utils/GrassLocalPagination';
 
@@ -62,8 +62,9 @@ const ModuleFamily = ({icon, family, filter}) => {
     useEffect(() => {
         let isMounted = true;   
         (async () => {
-            let res = await Grass.g.modules.all({family})
-            let data = res.response.processes
+            // let res = await Grass.g.modules.all({family})
+            let res = await grass.routes.Modules.getModules({family})
+            let data = res.processes
             console.log(data)
             setModules(data)
             setModulesCopy(data)

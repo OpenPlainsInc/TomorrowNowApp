@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sun May 08 2022
+ * Last Modified: Fri Sep 02 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -36,53 +36,54 @@
 // https://www.mrlc.gov/data-services-page
 import TileWMS from 'ol/source/TileWMS'
 import TileWMSSource from './TileWMS'
-export const nlcdSource = (params) => {
-    let yearOptions = {
-        '2019':'2019',
-        '2016':'2016',
-        '2013':'2013',
-        '2011':'2011',
-        '2008': '2008',
-        '2006':'2006',
-        '2004': '2004',
-        '2001': '2001'
-    }
 
-    let defaultYear = yearOptions['2019']
+import { useState, useEffect, useMemo } from 'react';
 
-    let dataTypeOptions = {
-        'land_cover': 'Land_Cover',
-        'impervious' : 'Impervious',
-        'impervious_descriptor': 'Impervious_descriptor',
-        'tree_canopy': 'Tree_Canopy'
-    }
+export const useNLCDSource = ({year='2019', dataType='land_cover', region='L48'}) => {
+    const [tileWMSSource, setTileWMSSource] = useState(null);
     
-    let defaultDataType = dataTypeOptions.land_cover
-
-    let defaultRegionOptions = {
-        'L48': 'L48'
-    }
-
-    let specialLayers = {
-        "NLCD_01-19_Land_Cover_Change_First_Disturbance_Date": "NLCD_01-19_Land_Cover_Change_First_Disturbance_Date",
-        "NLCD_Forest_Disturbance_Date_1986-2019": "NLCD_Forest_Disturbance_Date_1986-2019"
-    }
-
-    let defaultRegion = defaultRegionOptions.L48
-
-    let defaults = {
-        'LAYERS': `mrlc_display:NLCD_${defaultYear}_${defaultDataType}_${defaultRegion}`, 
-        'TILED': true
-    }
-    let updatedParams = Object.assign({}, defaults, params)
-    console.log("NLCD Params: ", updatedParams)
-    const tileWMS =  new TileWMS({
-        url: 'https://www.mrlc.gov/geoserver/mrlc_display/wms',
-        params: updatedParams,
-        serverType: 'geoserver',
-        transition: 0
+    useEffect(()=> {
+        const yearOptions = {
+            '2019':'2019',
+            '2016':'2016',
+            '2013':'2013',
+            '2011':'2011',
+            '2008':'2008',
+            '2006':'2006',
+            '2004':'2004',
+            '2001':'2001'
+        }
+    
+        const dataTypeOptions = {
+            'land_cover': 'Land_Cover',
+            'impervious' : 'Impervious',
+            'impervious_descriptor': 'Impervious_descriptor',
+            'tree_canopy': 'Tree_Canopy'
+        }
+    
+        let regionOptions = {
+            'L48': 'L48'
+        }
+    
+        let specialLayers = {
+            "NLCD_01-19_Land_Cover_Change_First_Disturbance_Date": "NLCD_01-19_Land_Cover_Change_First_Disturbance_Date",
+            "NLCD_Forest_Disturbance_Date_1986-2019": "NLCD_Forest_Disturbance_Date_1986-2019"
+        }
        
-      })
+        let requestParams = {
+            'LAYERS': `mrlc_display:NLCD_${yearOptions[year]}_${dataTypeOptions[dataType]}_${regionOptions[region]}`, 
+            'TILED': true
+        }
+        console.log("NLCD Params: ", requestParams)
+        const tileWMS =  new TileWMS({
+            url: 'https://www.mrlc.gov/geoserver/mrlc_display/wms',
+            params: requestParams,
+            serverType: 'geoserver',
+            transition: 0
+          })
+        setTileWMSSource(tileWMS)
+        
+    }, [year, dataType, region])
       
-    return tileWMS
+    return tileWMSSource
 }

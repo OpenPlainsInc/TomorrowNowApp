@@ -27,8 +27,12 @@ export const GrassFormModal = ({heading, actionType, show=false, handleClose, re
         console.log("Form Data:", data);
         (async () => {
           if (heading === "Location" && actionType === "Create") {
-            let response = await resource(data.location_name, data.epsg_code)
+            let response = await resource()(data.location_name, data.epsg_code)
             console.log("onSubmit: response", response)
+          }
+          if (heading === "Location" && actionType === "Delete") {
+            let response = await resource()(data.location_name)
+            console.log("onSubmit delete location: response", response)
           }
           if (heading === "Mapset" && actionType === "Create") {
             let response = await resource()(sourceLocation, data.mapset_name)
@@ -53,7 +57,7 @@ export const GrassFormModal = ({heading, actionType, show=false, handleClose, re
           </Modal.Header>
           <Modal.Body>
           { 
-          (heading === 'Location' && actionType === 'Create') ?
+          (heading === 'Location') ?
             <>
             <Form.Group className="mb-3" controlId="LocationName">
               <Form.Label>Location Name</Form.Label>
@@ -72,25 +76,29 @@ export const GrassFormModal = ({heading, actionType, show=false, handleClose, re
                 />)}
               />
             </Form.Group>
-
-
-            <Form.Group className="mb-3" controlId="EPSG">
-              <Form.Label>EPSG</Form.Label>
-              <Controller 
-                control={control}
-                name={"epsg_code"}
-                defaultValue="" 
-                render={({ field: { onChange, onBlur, value, ref } }) => (  
-                  <Form.Control
-                  ref={ref}
-                  type="text"
-                  placeholder="ex. 1234"
-                  value={value}
-                  onChange={onChange}
-                  autoFocus
-                />)}
-              />
-            </Form.Group>
+            {      
+            (actionType === 'Create') ?
+    
+              <Form.Group className="mb-3" controlId="EPSG">
+                <Form.Label>EPSG</Form.Label>
+                <Controller 
+                  control={control}
+                  name={"epsg_code"}
+                  defaultValue="" 
+                  render={({ field: { onChange, onBlur, value, ref } }) => (  
+                    <Form.Control
+                    ref={ref}
+                    type="text"
+                    placeholder="ex. 1234"
+                    value={value}
+                    onChange={onChange}
+                    autoFocus
+                  />)}
+                />
+              </Form.Group>
+             
+              : null
+            }
             </>
             :
 

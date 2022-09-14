@@ -9,7 +9,7 @@
 
 
 import React, { useRef, useState, useEffect } from "react"
-import Grass from "../grass"
+import grass from "@openplains/grass-js-client";
 import Form from 'react-bootstrap/Form'
 import InputGroup from "react-bootstrap/InputGroup"
 import ButtonGroup from "react-bootstrap/ButtonGroup"
@@ -32,16 +32,17 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
       if (selectionType === "locations") {
         setValue(location)
         setInputLabel("Location")
-        let data =  await Grass.getLocations()
-        console.log("locations", data.response)
-        setOptions(data.response.locations)
+        // let data =  await Grass.getLocations()
+        let data = await grass.routes.Locations.getLocations()
+        console.log("locations", data)
+        setOptions(data.locations)
       }
       else if (selectionType === "mapsets") {
         setValue(mapset)
         setInputLabel("Mapset")
-        let data =  await Grass.locations.location.mapsets.getMapsets(location)
-        console.log("mapsets", data.response)
-        setOptions(data.response.process_results)
+        // let data =  await Grass.locations.location.mapsets.getMapsets(location)
+        let data = await grass.routes.Mapsets.getMapsets(location)
+        setOptions(data.processResults)
       }
       else {
           return null
@@ -65,10 +66,10 @@ const GrassSelect = ({selectionType, onSelect, location="nc_spm_08", mapset="PER
   }
 
   const selectResource = () => {
-    if (modalAction === 'Create' && inputLabel === 'Location') return Grass.createLocation;
-    // if (modalAction === 'Delete' && inputLabel === 'Location') return Grass.deleteLocation;
-    if (modalAction === 'Create' && inputLabel === 'Mapset') return Grass.createMapset;
-    if (modalAction === 'Delete' && inputLabel === 'Mapset') return Grass.deleteMapset;
+    if (modalAction === 'Create' && inputLabel === 'Location') return grass.routes.Locations.createLocation;
+    if (modalAction === 'Delete' && inputLabel === 'Location') return grass.routes.Locations.deleteLocation;
+    if (modalAction === 'Create' && inputLabel === 'Mapset') return grass.routes.Mapsets.createMapset;
+    if (modalAction === 'Delete' && inputLabel === 'Mapset') return grass.routes.Mapsets.deleteMapset;
   }
 
   return (

@@ -9,13 +9,14 @@
 
 
 import React from "react"
-import Grass from "../grass"
+import grass from "@openplains/grass-js-client";
+
 import { useDataSource } from "../Utils"
 
 export const LocationsLoader = ({children}) => {
     
-    const grassLocations = useDataSource({getDataFunc: Grass.getLocations})
-
+    // const grassLocations = useDataSource({getDataFunc: Grass.getLocations})
+    const grassLocations = useDataSource({getDataFunc: grass.routes.Locations.getLocations})
     return (
       <>
         {

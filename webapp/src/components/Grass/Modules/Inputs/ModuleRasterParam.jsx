@@ -13,13 +13,13 @@ import React, { useState, useEffect } from 'react';
 import { useController } from "react-hook-form"
 import '../module.scss';
 import Form from 'react-bootstrap/Form'
-import Grass from '../../grass'
-
+import grass from "@openplains/grass-js-client";
 import { useDataSource } from '../../Utils/useDataSource';
 const ModuleRasterParam = ({param, control}) => {
     const [subtype, setSubtype] = useState(null);
     console.log("ModuleRasterParam", param.name)
-    const options = useDataSource({getDataFunc: Grass.getRasterLayers, params: ['nc_spm_08', 'PERMANENT']})
+    
+    const options = useDataSource({getDataFunc: grass.routes.Layers.getRasters, params: ['nc_spm_08', 'PERMANENT']})
 
     const {
         field: { onChange, onBlur, name, value, ref },
@@ -47,7 +47,7 @@ const ModuleRasterParam = ({param, control}) => {
             <Form.Control name={name} as="select" value={value} onChange={onChange} ref={ref}>
                 <option>Select Raster</option>
 
-                {options.data ? options.data.map((c) => {
+                {options.data ? options.data.processResults.map((c) => {
                     return(
                     <option key={c} value={c}>
                         {c}

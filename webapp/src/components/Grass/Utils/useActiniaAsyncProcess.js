@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 19 2022
+ * Last Modified: Fri Sep 02 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,14 +30,14 @@
  * 
  */
 
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 const ACTINIA_SOCKET_URL = 'ws://localhost:8005/ws/savana/resource/'
 
 export const useActiniaAsyncProcess = ({status, resourceId}) => {
     const [socketUrl, setSocketUrl] = useState(null); // pending...
     const [messageHistory, setMessageHistory] = useState(['test']);
-    const { sendMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(socketUrl, { share: false });
+    const { sendJsonMessage, lastMessage, lastJsonMessage, readyState } = useWebSocket(socketUrl, { share: false });
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
         [ReadyState.OPEN]: 'Open',
@@ -50,7 +50,6 @@ export const useActiniaAsyncProcess = ({status, resourceId}) => {
     useEffect(()=> {
         if (!resourceId || !status) return;
         console.log("Starting Websocket...")
-        console.log("Websocket: ResourceId Received...")
         console.log(`Websocket: Resource Id: ${resourceId}`)
         let resourceName = resourceId.replace(/-/g , '_')
         console.log(`Websocket: Resource Name: ${resourceName}`)
@@ -59,17 +58,17 @@ export const useActiniaAsyncProcess = ({status, resourceId}) => {
 
     // Send websocket status message to server
     useEffect(()=> {
-        if (readyState != ReadyState.OPEN) return;
+        if (readyState !== ReadyState.OPEN) return;
         console.log("Sending Websocket Message: ", status)
-        sendMessage(JSON.stringify({message: status, resource_id: resourceId}))
         setMessageHistory([{message: status, resource_id: resourceId}])
-    },[connectionStatus])
+        sendJsonMessage({message: status, resource_id: resourceId})
+    },[readyState])
 
-    // Log last message from Websocket
-    useEffect(()=> {
-        if (readyState != ReadyState.OPEN) return;
-        console.log("Last Websocket Message", lastMessage)
-    },[lastMessage])
+    // // Log last message from Websocket
+    // useEffect(()=> {
+    //     if (readyState !== ReadyState.OPEN) return;
+    //     console.log("Last Websocket Message", lastMessage)
+    // },[readyState, lastMessage])
 
     // Get Websocket message history
     useEffect(() => {
@@ -81,8 +80,7 @@ export const useActiniaAsyncProcess = ({status, resourceId}) => {
     // Set source data once data is finished
     useEffect(() => {
         if (!lastJsonMessage) return;
-        console.log("Last Message: ", lastJsonMessage)
-        console.log("Last Message Finished: ", lastJsonMessage)
+        console.dir('Last JSON Message', lastJsonMessage)
     }, [lastJsonMessage])
 
     return {lastJsonMessage, messageHistory, wsState: readyState}

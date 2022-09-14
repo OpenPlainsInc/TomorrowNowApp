@@ -119,11 +119,10 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
                 interpolate: true, // set fault for discrete data
                 style: style
             }
-            console.log("COG Url: ", rastersData)
             let tmpSource = GeoTIFFSource(sourceOptions)
             setSource(tmpSource)
         }
-    }, [lastJsonMessage]);
+    }, [lastJsonMessage, rasterName]);
 
 
     useEffect(()=> {
@@ -134,7 +133,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             setGrassColorScheme(scheme)
             console.log("GRASS color scheme:", scheme)
         })()
-    },[])
+    },[locationName, mapsetName, rasterName])
 
     
 
@@ -157,7 +156,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     // Update the Tile Stlye with new color palette
     useEffect(()=> {
         if (!source || !color) return;
-        console.log("update color")
+        console.log("update color", color)
         
         let colorPalette = color !== 'grass' ? [
             'interpolate',
@@ -170,7 +169,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             ...style,
             color: colorPalette
         }))
-    },[source,color])
+    },[source, color])
     // GRASS Projection 3358
     return (
             

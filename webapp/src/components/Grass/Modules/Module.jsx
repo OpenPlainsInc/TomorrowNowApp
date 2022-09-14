@@ -15,7 +15,7 @@ import './module.scss';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 import Card from 'react-bootstrap/Card'
-import Grass from '../grass'
+import grass from "@openplains/grass-js-client";
 import Nav from 'react-bootstrap/Nav'
 import { ModuleForm } from './ModuleForm';
 import { useDataSource } from '../Utils/useDataSource';
@@ -32,8 +32,8 @@ const Module = ({moduleName}) => {
   const [activeSubsection, setActiveSubsection] = useState('required');
   const [sectionParams, setSectionParams] = useState([]);
   console.log("Module", location)
-  const module = useDataSource({getDataFunc: Grass.g.modules.get, params: [moduleName]})
-
+  const module = useDataSource({getDataFunc: grass.routes.Modules.getModule, params: [moduleName]})
+  console.log("grass.routes.Modules.getModule", module)
   const filterSectionParams = (params, section) => {
     let filterdParams = params.filter(f => {
       if (section === 'optional' && f.optional){

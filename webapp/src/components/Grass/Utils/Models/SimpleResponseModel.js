@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Jun 09 2022
+ * Last Modified: Wed Sep 07 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -43,7 +43,7 @@ export class SimpleResponseModel {
      * @param {String} status - The status of the resource, values: accepted, running, finished, terminated, error
      * @param {String} message - A simple message to describes the status of the resource
      */
-    constructor(status, message) {
+    constructor({status, message}) {
         this.status = new RequestStatus(status).validate();
         this.message = message;
     }
