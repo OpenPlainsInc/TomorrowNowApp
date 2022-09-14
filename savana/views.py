@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Jun 01 2022                                               #
+# Last Modified: Mon Sep 12 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -505,8 +505,6 @@ def rDrain(request):
                         "param": "w",
                         "value": str(minx)
                     }
-            
-
                 ]
             },
             {
@@ -555,8 +553,79 @@ def rDrain(request):
                         "value": "usgs_3dep_30m_direction"
                     },
                     {
+                        "param": "stream",
+                        "value": "usgs_3dep_30m_streams"
+                    },
+                    {
+                        "param": "threshold",
+                        "value": "3000"
+                    },
+                    {
                         "param": "memory",
                         "value": "10000"
+                    }
+                ]
+            },
+            {
+                "module": "r.thin",
+                "id": "r.thin_usgs_3dep_30",
+                "inputs": [
+                    {
+                        "param": "input",
+                        "value": "usgs_3dep_30m_streams"
+                    },
+                    {
+                        "param": "output",
+                        "value": "usgs_3dep_30m_streams_thin"
+                    }
+                ]
+            },
+            {
+                "module": "r.to.vect",
+                "id": "r.to.vect_streams",
+                "flags": "s",
+                "inputs": [
+                    {
+                        "param": "input",
+                        "value": "usgs_3dep_30m_streams_thin"
+                    },
+                    {
+                        "param": "type",
+                        "value": "line"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "param": "output",
+                        "value": "usgs_3dep_30m_streams"
+                    }
+                ]
+            },
+            {
+                "id": "v.out.ogr_streams",
+                "inputs": [
+                    {
+                        "param": "input",
+                        "value": "usgs_3dep_30m_streams"
+                    },
+                    {
+                        "param": "type",
+                        "value": "line"
+                    },
+                    {
+                        "param": "format",
+                        "value": "PostgreSQL"
+                    },
+                    {
+                        "param": "output_type",
+                        "value": "line"
+                    }
+                ],
+                "module": "v.out.ogr",
+                "outputs": [
+                    {
+                        "param": "output",
+                        "value": "PG:host=db port=5432 dbname=actinia user=actinia password=actinia"
                     }
                 ]
             },
@@ -635,7 +704,7 @@ def rDrain(request):
                 "module": "r.mask",
                 "id": "r.mask",
                 "inputs": [
-                    {                
+                    {               
                         "param": "raster",
                         "value": "point_basin"
                     },
