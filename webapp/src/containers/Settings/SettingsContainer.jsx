@@ -30,8 +30,7 @@ import ReactFlow, {
   useEdgesState,
   MarkerType
 } from 'react-flow-renderer';
-import { useEffect } from "react";
-import { xhr } from "ol/featureloader";
+
 
 
 
@@ -643,29 +642,86 @@ const DEMO_PROCESS_CHAIN = [
   }
 ]
 
+const calculateInputNodeLocation = (modX, modY, step, numInputs) => {
+ 
+  const xGap = 300;
+  let newX = modX - xGap
+  const yStep = 100;
+  
+  const inputsEven = numInputs % 2 === 0;
+
+  let newY = modY;
+  let maxStep = 0;
+  // let minStep = 0;
+  let stepIndex = []
+  if (inputsEven) {
+    const nodesPerSide = Math.ceil(numInputs / 2);
+    maxStep = modY - (yStep * nodesPerSide);
+    // minStep = modY + (yStep * nodesPerSide);
+    for (let i = 0; i < numInputs; i++) {
+      let newStep = maxStep + (i * yStep) + (yStep/2)
+      stepIndex.push(newStep)
+    }   
+  }
+  else {
+    let nodesPerSide = Math.ceil((numInputs - 1) / 2);
+    maxStep = modY - (yStep * nodesPerSide);
+    // minStep = modY + (yStep * nodesPerSide);
+    for (let i = 0; i < numInputs; i++) {
+      let newStep = maxStep + (i * yStep)
+      stepIndex.push(newStep)
+    }    
+  }
+
+  newY = stepIndex[step - 1]  
+  return { x: newX, y: newY }
+
+
+}
+
 
 const processChainToFlow = (processChainList) => {
   const nodes = [];
   const edges = [];
   let nodeId = 0;
   let xPos = 0;
-  let yPos = 250;
+  let yPos = 400;
   let recentNodeId = null;
   let lastOutputValue = null;
+  let lastCurrentNodeIdModle = null;
+  
 
+  // Start creating flow graph
   for (let i = 0; i < processChainList.length; i++) {
     let pc = processChainList[i]
     let currentNodeIdModle = `${pc.module}-${nodeId.toString()}`
-
+    console.log("START NODE:")
+    console.log("Set: currentNodeIdModle as ", currentNodeIdModle)
+    console.log("lastCurrentNodeIdModle", lastCurrentNodeIdModle)
+    console.log("recentNodeId", recentNodeId)
+    console.log('lastOutputValue: ', lastOutputValue)
+    // Create a new row every time xpos is > 600
+    if (xPos > 1200) {
+      xPos = 0;
+      yPos = yPos + 400;
+    }
+    else {
+      if (i) {
+        // Run only after first pass
+        xPos = xPos + 400
+      }
+     
+    }
     // Input Nodes
+    let didOutPutConnectToInput = false;
     let numberOfInputs = pc.inputs.length
     for (let x = 0; x< numberOfInputs; x++) {
       let inputNodeId = `${currentNodeIdModle}-input-${pc.inputs[x].param}`
       let inputNode = {
         id: inputNodeId,
         sourcePosition: 'right',
-        targetPosition: 'left',
-        position: { x: xPos - 200, y: (yPos - 20) * ((x + 1)/numberOfInputs)},
+        targetPosition: 'top',
+        position: calculateInputNodeLocation(xPos, yPos, x + 1, numberOfInputs),
         style: { background: '#D6D5E6' },
         data: {
           label: pc.inputs[x].param
@@ -674,9 +730,9 @@ const processChainToFlow = (processChainList) => {
       nodes.push(inputNode)
 
       // Input Edges
-
       // Connect output to input if needed
       if (lastOutputValue === pc.inputs[x].value) {
+        didOutPutConnectToInput = true
         let inputEdgeId = `inputVarEdge-${recentNodeId}-${currentNodeIdModle}`
         edges.push({
           id: inputEdgeId,
@@ -689,33 +745,16 @@ const processChainToFlow = (processChainList) => {
             type: MarkerType.ArrowClosed,
           }
         });
-      }
-      else {
-        // if (recentNodeId) {
-        //   let moduleToModuleEdgeId = `moduleToModule-${recentNodeId}-${currentNodeIdModle}`
-        //   edges.push({
-        //     id: moduleToModuleEdgeId,
-        //     source: recentNodeId,
-        //     target: currentNodeIdModle,
-        //     style: {stroke: '#fff'},
-        //     markerEnd: {
-        //       type: MarkerType.ArrowClosed,
-        //     }
-        //   });
-        // }
-        
-      }
-
+      } 
+     
       // connect input to module
       let inputEdgeId = `inputEdge-${inputNodeId}`
-
-
         edges.push({
           id: inputEdgeId,
           source: inputNodeId,
           target: currentNodeIdModle,
           label: pc.inputs[x].value,
-          type: 'step',
+          // type: 'step',
           style: {stroke: '#f6ab6c'},
           markerEnd: {
             type: MarkerType.ArrowClosed,
@@ -723,47 +762,70 @@ const processChainToFlow = (processChainList) => {
         });
       
     }
+
+    if (!didOutPutConnectToInput && lastCurrentNodeIdModle !== currentNodeIdModle) {
+       
+      let noOutputEdgeId = `noOutputEdgeId-${lastCurrentNodeIdModle}-n${currentNodeIdModle}-${i}`
+      console.log("noOutputEdgeId ", noOutputEdgeId)
+      edges.push({
+        id: noOutputEdgeId,
+        source: lastCurrentNodeIdModle,
+        target: currentNodeIdModle,
+        label: `Step ${i + 1}`,
+        type: 'default',
+        animated: true,
+        style: { stroke: '#657e96', fontSize: "1.875em" },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+        }
+      });
+    }
+
     
     // Module Node
+    xPos = xPos + 100
     let node = {
       id: currentNodeIdModle,
       sourcePosition: 'right',
       targetPosition: 'left',
       position: { x: xPos, y: yPos },
       data: {
-        label: pc.module
+        // label: pc.module,
+        label: (
+          <>
+            <strong>{pc.module}</strong>
+          </>
+        ),
       }
     }
-    if (xPos + 250 > 3000) {
-      yPos = yPos + 300;
-      xPos = 0;
-    }
-    else {
-      xPos = xPos + 300;
-    }
-
     
+    lastCurrentNodeIdModle = currentNodeIdModle
     nodes.push(node)
 
-    
+    // Increase xpos no matter if output node is added.
+    xPos = xPos + 250
 
     // console.log(`source: ${recentNodeId}, target: ${currentNodeId}, edgeId: ${currentNodeId}-${recentNodeId}`)
     if (recentNodeId && nodeId <= processChainList.length - 1) {
       
 
-      // Add output nodes and edges if needed
+     
       recentNodeId = `${pc.module}-${nodeId.toString()}`;
+   
       if (pc.outputs) {
         // Output Nodes
+        // Add output nodes and edges if needed
         let numberOfOutputs = pc.outputs.length;
-        xPos = xPos + 200;
+        
+        
         for (let x = 0; x< numberOfOutputs; x++) {
+          yPos = yPos + 150
           let outputNodeId = `${currentNodeIdModle}-output-${pc.outputs[x].param}`
           let outputNode = {
             id: outputNodeId,
-            position: { x: xPos, y: (yPos - 50) * ((x + 1)/numberOfOutputs)},
-            sourcePosition: 'top',
-            targetPosition: 'right',
+            position: { x: xPos, y: yPos },
+            sourcePosition: 'bottom',
+            targetPosition: 'left',
             style: { background: "#657e96"},
             data: {
               label: pc.outputs[x].value
@@ -789,134 +851,25 @@ const processChainToFlow = (processChainList) => {
         }
         
       }
-      
-
+      else {
+        lastOutputValue = null;
+      }
       
     }
+ 
     if (!recentNodeId) {
-      recentNodeId = `${pc.module}-${nodeId.toString()}`;
+      recentNodeId = currentNodeIdModle;
+     
     }
-
+    // Increase xpos no matter if output node is added.
+    xPos = xPos + 100;
     nodeId++;
+    console.log("END NODE")
   }
 
   return { nodes, edges }
 }
 
-
-
-const initialNodes = [
-  {
-    id: '1',
-    type: 'default',
-    data: {
-      label: (
-        <>
-          <strong>Processes Chain</strong>
-        </>
-      ),
-    },
-    position: { x: 250, y: 0 },
-  },
-  // {
-  //   id: '2',
-  //   data: {
-  //     label: (
-  //       <>
-  //         Setting Computational Region
-  //       </>
-  //     ),
-  //   },
-  //   position: { x: 100, y: 100 },
-  // },
-  // {
-  //   id: '3',
-  //   data: {
-  //     label: (
-  //       <>
-  //         Gathering 3dep 1 arc-second elevation data
-  //       </>
-  //     ),
-  //   },
-  //   position: { x: 400, y: 100 },
-  //   style: {
-  //     background: '#D6D5E6',
-  //     color: '#333',
-  //     border: '1px solid #222138',
-  //     width: 180,
-  //   },
-  // },
-  // {
-  //   id: '4',
-  //   position: { x: 250, y: 200 },
-  //   data: {
-  //     label: 'Downloading NLCD data',
-  //   },
-  // },
-  // {
-  //   id: '5',
-  //   data: {
-  //     label: 'Calculating Flow Direction',
-  //   },
-  //   position: { x: 250, y: 325 },
-  // },
-  // {
-  //   id: '6',
-  //   type: 'output',
-  //   data: {
-  //     label: (
-  //       <>
-  //         Calculating Upstream <strong>Basin</strong>
-  //       </>
-  //     ),
-  //   },
-  //   position: { x: 100, y: 480 },
-  // },
-  // {
-  //   id: '7',
-  //   type: 'output',
-  //   data: { label: 'Another output node' },
-  //   position: { x: 400, y: 450 },
-  // },
-];
-
-const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2', label: 'init' },
-  { id: 'e1-3', source: '1', target: '3' },
-  {
-    id: 'e3-4',
-    source: '3',
-    target: '4',
-    animated: true,
-    label: 'download in progress',
-  },
-  {
-    id: 'e4-5',
-    source: '4',
-    target: '5',
-    label: '',
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-    },
-  },
-  {
-    id: 'e5-6',
-    source: '5',
-    target: '6',
-    type: 'smoothstep',
-    label: 'smooth step edge',
-  },
-  // {
-  //   id: 'e5-7',
-  //   source: '5',
-  //   target: '7',
-  //   type: 'step',
-  //   style: { stroke: '#f6ab6c' },
-  //   label: 'a step edge',
-  //   animated: true,
-  //   labelStyle: { fill: '#f6ab6c', fontWeight: 700 },
-  // },
-];
 
 
 const onInit = (reactFlowInstance) => console.log('flow loaded:', reactFlowInstance);
@@ -931,8 +884,6 @@ const onInit = (reactFlowInstance) => console.log('flow loaded:', reactFlowInsta
 // console.log("initialEdgesPc", initialEdgesPc)
 
 const { nodes: initialNodesPc, edges: initialEdgesPc } = processChainToFlow(DEMO_PROCESS_CHAIN[0].list)
-console.log("initialNodesPc", initialNodesPc)
-console.log("initialEdgesPc", initialEdgesPc)
 
 export default function SettingsContainer() {
   // const initialNodesPc = useMemo(() => processChainToNodes(DEMO_PROCESS_CHAIN[0].list.slice(0,5)), [])
