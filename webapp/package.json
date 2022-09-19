@@ -12,6 +12,7 @@
     "colormap": "^2.3.2",
     "esbuild": "^0.14.39",
     "geoblaze": "^1.1.0",
+    "geotiff": "^2.0.5",
     "gl-matrix": "^3.4.3",
     "history": "^5.0.0",
     "ol": "^7.1.0",

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Sep 09 2022
+ * Last Modified: Mon Sep 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -83,13 +83,13 @@ export const streamStyle = () => {
     })
 }
 
-const selectStyle = new Style({
+export const selectStyle = new Style({
   fill: new Fill({
-    color: '#eeeeee',
+    color: 'rgba(255, 255, 255, 0.0)',
   }),
   stroke: new Stroke({
     color: 'rgba(255, 255, 255, 0.7)',
-    width: 2,
+    width: 4,
   }),
 });
 
