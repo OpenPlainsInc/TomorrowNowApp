@@ -642,22 +642,17 @@ const DEMO_PROCESS_CHAIN = [
   }
 ]
 
-const calculateInputNodeLocation = (modX, modY, step, numInputs) => {
+const calculateInputNodeLocation = (modX, modY, step, numInputs, xGap=300, yStep=100) => {
  
-  const xGap = 300;
   let newX = modX - xGap
-  const yStep = 100;
-  
   const inputsEven = numInputs % 2 === 0;
 
   let newY = modY;
   let maxStep = 0;
-  // let minStep = 0;
   let stepIndex = []
   if (inputsEven) {
     const nodesPerSide = Math.ceil(numInputs / 2);
     maxStep = modY - (yStep * nodesPerSide);
-    // minStep = modY + (yStep * nodesPerSide);
     for (let i = 0; i < numInputs; i++) {
       let newStep = maxStep + (i * yStep) + (yStep/2)
       stepIndex.push(newStep)
@@ -666,7 +661,6 @@ const calculateInputNodeLocation = (modX, modY, step, numInputs) => {
   else {
     let nodesPerSide = Math.ceil((numInputs - 1) / 2);
     maxStep = modY - (yStep * nodesPerSide);
-    // minStep = modY + (yStep * nodesPerSide);
     for (let i = 0; i < numInputs; i++) {
       let newStep = maxStep + (i * yStep)
       stepIndex.push(newStep)
@@ -701,7 +695,7 @@ const processChainToFlow = (processChainList) => {
     console.log("recentNodeId", recentNodeId)
     console.log('lastOutputValue: ', lastOutputValue)
     // Create a new row every time xpos is > 600
-    if (xPos > 1200) {
+    if (xPos > 1600) {
       xPos = 0;
       yPos = yPos + 400;
     }
@@ -717,12 +711,20 @@ const processChainToFlow = (processChainList) => {
     let numberOfInputs = pc.inputs.length
     for (let x = 0; x< numberOfInputs; x++) {
       let inputNodeId = `${currentNodeIdModle}-input-${pc.inputs[x].param}`
+      let inputStyle = {
+        background: '#D6D5E6',
+      }
+      let selectedInputStyle ={
+        background: "#f0e3ce",
+        borderColor: "#f6ab6c",
+        borderWidth: 3
+      }
       let inputNode = {
         id: inputNodeId,
         sourcePosition: 'right',
         targetPosition: 'top',
         position: calculateInputNodeLocation(xPos, yPos, x + 1, numberOfInputs),
-        style: { background: '#D6D5E6' },
+        style: lastOutputValue === pc.inputs[x].value ? selectedInputStyle : inputStyle,
         data: {
           label: pc.inputs[x].param
         }
@@ -739,7 +741,7 @@ const processChainToFlow = (processChainList) => {
           source: recentNodeId,
           target: inputNodeId,
           label: pc.inputs[x].value,
-          type: 'step',
+          type: xPos <= 1100 ? 'default' : 'step',
           style: {stroke: '#aaaaaa'},
           markerEnd: {
             type: MarkerType.ArrowClosed,
@@ -755,7 +757,9 @@ const processChainToFlow = (processChainList) => {
           target: currentNodeIdModle,
           label: pc.inputs[x].value,
           // type: 'step',
-          style: {stroke: '#f6ab6c'},
+          style: {
+            stroke: '#f6ab6c'
+          },
           markerEnd: {
             type: MarkerType.ArrowClosed,
           }
@@ -771,7 +775,7 @@ const processChainToFlow = (processChainList) => {
         id: noOutputEdgeId,
         source: lastCurrentNodeIdModle,
         target: currentNodeIdModle,
-        label: `Step ${i + 1}`,
+        label: `Step ${i}`,
         type: 'default',
         animated: true,
         style: { stroke: '#657e96', fontSize: "1.875em" },
@@ -783,10 +787,10 @@ const processChainToFlow = (processChainList) => {
 
     
     // Module Node
-    xPos = xPos + 100
+    xPos = xPos + 50
     let node = {
       id: currentNodeIdModle,
-      sourcePosition: 'right',
+      sourcePosition: xPos <= 1100 ? 'right' : 'bottom',
       targetPosition: 'left',
       position: { x: xPos, y: yPos },
       data: {
@@ -824,7 +828,7 @@ const processChainToFlow = (processChainList) => {
           let outputNode = {
             id: outputNodeId,
             position: { x: xPos, y: yPos },
-            sourcePosition: 'bottom',
+            sourcePosition: xPos <= 800 ? 'right' : 'bottom',
             targetPosition: 'left',
             style: { background: "#657e96"},
             data: {
@@ -862,7 +866,7 @@ const processChainToFlow = (processChainList) => {
      
     }
     // Increase xpos no matter if output node is added.
-    xPos = xPos + 100;
+    xPos = xPos + 200;
     nodeId++;
     console.log("END NODE")
   }
