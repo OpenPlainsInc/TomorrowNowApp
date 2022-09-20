@@ -89,7 +89,7 @@ export const selectStyle = new Style({
   }),
   stroke: new Stroke({
     color: 'rgba(255, 255, 255, 0.7)',
-    width: 4,
+    width: 6,
   }),
 });
 
