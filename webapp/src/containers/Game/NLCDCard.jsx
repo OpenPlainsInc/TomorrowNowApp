@@ -6,14 +6,11 @@
  * 
  * Copyright (c) 2022 Corey White
  */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React from 'react';
 import Card from 'react-bootstrap/Card'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
-import nlcdColors from "../../components/OpenLayers/Colors/nlcd"
 import { ChartsContainer } from '../../components/Grass/Charts/ChartsContainer';
 import { Charts, ChartTypes} from '../../components/Grass/Charts/ChartTypes';
 import { chartDataFormat } from '../../components/Grass/Charts/chartDataFormat';
-import { parsers } from '../../components/Grass/Utils';
 
 export const NLCDCard = (({nlcdData, basinElevationInfo}) => {
 
