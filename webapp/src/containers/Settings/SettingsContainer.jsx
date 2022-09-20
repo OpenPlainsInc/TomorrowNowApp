@@ -887,23 +887,17 @@ const onInit = (reactFlowInstance) => console.log('flow loaded:', reactFlowInsta
 // const initialEdgesPc = processChainToEdges(DEMO_PROCESS_CHAIN[0].list.slice(0,5))
 // console.log("initialEdgesPc", initialEdgesPc)
 
-const { nodes: initialNodesPc, edges: initialEdgesPc } = processChainToFlow(DEMO_PROCESS_CHAIN[0].list)
+
 
 export default function SettingsContainer() {
-  // const initialNodesPc = useMemo(() => processChainToNodes(DEMO_PROCESS_CHAIN[0].list.slice(0,5)), [])
-  // console.log("initialNodesPc", initialNodesPc)
-  // const initialEdgesPc = useMemo(() => processChainToEdges(DEMO_PROCESS_CHAIN[0].list.slice(0,5)), [])
-  // console.log("initialEdgesPc", initialEdgesPc)
+ 
+  const { nodes: initialNodesPc, edges: initialEdgesPc } = processChainToFlow(DEMO_PROCESS_CHAIN[0].list)
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesPc);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdgesPc);
  
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
 
-    // useEffect(() => {
-    //   setNodes(initialNodesPc)
-    //   setEdges(initialEdgesPc)
-    // }, [initialNodesPc, initialEdgesPc, setNodes, setEdges]);
 
     return (
      
