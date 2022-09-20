@@ -21,13 +21,13 @@ export const TopNavbar = () => {
         <Container fluid className="bg-light text-dark">
          <Navbar bg="primary" variant="dark" fixed="top">
          <Container fluid>
-          <Navbar.Brand>TomorrowNow</Navbar.Brand>
+          <Navbar.Brand>OpenPlains</Navbar.Brand>
           <Nav className="me-auto">
             <LinkContainer to="/home">
               <Nav.Link>Home</Nav.Link>
             </LinkContainer>
             <LinkContainer to="/game">
-              <Nav.Link>Game</Nav.Link>
+              <Nav.Link>Watershed</Nav.Link>
             </LinkContainer>
             {/* <LinkContainer to="/world">
               <Nav.Link>World</Nav.Link>
