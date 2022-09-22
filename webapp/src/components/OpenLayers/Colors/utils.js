@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Apr 28 2022
+ * Last Modified: Tue Sep 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -85,6 +85,8 @@ const getColorStops = (name, min, max, steps, reverse) => {
       if (map === 'aspect') return grass.aspect;
       if (map === 'slope') return grass.slope;
       if (map === 'nlcd') return nlcd;
+      if (map.includes("nlcd")) return nlcd.webGLColors;
+
       // if (map === 'grass') return (grass)
 
       // if (map === 'point_basin') {

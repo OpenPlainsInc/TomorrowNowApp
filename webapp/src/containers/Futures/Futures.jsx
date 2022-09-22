@@ -8,10 +8,36 @@
  */
 
 import { Outlet } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import ExistingModelsCard from "./ExistingModelsCard";
+import StartNewModel from "./StartNewModel";
+import DataWelcomeCard from './DataWelcomeCard';
+import LearnAboutModelCard from "./LearnAboutModelCard";
+import FindModelMapCard from "./FindModelMapCard";
+
 export default function Futures() {
     return (
-      <main style={{ padding: "1rem 0" }}>
-        <Outlet />
-      </main>
+        <Container fluid className="bg-light text-dark" style={{paddingTop: 20, height: '100vh'}}>
+          <Row>
+            <Col md={4}>
+              <StartNewModel/>
+              <div style={{paddingTop: 20}}>
+                <DataWelcomeCard/>
+              </div>
+              <div style={{paddingTop: 20}}>
+                <LearnAboutModelCard/>
+              </div>
+            </Col>
+            <Col md={8}>
+              <FindModelMapCard/>
+              <div style={{paddingTop: 20}}>
+                <ExistingModelsCard/>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+        // <Outlet />
     );
   }

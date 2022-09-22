@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Sep 19 2022
+ * Last Modified: Wed Sep 21 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -59,11 +59,11 @@ export const hucStyle = () => {
       })
 }
 
-export const countyStyle = () => {
+export const countyStyle = (width=3) => {
   return new Style({
       stroke: new Stroke({
         color: 'rgba(94, 94, 94, 0.75)',
-        width: 3,
+        width: width,
       }),
       fill: new Fill({
           color: 'rgba(20,20,20,0.0)',
