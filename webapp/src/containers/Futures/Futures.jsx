@@ -16,8 +16,10 @@ import StartNewModel from "./StartNewModel";
 import DataWelcomeCard from './DataWelcomeCard';
 import LearnAboutModelCard from "./LearnAboutModelCard";
 import FindModelMapCard from "./FindModelMapCard";
+import mockModelData from "./mockModelData";
 
 export default function Futures() {
+  const mockModels = mockModelData()
     return (
         <Container fluid className="bg-light text-dark" style={{paddingTop: 20, height: '100vh'}}>
           <Row>
@@ -31,9 +33,9 @@ export default function Futures() {
               </div>
             </Col>
             <Col md={8}>
-              <FindModelMapCard/>
+              <FindModelMapCard data={mockModels}/>
               <div style={{paddingTop: 20}}>
-                <ExistingModelsCard/>
+                <ExistingModelsCard data={mockModels}/>
               </div>
             </Col>
           </Row>

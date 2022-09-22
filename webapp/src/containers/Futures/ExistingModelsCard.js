@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Sep 21 2022
+ * Last Modified: Thu Sep 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,14 +34,14 @@ import ModelsTable from "./ModelsTable"
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
-const ExistingModelsCard = () => {
+const ExistingModelsCard = ({data}) => {
 
     return(
         <Card>
             <Card.Header as="h2">Existing Models</Card.Header>
             <Card.Body>
                 <Card.Title>Exploring Senarios</Card.Title>
-                <ModelsTable/>
+                <ModelsTable data={data.features}/>
                 <Button variant="secondary">Explore</Button>
             </Card.Body>
         </Card>

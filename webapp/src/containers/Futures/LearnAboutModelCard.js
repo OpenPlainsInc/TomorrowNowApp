@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Sep 21 2022
+ * Last Modified: Thu Sep 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -42,7 +42,7 @@ const LearnAboutModelCard = () => {
                 <Card.Text>
                     Learn about how FUTURES works 
                 </Card.Text>
-                <Button variant="secondary">Learn</Button>
+                <Button variant="secondary">Explore</Button>
             </Card.Body>
         </Card>
     )

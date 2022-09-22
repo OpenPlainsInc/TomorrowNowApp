@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Sep 21 2022
+ * Last Modified: Thu Sep 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,7 +29,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './find-model-map-card.scss';
 import Card from 'react-bootstrap/Card';
 import FormControl from "react-bootstrap/FormControl"
@@ -39,25 +39,81 @@ import Map from '../../components/OpenLayers/Map';
 import Layers from '../../components/OpenLayers/Layers/Layers';
 import TileLayer from "../../components/OpenLayers/Layers/TileLayer"
 import VectorLayer from "../../components/OpenLayers/Layers/VectorLayer"
+import { Vector as VectorSource } from 'ol/source';
+import GeoJSON from 'ol/format/GeoJSON';
 import { VectorTileLayer } from "../../components/OpenLayers/Layers/VectorTileLayer";
 import { useVectorTileSource, useNLCDSource, osm } from '../../components/OpenLayers/Sources';
 import { countyStyle } from '../../components/OpenLayers/Sources/hucBoundaries';
 import Events from '../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
+import {countySelectionStyle} from './countySelectStyle';
+import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+const FindModelMapCard = ({data}) => {
 
-const FindModelMapCard = () => {
+    const [center, setCenter] = useState([-95.54, 38.03]);
+    const [zoom, setZoom] = useState(4.25);
+    const [projection, setProjection] = useState('EPSG:4326');
+    const updateSelectionRef = useRef();
+    const [osmSource, setOsmSource] = useState(osm());
+    const [selectedCounties, setSelectedCounties] = useState({})
+    const [currentCounty, setCurrentCounty] = useState(null)
 
-    const DEFAULT_CENTER = [-95.54, 38.03];
-    const DEFAULT_ZOOM = 4.25;
-    const DEFAULT_PROJ = 'EPSG:4326';
-    const [osmSource, setOsmSource] = useState(osm()); 
+
+    const modelPointStyles = new Style({
+        image: new CircleStyle({
+            radius: 5,
+            fill: new Fill({color: 'rgba(0, 0, 0, 0.9)'}),
+            stroke: new Stroke({color: 'rgba(0, 0, 0, 1)', width: 1}),
+            // fill: new Fill({color: 'rgba(208, 121, 68, 0.9)'}),
+            // stroke: new Stroke({color: 'rgba(208, 121, 68, 1)', width: 1}),
+            // fill: new Fill({color: 'rgba(101,126,150, 0.9)'}),
+            // stroke: new Stroke({color: 'rgba(101,126,150, 1)', width: 1}),
+        })
+    })
+      
+    const modelPointSource = new VectorSource({
+        features: new GeoJSON().readFeatures(data),
+      });
 
     let nlcdsource = useNLCDSource({year:'2019', dataType:'land_cover', region:'L48'});
     let countySource = useVectorTileSource({
         layerName:"savana:cb_2018_us_county_500k",
         baseUrl:`http://localhost:8600/geoserver/gwc/service/wmts`,
-        projection: DEFAULT_PROJ
+        projection: projection
       })
+
+    const onClickEvent = (e) => {
+        e.preventDefault()
+        updateSelectionRef.current = true;
+        e.target.getLayers().forEach((el) => {
+            if (el.get('name') === "counties") {
+              e.map.forEachFeatureAtPixel(e.pixel, function (f, layer) {
+                let properties = f.getProperties()
+                let geoid = properties.geoid;
+                setCurrentCounty({...properties})
+                const newSelectedCounties = {...selectedCounties}
+               
+                if (geoid in selectedCounties) {
+                    delete newSelectedCounties[geoid];
+                } else {
+                    newSelectedCounties[geoid] = properties;
+                }
+                setSelectedCounties(newSelectedCounties)
+               
+                e.target.getLayers().forEach((el) => {
+                    if (el.get('name') === 'seletedCounties') {
+                        el.setStyle((feature) => {
+                            if (feature.getProperties().geoid in newSelectedCounties) {
+                                return countySelectionStyle;
+                            }
+                        })
+                      el.changed()
+                    }
+                  })
+              });
+            }
+          })
+    }
 
     return (
         <Card>
@@ -73,8 +129,8 @@ const FindModelMapCard = () => {
                         // onChange={filterData}
                         />
                     </InputGroup>
-                    </Card.Subtitle>
-                <Map mapClass="find-model-map" center={DEFAULT_CENTER} zoom={DEFAULT_ZOOM} projection={DEFAULT_PROJ}>
+                </Card.Subtitle>
+                <Map mapClass="find-model-map" center={center} zoom={zoom} projection={projection}>
                     <Layers>
                         <TileLayer source={nlcdsource} opacity={0.75}></TileLayer>
                         <TileLayer source={osmSource} opacity={0.5}></TileLayer>
@@ -87,15 +143,36 @@ const FindModelMapCard = () => {
                             style={countyStyle(1)}
                             source={countySource}
                         />
+                        <VectorTileLayer 
+                            layerName="seletedCounties" 
+                            renderMode="vector"
+                            source={countySource} 
+                            style={(feature) => {
+                                if (feature.getProperties().geoid in selectedCounties) {
+                                    console.log("Updating Style",feature.getProperties().geoid)
+                                    return countySelectionStyle;
+                                }
+                            }}
+                        />
+                        <VectorLayer
+                            zIndex={1}
+                            layerName="model_points"
+                            source={modelPointSource}
+                            style={modelPointStyles}
+                        >
+
+                        </VectorLayer>
                     </Layers>
                     <Events>
-
+                        <OnMapEvent eventName='click' eventHandler={onClickEvent}></OnMapEvent>
                     </Events>
                 </Map>
                 
             </Card.Body>
             <Card.Footer>
-            
+                {
+                    selectedCounties ? Object.keys(selectedCounties).map((k) => <p key={k}>{selectedCounties[k].name}</p>) : null
+                }
             </Card.Footer>
         </Card>
         

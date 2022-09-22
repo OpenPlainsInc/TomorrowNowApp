@@ -1,7 +1,7 @@
 /*
- * Filename: DataWelcomeCard.js
+ * Filename: countySelectStyle.js
  * Project: TomorrowNow
- * File Created: Wednesday September 21st 2022
+ * File Created: Thursday September 22nd 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,24 +30,17 @@
  * 
  */
 
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
-import { LinkContainer } from 'react-router-bootstrap';
-const DataWelcomeCard = () => {
-    return (
-        <Card>
-            <Card.Header as="h2">Understand the Data</Card.Header>
-            <Card.Body>
-                <Card.Title>Explore Data</Card.Title>
-                <Card.Text>
-                    Learn about the data used in the FUTURES model.
-                </Card.Text>
-                <LinkContainer to="/board/location/futures_triangle_nc/mapset/PERMANENT">
-                    <Button variant="secondary">Learn</Button>
-                </LinkContainer>
-            </Card.Body>
-        </Card>
-    )
-}
 
-export default DataWelcomeCard
+import { Style, Fill, Stroke } from "ol/style";
+
+export const countySelectionStyle = new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.7)',
+    }),
+    stroke: new Stroke({
+      color: 'rgba(255, 255, 255, 0.7)',
+      width: 6,
+    }),
+  });
+
+// export default countySelectionStyle
