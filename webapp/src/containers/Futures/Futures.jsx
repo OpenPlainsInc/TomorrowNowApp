@@ -39,7 +39,8 @@ export default function Futures() {
               </div>
             </Col>
           </Row>
+          
         </Container>
-        // <Outlet />
+        
     );
   }

@@ -8,7 +8,7 @@ import {
 
 
 
-const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map", altView=null}) => {
+const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map", altView=null, triggerExternalLayerRender=null}) => {
   const mapRef = useRef();
   const [map, setMap] = useState(null);
  
@@ -54,6 +54,11 @@ const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map"
     if (!map) return;
     map.getView().setCenter(center)
   }, [map, center])
+
+  if (triggerExternalLayerRender && map){
+    triggerExternalLayerRender(map)
+  }
+ 
 
   return (
     <MapContext.Provider value={{ map }}>

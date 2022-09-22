@@ -31,7 +31,7 @@
  */
 
 
-import { Style, Fill, Stroke } from "ol/style";
+import { Style, Fill, Stroke, Text, Circle as CircleStyle } from "ol/style";
 
 export const countySelectionStyle = new Style({
     fill: new Fill({
@@ -42,5 +42,62 @@ export const countySelectionStyle = new Style({
       width: 6,
     }),
   });
+
+
+
+export const countiesLabelStyle = new Style({
+    text: new Text({
+      font: '13px Calibri,sans-serif',
+      fill: new Fill({
+        color: '#000',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 4,
+      }),
+    }),
+  });
+
+export const countyStyle = (width=1) => {
+    return new Style({
+        stroke: new Stroke({
+          color: 'rgba(94, 94, 94, 0.75)',
+          width: width,
+        }),
+        fill: new Fill({
+            color: 'rgba(20,20,20,0.0)',
+        })
+      })
+  }
+
+const countyStyles = [countyStyle(), countiesLabelStyle];
+
+export const countiesStyleWithLabel = (feature) => {
+    countiesLabelStyle
+      .getText()
+      .setText([
+        // feature.getId(),
+        // 'bold 13px Calibri,sans-serif',
+        ` ${feature.get('name')}`,
+        'bold 13px Calibri,sans-serif',
+        '\n',
+        '',
+        // `${feature.get('density')} people/mi²`,
+        // 'italic 11px Calibri,sans-serif',
+      ]);
+    return countyStyles
+}
+
+export const modelPointStyles = new Style({
+  image: new CircleStyle({
+      radius: 5,
+      fill: new Fill({color: 'rgba(0, 0, 0, 0.9)'}),
+      stroke: new Stroke({color: 'rgba(0, 0, 0, 1)', width: 1}),
+      // fill: new Fill({color: 'rgba(208, 121, 68, 0.9)'}),
+      // stroke: new Stroke({color: 'rgba(208, 121, 68, 1)', width: 1}),
+      // fill: new Fill({color: 'rgba(101,126,150, 0.9)'}),
+      // stroke: new Stroke({color: 'rgba(101,126,150, 1)', width: 1}),
+  })
+})
 
 // export default countySelectionStyle

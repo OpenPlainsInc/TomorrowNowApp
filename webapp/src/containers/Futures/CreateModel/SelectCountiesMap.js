@@ -1,4 +1,37 @@
 /*
+ * Filename: SelectCountiesMap.js
+ * Project: TomorrowNow
+ * File Created: Thursday September 22nd 2022
+ * Author: Corey White (smortopahri@gmail.com)
+ * Maintainer: Corey White
+ * -----
+ * Last Modified: Thu Sep 22 2022
+ * Modified By: Corey White
+ * -----
+ * License: GPLv3
+ * 
+ * Copyright (c) 2022 TomorrowNow
+ * 
+ * TomorrowNow is an open-source geospatial participartory modeling platform
+ * to enable stakeholder engagment in socio-environmental decision-makeing.
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ */
+
+
+/*
  * Filename: FindModelMapCard.js
  * Project: TomorrowNow
  * File Created: Wednesday September 21st 2022
@@ -30,25 +63,25 @@
  * 
  */
 import React, { useEffect, useState, useRef } from 'react';
-import './find-model-map-card.scss';
+import '../find-model-map-card.scss';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import FormControl from "react-bootstrap/FormControl"
 import InputGroup from "react-bootstrap/InputGroup"
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
-import Map from '../../components/OpenLayers/Map';
-import Layers from '../../components/OpenLayers/Layers/Layers';
-import TileLayer from "../../components/OpenLayers/Layers/TileLayer"
-import VectorLayer from "../../components/OpenLayers/Layers/VectorLayer"
-import { Vector as VectorSource } from 'ol/source';
-import GeoJSON from 'ol/format/GeoJSON';
-import { VectorTileLayer } from "../../components/OpenLayers/Layers/VectorTileLayer";
-import { useVectorTileSource, useNLCDSource, osm } from '../../components/OpenLayers/Sources';
-import { countyStyle } from '../../components/OpenLayers/Sources/hucBoundaries';
-import Events from '../../components/OpenLayers/Events/Events';
-import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
-import {countiesStyleWithLabel, countySelectionStyle, modelPointStyles} from './countySelectStyle';
-import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
-const FindModelMapCard = ({data}) => {
+import Map from '../../../components/OpenLayers/Map';
+import Layers from '../../../components/OpenLayers/Layers/Layers';
+import TileLayer from "../../../components/OpenLayers/Layers/TileLayer"
+import { VectorTileLayer } from "../../../components/OpenLayers/Layers/VectorTileLayer";
+import { useVectorTileSource, useNLCDSource, osm } from '../../../components/OpenLayers/Sources';
+
+import Events from '../../../components/OpenLayers/Events/Events';
+import OnMapEvent from '../../../components/OpenLayers/Events/onMapEvent';
+import {countiesStyleWithLabel, countySelectionStyle} from '../countySelectStyle';
+import CountyInfoCard from './CountyInfoCard';
+const SelectCountiesMap = ({data=null}) => {
 
     const [center, setCenter] = useState([-95.54, 38.03]);
     const [zoom, setZoom] = useState(4.25);
@@ -57,10 +90,7 @@ const FindModelMapCard = ({data}) => {
     const [osmSource, setOsmSource] = useState(osm());
     const [selectedCounties, setSelectedCounties] = useState({})
     const [currentCounty, setCurrentCounty] = useState(null)
-      
-    const modelPointSource = new VectorSource({
-        features: new GeoJSON().readFeatures(data),
-      });
+    const isButtonDisabled = useRef()
 
     let nlcdsource = useNLCDSource({year:'2019', dataType:'land_cover', region:'L48'});
     let countySource = useVectorTileSource({
@@ -68,6 +98,29 @@ const FindModelMapCard = ({data}) => {
         baseUrl:`http://localhost:8600/geoserver/gwc/service/wmts`,
         projection: projection
       })
+
+    const isCountiesPlural = (selectedCounitesLength, maxSelection=5) => {
+        return (selectedCounitesLength - maxSelection) === 1 ? "county" : "counties";
+    }
+
+    const handleRemoveCountyCard = (geoid) => {
+        const copy = {...selectedCounties}
+        delete copy[geoid]
+        setSelectedCounties({...copy})
+    }
+
+    const updateCountiesInMap = (map) => {
+        map.getLayers().forEach((el) => {
+            if (el.get('name') === 'seletedCounties') {
+                el.setStyle((feature) => {
+                    if (feature.getProperties().geoid in selectedCounties) {
+                        return countySelectionStyle;
+                    }
+                })
+              el.changed()
+            }
+          })
+    }
 
     const onClickEvent = (e) => {
         e.preventDefault()
@@ -104,8 +157,9 @@ const FindModelMapCard = ({data}) => {
 
     return (
         <Card>
-            <Card.Header as="h2">Find a Model</Card.Header>
+            <Card.Header as="h2">Select Study Region</Card.Header>
             <Card.Body>
+                <Card.Subtitle style={{marginBottom: 10}}>Click on the map to select up to 5 connected counites to form your study region.</Card.Subtitle>
                 <Card.Subtitle>
                     <InputGroup style={{marginBottom: 10}}>
                         <InputGroup.Text id="basic-addon1"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
@@ -117,7 +171,7 @@ const FindModelMapCard = ({data}) => {
                         />
                     </InputGroup>
                 </Card.Subtitle>
-                <Map mapClass="find-model-map" center={center} zoom={zoom} projection={projection}>
+                <Map mapClass="find-model-map" center={center} zoom={zoom} projection={projection} triggerExternalLayerRender={updateCountiesInMap}>
                     <Layers>
                         <TileLayer source={nlcdsource} opacity={0.75}></TileLayer>
                         <TileLayer source={osmSource} opacity={0.5}></TileLayer>
@@ -127,7 +181,6 @@ const FindModelMapCard = ({data}) => {
                             minZoom={4}
                             declutter={true}
                             renderMode="vector"
-                            // style={countyStyle(1)}
                             style={countiesStyleWithLabel}
                             source={countySource}
                         />
@@ -142,14 +195,6 @@ const FindModelMapCard = ({data}) => {
                                 }
                             }}
                         />
-                        <VectorLayer
-                            zIndex={1}
-                            layerName="model_points"
-                            source={modelPointSource}
-                            style={modelPointStyles}
-                        >
-
-                        </VectorLayer>
                     </Layers>
                     <Events>
                         <OnMapEvent eventName='click' eventHandler={onClickEvent}></OnMapEvent>
@@ -158,13 +203,41 @@ const FindModelMapCard = ({data}) => {
                 
             </Card.Body>
             <Card.Footer>
+                <Row>
                 {
-                    selectedCounties ? Object.keys(selectedCounties).map((k) => <p key={k}>{selectedCounties[k].name}</p>) : null
+                    selectedCounties ? Object.keys(selectedCounties).map((k) => { 
+                        return(
+                            <Col  key={k} md="2">
+                                <CountyInfoCard county={selectedCounties[k]} removeCountyHandler={handleRemoveCountyCard}/>
+                            </Col>
+                        )
+                    }) : null
                 }
+               
+                </Row>
+                <Row>
+                <Col  md={{ span: 6, offset: 3 }}>
+                {
+                
+                   selectedCounties ?  
+                   
+                        (Object.keys(selectedCounties).length > 0 && Object.keys(selectedCounties).length <=5) ? 
+                            <div className="d-grid gap-2" style={{paddingTop: 20}}>
+                                <Button>Continue</Button>
+                            </div> : 
+                        Object.keys(selectedCounties).length > 5 ?
+                            <Alert variant='warning'>
+                                {`Please remove ${Object.keys(selectedCounties).length - 5} ${isCountiesPlural(Object.keys(selectedCounties).length)} to continue.`}
+                            </Alert> : 
+                        null : 
+                    null   
+                }
+                </Col>
+                </Row>
             </Card.Footer>
         </Card>
         
     )
 }
 
-export default FindModelMapCard
+export default SelectCountiesMap

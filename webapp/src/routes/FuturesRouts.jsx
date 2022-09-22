@@ -10,11 +10,13 @@
 import React from "react"
 
 import {Route} from "react-router-dom";
+import CreateModelContainer from "../containers/Futures/CreateModel/CreateModelContainer";
 import Futures from '../containers/Futures/Futures';
 
 const FuturesRoutes = (
   <>
-    <Route path="futures" element={<Futures />} />
+    <Route path="futures/create" element={<CreateModelContainer/> }></Route>
+    <Route path="futures" element={<Futures />}></Route>
   </>
 )
 

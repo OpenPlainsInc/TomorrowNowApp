@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Sep 21 2022
+ * Last Modified: Thu Sep 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -32,6 +32,7 @@
 
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import { LinkContainer } from 'react-router-bootstrap';
 // import { FaDataBase } from "@react-icons/all-files/fa/FaDataBase";
 // import { FaSolid } from "@react-icons/all-files/fa/FaSolid";
 const StartNewModel = () => {
@@ -46,7 +47,9 @@ const StartNewModel = () => {
                 <Card.Text>
                     Ready to co-develop policies that will shape the future impact of urban development in your community? Click the start button to create a new model.
                 </Card.Text>
-                <Button variant="secondary">Start</Button>
+                <LinkContainer to="/futures/create">
+                    <Button variant="secondary">Start</Button>
+                </LinkContainer>
             </Card.Body>
         </Card>
     )
