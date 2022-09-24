@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Fri Sep 23 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -81,6 +81,7 @@ import Events from '../../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../../components/OpenLayers/Events/onMapEvent';
 import {countiesStyleWithLabel, countySelectionStyle} from '../countySelectStyle';
 import CountyInfoCard from './CountyInfoCard';
+import { useFormContext } from "react-hook-form";
 const SelectCountiesMap = ({data=null}) => {
 
     const [center, setCenter] = useState([-95.54, 38.03]);
@@ -91,7 +92,7 @@ const SelectCountiesMap = ({data=null}) => {
     const [selectedCounties, setSelectedCounties] = useState({})
     const [currentCounty, setCurrentCounty] = useState(null)
     const isButtonDisabled = useRef()
-
+    const methods = useFormContext()
     let nlcdsource = useNLCDSource({year:'2019', dataType:'land_cover', region:'L48'});
     let countySource = useVectorTileSource({
         layerName:"savana:cb_2018_us_county_500k",
@@ -139,7 +140,10 @@ const SelectCountiesMap = ({data=null}) => {
                     newSelectedCounties[geoid] = properties;
                 }
                 setSelectedCounties(newSelectedCounties)
-               
+
+                // Sets the counites to the form data
+                methods.setValue("counties", Object.keys(newSelectedCounties));
+
                 e.target.getLayers().forEach((el) => {
                     if (el.get('name') === 'seletedCounties') {
                         el.setStyle((feature) => {
@@ -159,12 +163,12 @@ const SelectCountiesMap = ({data=null}) => {
         <Card>
             <Card.Header as="h2">Select Study Region</Card.Header>
             <Card.Body>
-                <Card.Subtitle style={{marginBottom: 10}}>Click on the map to select up to 5 connected counites to form your study region.</Card.Subtitle>
+                <Card.Subtitle style={{marginBottom: 10}}>Click on the map to select up to 5 connected counties to form your study region.</Card.Subtitle>
                 <Card.Subtitle>
                     <InputGroup style={{marginBottom: 10}}>
                         <InputGroup.Text id="basic-addon1"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
                         <FormControl
-                        placeholder="Search Data"
+                        placeholder="Search Counties"
                         aria-label="Search"
                         aria-describedby="basic-addon1"
                         // onChange={filterData}
@@ -207,7 +211,7 @@ const SelectCountiesMap = ({data=null}) => {
                 {
                     selectedCounties ? Object.keys(selectedCounties).map((k) => { 
                         return(
-                            <Col  key={k} md="2">
+                            <Col  key={k} md="3">
                                 <CountyInfoCard county={selectedCounties[k]} removeCountyHandler={handleRemoveCountyCard}/>
                             </Col>
                         )
@@ -223,8 +227,9 @@ const SelectCountiesMap = ({data=null}) => {
                    
                         (Object.keys(selectedCounties).length > 0 && Object.keys(selectedCounties).length <=5) ? 
                             <div className="d-grid gap-2" style={{paddingTop: 20}}>
-                                <Button>Continue</Button>
-                            </div> : 
+                                {/* <Button>Continue</Button> */}
+                            </div> 
+                            : 
                         Object.keys(selectedCounties).length > 5 ?
                             <Alert variant='warning'>
                                 {`Please remove ${Object.keys(selectedCounties).length - 5} ${isCountiesPlural(Object.keys(selectedCounties).length)} to continue.`}

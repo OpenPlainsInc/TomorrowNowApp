@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Fri Sep 23 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -51,7 +51,7 @@ const CountyInfoCard = ({county, removeCountyHandler=null}) => {
     const alandKm2 = convertSqmToSqKm(county.aland)
     const awaterKm2 = convertSqmToSqKm(county.awater)
     return (
-        <Card style={{ width: '18rem' }}>
+        <Card border="danger" >
         {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
         <Card.Header>
             <Card.Title>{county.name}</Card.Title>
@@ -61,7 +61,7 @@ const CountyInfoCard = ({county, removeCountyHandler=null}) => {
             
             <Card.Text><strong>Area Land:</strong> {alandKm2} km<sup>2</sup></Card.Text>
             <Card.Text><strong>Area Water:</strong> {awaterKm2} km<sup>2</sup></Card.Text>
-            <Card.Text><small>Data Provided from U.S. Cenus: {county.layer} layer</small></Card.Text>
+            <Card.Text><small>Data Provided from U.S. Census: {county.layer} layer</small></Card.Text>
             <Button variant="danger" onClick={(e) => {removeCountyHandler(county.geoid)}}>Remove</Button>
             
         </Card.Body>

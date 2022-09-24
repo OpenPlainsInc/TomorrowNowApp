@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Fri Sep 23 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -48,6 +48,7 @@ import Events from '../../components/OpenLayers/Events/Events';
 import OnMapEvent from '../../components/OpenLayers/Events/onMapEvent';
 import {countiesStyleWithLabel, countySelectionStyle, modelPointStyles} from './countySelectStyle';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+import ExistingModelsCard from './ExistingModelsCard';
 const FindModelMapCard = ({data}) => {
 
     const [center, setCenter] = useState([-95.54, 38.03]);
@@ -155,6 +156,8 @@ const FindModelMapCard = ({data}) => {
                         <OnMapEvent eventName='click' eventHandler={onClickEvent}></OnMapEvent>
                     </Events>
                 </Map>
+
+                <ExistingModelsCard data={data}></ExistingModelsCard>
                 
             </Card.Body>
             <Card.Footer>

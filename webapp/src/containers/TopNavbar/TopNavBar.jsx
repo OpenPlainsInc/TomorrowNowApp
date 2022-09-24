@@ -26,9 +26,7 @@ export const TopNavbar = () => {
             <LinkContainer to="/home">
               <Nav.Link>Home</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/game">
-              <Nav.Link>Watershed</Nav.Link>
-            </LinkContainer>
+            
             {/* <LinkContainer to="/world">
               <Nav.Link>World</Nav.Link>
             </LinkContainer> */}
@@ -44,8 +42,11 @@ export const TopNavbar = () => {
             {/* <LinkContainer to="/dashboard">
               <Nav.Link>Dashboard</Nav.Link>
             </LinkContainer> */}
+            <LinkContainer to="/game">
+              <Nav.Link>Watersheds</Nav.Link>
+            </LinkContainer>
             <LinkContainer to="/futures">
-              <Nav.Link>Futures</Nav.Link>
+              <Nav.Link>Urban Growth</Nav.Link>
             </LinkContainer>
           </Nav>
 

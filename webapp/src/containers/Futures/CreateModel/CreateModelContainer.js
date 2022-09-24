@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Fri Sep 23 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -35,17 +35,15 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import SelectCountiesMap from "./SelectCountiesMap";
+import ModelDetailView from "../ModelDetialView";
+import ModelForm, { ConnectForm } from "./ModelForm";
 
 
 const CreateModelContainer = () => {
 
     return (
         <Container fluid className="bg-light text-dark" style={{paddingTop: 20, height: '100vh'}}>
-            <Row>
-                <Col>
-                    <SelectCountiesMap></SelectCountiesMap>
-                </Col>
-            </Row>
+            <ModelForm/>
         </Container>
     )
 }

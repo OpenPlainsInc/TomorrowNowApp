@@ -497,7 +497,7 @@ const Game = ({params}) => {
              
             <Col md={4} >   
               <Row className="bg-alert text-dark">
-                <h2>{selectedHuc12Props ? selectedHuc12Props.name: ""}</h2>             
+                {/* <h2>{selectedHuc12Props ? selectedHuc12Props.name: ""}</h2>              */}
                   { 
                     nlcdData ? 
                     <NLCDCard nlcdData={nlcdData} basinElevationInfo={basinElevationInfo}></NLCDCard>

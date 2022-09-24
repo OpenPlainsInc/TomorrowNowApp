@@ -34,9 +34,9 @@ export default function Futures() {
             </Col>
             <Col md={8}>
               <FindModelMapCard data={mockModels}/>
-              <div style={{paddingTop: 20}}>
+              {/* <div style={{paddingTop: 20}}>
                 <ExistingModelsCard data={mockModels}/>
-              </div>
+              </div> */}
             </Col>
           </Row>
           

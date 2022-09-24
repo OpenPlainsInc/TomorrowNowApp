@@ -94,8 +94,8 @@ const BoardMap = (props) => {
                             ></ActiniaGeoTiff>
                         
 
-                        <TileLayer zIndex={5} source={new TileDebug()}></TileLayer>
-                        <GraticuleLayer></GraticuleLayer>
+                        {/* <TileLayer zIndex={5} source={new TileDebug()}></TileLayer> */}
+                        {/* <GraticuleLayer></GraticuleLayer> */}
                     </Layers>
 
                     <Controls>
@@ -103,7 +103,7 @@ const BoardMap = (props) => {
                         <ZoomSliderControl />
                         <ScaleLineControl />
                         {/* <RotateControl autoHide={false}/> */}
-                        <EditMapControl />
+                        {/* <EditMapControl /> */}
                     </Controls>
                     <Reprojection epsg='3358'></Reprojection> 
                     {/* <Reprojection epsg='5070'></Reprojection>  */}
