@@ -98,7 +98,8 @@ services:
 #     - 7800:7800
 
   api:
-    build: .
+    build: 
+      context: ./openplains_api
     command: bash -c "python manage.py runserver 0.0.0.0:8005"
     volumes:
       - .:/code
@@ -114,7 +115,7 @@ services:
 
   celery_worker:
     build:
-      context: .
+      context: ./openplains_api
       # dockerfile: ./Dockerfile
     # image: django_celery_example_celery_worker
     command: celery -A api.celery worker --loglevel=INFO
@@ -137,8 +138,8 @@ services:
       - ./webapp/:/code
     ports:
       - "3000:3000"
-    depends_on:
-      - api    
+    # depends_on:
+    #   - api    
   titiler:
     build:
       context: ./titiler

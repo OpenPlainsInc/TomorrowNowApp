@@ -9,6 +9,7 @@ django-guardian>=2.4.0
 django-debug-toolbar>=3.2
 django-extensions>=3.1
 djangorestframework-gis>=0.18
+django-rest-knox>=4.2
 redis>=4.0
 hiredis>=2.0
 requests>=2.27
