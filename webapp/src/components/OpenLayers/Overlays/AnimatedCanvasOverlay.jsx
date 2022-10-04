@@ -10,10 +10,9 @@
 
 import { useContext, useEffect, useState } from "react";
 import MapContext from "../MapContext";
-import AnimatedCanvas from "ol-ext/overlay/AnimatedCanvas"
+import AnimatedCanvas from "ol-ext/overlay/AnimatedCanvas";
 // import Rain  from "ol-ext/particule/Rain"
 // import Cloud from "ol-ext/particule/Cloud"
-
 
 /**
  * 
@@ -34,8 +33,8 @@ export const AnimatedCanvasOverlay = ({acanvas, visible=false}) => {
 
     // animatedOverlay.setVisible(visible);
     setOverlay(animatedOverlay)
-    animatedOverlay.setMap(map)
-    // map.addOverlay(animatedOverlay);
+    // animatedOverlay.setMap(map)
+    map.addOverlay(animatedOverlay);
 
     return () => {
       if (map) {
