@@ -34,7 +34,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     zIndex = 0 
 }) => {
  
-   
+    const [dataUrl, setDataUrl] = useState(null)
     const [source, setSource] = useState(null);
     const [status, setStatus] = useState(null)
     const [resourceId, setResourceId] = useState(null)
@@ -103,24 +103,14 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             setStatus(data.message)
 
             const rastersData = `${API_HOST}/r/resource/${rasterName}/stream/${data.resource_id}`
-
+            setDataUrl(rastersData)
             if (data.statistics) {
                 setDataRangeMin(data.statistics.min)
                 setDataRangeMax(data.statistics.max)
             }
             
 
-            let sourceOptions = {
-                sources: [{url: rastersData}], 
-                allowFullFile: true, 
-                forceXHR: true, 
-                normalize: false, // set true for imagery
-                convertToRGB: false,
-                interpolate: true, // set fault for discrete data
-                style: style
-            }
-            let tmpSource = GeoTIFFSource(sourceOptions)
-            setSource(tmpSource)
+           
         }
     }, [lastJsonMessage, rasterName]);
 
@@ -141,9 +131,21 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
 
     // //Set Color Palette and Style once source is set
     useEffect(()=> {
-        if (!source || status !== 'finished') return;
+        if (status !== 'finished') return;
+
+        let sourceOptions = {
+            sources: [{url: dataUrl}], 
+            allowFullFile: true, 
+            forceXHR: true, 
+            normalize: false, // set true for imagery
+            convertToRGB: false,
+            interpolate: true, // set fault for discrete data
+            style: style
+        }
+        let tmpSource = GeoTIFFSource(sourceOptions)
+        setSource(tmpSource)
         
-        let colorPalette = color === 'grass' ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+        let colorPalette = color === 'grass' && !rasterName.includes("nlcd") ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
         console.log("Color Palette Set: ", colorPalette)
         setTileColor(colorPalette)
         setTileStyle(prevState => ({
@@ -151,7 +153,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             color: colorPalette
         }))
 
-    },[source, status])
+    },[status])
 
     // Update the Tile Stlye with new color palette
     useEffect(()=> {
@@ -163,7 +165,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             ['linear'],
             ['band', 1],
             ...utils.getColorStops(color, dataRangeMin, dataRangeMax, 15, false)
-        ] : grassColorScheme
+        ] : !rasterName.includes("nlcd") ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
         setTileColor(colorPalette)
         setTileStyle(prevState => ({
             ...style,
@@ -172,20 +174,21 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     },[source, color])
     // GRASS Projection 3358
     return (
-            
-                        <WebGLTileLayer 
-                            gamma={gamma}
-                            opacity={opacity}
-                            saturation={saturation}
-                            contrast={contrast}
-                            exposure={exposure}
-                            layerName={rasterName}
-                            style={tileStyle}
-                            color={tileColor}
-                            minZoom={minZoom}
-                            maxZoom={maxZoom}
-                            source={source}>
-                        </WebGLTileLayer>
+        status === "finished" ?
+        <WebGLTileLayer 
+            gamma={gamma}
+            opacity={opacity}
+            saturation={saturation}
+            contrast={contrast}
+            exposure={exposure}
+            layerName={rasterName}
+            style={tileStyle}
+            color={tileColor}
+            minZoom={minZoom}
+            maxZoom={maxZoom}
+            source={source}/>
+        :
+        null
         
     )
  
