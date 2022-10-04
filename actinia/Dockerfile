@@ -1,8 +1,8 @@
-FROM mundialis/actinia-core:4.2.1 as actinia
+FROM mundialis/actinia-core:4.3.0 as actinia
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
-ENV ACTINIA_CORE_VERSION=4.2.1
+ENV ACTINIA_CORE_VERSION=4.3.0
 
 # USER root
 
@@ -37,7 +37,7 @@ ARG WHEEL_NAME=actinia_metadata_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.w
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-metadata-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
-ARG PLUGIN_VERSION=2.3.1
+ARG PLUGIN_VERSION=2.4.0
 ARG WHEEL_NAME=actinia_module_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-module-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
