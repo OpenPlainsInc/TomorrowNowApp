@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Sep 23 2022
+ * Last Modified: Mon Sep 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -161,9 +161,9 @@ const SelectCountiesMap = ({data=null}) => {
 
     return (
         <Card>
-            <Card.Header as="h2">Select Study Region</Card.Header>
+            <Card.Header as="h2">Select Region</Card.Header>
             <Card.Body>
-                <Card.Subtitle style={{marginBottom: 10}}>Click on the map to select up to 5 connected counties to form your study region.</Card.Subtitle>
+                <Card.Subtitle style={{marginBottom: 10}}>Click on the map to select up to 5 connected counties to form your region of interest.</Card.Subtitle>
                 <Card.Subtitle>
                     <InputGroup style={{marginBottom: 10}}>
                         <InputGroup.Text id="basic-addon1"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
