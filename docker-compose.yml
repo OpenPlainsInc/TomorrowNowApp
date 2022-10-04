@@ -102,7 +102,7 @@ services:
       context: ./openplains_api
     command: bash -c "python manage.py runserver 0.0.0.0:8005"
     volumes:
-      - .:/code
+      - ./openplains_api:/code
       - ./actinia-core-data/resources:/actinia_core/resources:Z
 
     ports:
@@ -120,9 +120,9 @@ services:
     # image: django_celery_example_celery_worker
     command: celery -A api.celery worker --loglevel=INFO
     volumes:
-      - .:/code
+      - ./openplains_api:/code
     env_file:
-      - ./api/.env
+      - ./openplains_api/api/.env
     depends_on:
       - redis
       - db

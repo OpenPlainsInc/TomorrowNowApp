@@ -152,3 +152,6 @@ actinia/.actinia.env
 
 # Postgres Database Data
 data/
+
+# New Relic
+newrelic.ini
