@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Sep 23 2022
+ * Last Modified: Mon Sep 26 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -184,7 +184,7 @@ const ModelDetailView = ({modelId=null, selectedCounties=[], modelDesisEditable=
             </Card.Body>
             <Card.Footer>
                 <div className="d-grid gap-2" >
-                    <Button type="submit">Submit</Button>
+                    <Button variant="secondary" type="submit">Submit</Button>
                 </div>
             </Card.Footer>
         </Card>
