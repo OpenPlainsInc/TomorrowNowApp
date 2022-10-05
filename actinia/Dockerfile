@@ -1,8 +1,8 @@
-FROM mundialis/actinia-core:4.3.0 as actinia
+FROM mundialis/actinia-core:4.2.1 as actinia
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
-ENV ACTINIA_CORE_VERSION=4.3.0
+ENV ACTINIA_CORE_VERSION=4.2.1
 
 # USER root
 
@@ -75,7 +75,8 @@ RUN pip3 install -r /src/actinia_core/requirements.txt
 # RUN mkdir -p /home/user/gcp/
 # COPY gcp_keys/gcp_tomorrownow_dev_key.json /home/user/gcp/gcp_tomorrownow_dev_key.json
 
-COPY actinia.cfg /etc/default/actinia
+
+COPY ./actinia.cfg /etc/default/actinia
 COPY start.sh /src/start.sh
 CMD ["/src/start.sh"]
 # USER user

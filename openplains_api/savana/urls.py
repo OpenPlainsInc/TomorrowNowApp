@@ -10,7 +10,7 @@ app_name = 'savana'
 urlpatterns = [
     # path('csrf/', views.csrf),
     path('ping/', views.ping),
-    path('g/locations/', cache_page(60 * 15, key_prefix="grass_locations")(views.gLocations), name="ListLocations"),
+    path('g/locations/', views.gLocations, name="ListLocations"),
     path('g/locations/<str:location_name>', views.gLocation, name="Location"),
     path('g/locations/<str:location_name>/info', cache_page(60 * 15)(views.gLocationInfo), name="LocationInfo"),
     path('g/locations/<str:location_name>/mapsets', views.gMapsets, name="Mapsets"),
@@ -45,6 +45,17 @@ urlpatterns = [
     path('v/locations/<str:location_name>/mapsets/<str:mapset_name>/vector_layers/<str:vector_name>/render', cache_page(60 * 15)(views.vRenderImage), name="renderVector"),
     # path('v/locations/<str:location_name>/mapsets/<str:mapset_name>/vector_layers/<str:vector_name>/sampling_async', cache_page(60 * 15)(views.rColors), name="vSamplingAsync"),
     # path('v/locations/<str:location_name>/mapsets/<str:mapset_name>/vector_layers/<str:vector_name>/sampling_sync', views.rGeoTiff, name="vSamplingSync"),
+    # path('model', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>/predictors', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>/pressure', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>/potential', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>/demand', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>/calibration', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>/scenario', views.rGeoTiff, name="vSamplingSync"),
+    # path('model/<str:model_id>/futures/<str:futures_id>/scenario/<str:scenario_id>', views.rGeoTiff, name="vSamplingSync"),
+
 
     
     path('i', views.ping, name='i')

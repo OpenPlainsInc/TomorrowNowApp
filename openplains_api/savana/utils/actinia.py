@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sat Apr 16 2022                                               #
+# Last Modified: Tue Oct 04 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -40,7 +40,7 @@ import time
 import requests
 from functools import reduce
 # from channels.layers import get_channel_layer
-# from actinia import Actinia
+from actinia import Actinia
 
 
 import re
@@ -54,9 +54,11 @@ from typing import List, Optional
 ACTINIA_SETTINGS = settings.ACTINIA
 
 
-# actinia_con = Actinia(os.path.join('http://', ACTINIA_SETTINGS['ACTINIA_BASEURL']), ACTINIA_SETTINGS['ACTINIA_VERSION'])
-# print(actinia_con.get_version())
-# actinia_con.set_authentication(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
+def initActiniaClient():
+    actinia_con = Actinia(os.path.join('http://', ACTINIA_SETTINGS['ACTINIA_BASEURL']), ACTINIA_SETTINGS['ACTINIA_VERSION'])
+    # print(actinia_con.get_version())
+    actinia_con.set_authentication(ACTINIA_SETTINGS['ACTINIA_USER'], ACTINIA_SETTINGS['ACTINIA_PASSWORD'])
+    return actinia_con
 
 
 def currentUser():

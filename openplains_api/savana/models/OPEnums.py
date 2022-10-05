@@ -1,7 +1,7 @@
 ###############################################################################
-# Filename: __init__.py                                                        #
+# Filename: Enums.py                                                           #
 # Project: TomorrowNow                                                         #
-# File Created: Friday March 18th 2022                                         #
+# File Created: Tuesday October 4th 2022                                       #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
@@ -29,12 +29,16 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 #                                                                              #
 ###############################################################################
+from django.db import models
 
 
-from .ProcessingResponseModel import ProcessingResponseModel
-from .TestGCSResourceModel import TestGCSResourceModel
-from .DrainRequest import DrainRequest
-from .OPEnums import StatusEnum, PrivacyEnum
-from .OPGoal import Goal
-from .OPModel import OpenPlainsModel
-from .OPModelGoal import ModelGoal
+class StatusEnum(models.TextChoices):
+    ACCPECTED = "AC", "Active"
+    RUNNING = "RT", "Retired"
+    INITIATING = "IN", "Initiating"
+    ERROR = "ER", "Error"
+
+
+class PrivacyEnum(models.TextChoices):
+    PUBLIC = "PU", "Public"
+    PRIVATE = "PR", "Private"

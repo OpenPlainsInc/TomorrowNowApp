@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Sep 19 2022                                               #
+# Last Modified: Tue Oct 04 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -178,12 +178,14 @@ def gMapset(request, location_name, mapset_name):
     if request.method == 'POST':
         r = requests.post(url, auth=acp.auth())
         print(f"Request URL: {url}")
+        # cache.delete_many(keys=cache.keys('*.grass_locations.*'))
         return JsonResponse({"response": r.json()}, safe=False)
 
     if request.method == 'DELETE':
         r = requests.delete(url, auth=acp.auth())
         print(f"Request URL: {url}")
         if r.status_code == 200:
+            # cache.delete_many(keys=cache.keys('*.grass_locations.*'))
             return JsonResponse({"response": r.json()}, safe=False)
         else:
             return JsonResponse({"response": r.json()}, safe=False)

@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: __init__.py                                                        #
+# Filename: OGModelGoal.py                                                     #
 # Project: TomorrowNow                                                         #
-# File Created: Friday March 18th 2022                                         #
+# File Created: Tuesday October 4th 2022                                       #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 04 2022                                               #
+# Last Modified: Wed Oct 05 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,11 +30,22 @@
 #                                                                              #
 ###############################################################################
 
+from django.db import models
 
-from .ProcessingResponseModel import ProcessingResponseModel
-from .TestGCSResourceModel import TestGCSResourceModel
-from .DrainRequest import DrainRequest
-from .OPEnums import StatusEnum, PrivacyEnum
+from .OPEnums import PrivacyEnum, StatusEnum
 from .OPGoal import Goal
-from .OPModel import OpenPlainsModel
-from .OPModelGoal import ModelGoal
+
+
+class ModelGoal(models.Model):
+    """
+    The goals of a specific OPModel
+    """
+
+    name = models.CharField(max_length=250)  # The model name
+    status = models.CharField(max_length=2, choices=(StatusEnum.choices), default=StatusEnum.INITIATING)
+    privacy = models.CharField(max_length=2, choices=(PrivacyEnum.choices), default=PrivacyEnum.PRIVATE)
+    goal = models.ForeignKey(Goal, editable=True, on_delete=models.CASCADE, null=True)
+    model = models.ForeignKey("savana.OpenPlainsModel", editable=True, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.name

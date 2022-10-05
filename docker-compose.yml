@@ -101,6 +101,8 @@ services:
     build: 
       context: ./openplains_api
     command: bash -c "python manage.py runserver 0.0.0.0:8005"
+    # command: bash -c "NEW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin run-program gunicorn api.wsgi:application"
+
     volumes:
       - ./openplains_api:/code
       - ./actinia-core-data/resources:/actinia_core/resources:Z
@@ -168,6 +170,21 @@ services:
       retries: 3
     ports:
       - 8600:8080
+
+  # agent:
+  #   container_name: newrelic-infra
+  #   image: newrelic/infrastructure:latest
+  #   cap_add:
+  #     - SYS_PTRACE
+  #   network_mode: host
+  #   pid: host
+  #   privileged: true
+  #   volumes:
+  #     - "/:/host:ro"
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #   environment:
+  #     NRIA_LICENSE_KEY: '${NRIA_LICENSE_KEY}'
+  #   restart: unless-stopped
 
   # nginx:
   #   image: nginx:1.22.0
