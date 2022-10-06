@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Sep 23 2022
+ * Last Modified: Thu Oct 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -40,7 +40,7 @@ const ExistingModelsCard = ({data}) => {
         <Card>
             <Card.Header as="h3">Existing Models</Card.Header>
             <Card.Body>
-                <Card.Title>Exploring Senarios</Card.Title>
+                <Card.Title>Exploring Scenarios</Card.Title>
                 <ModelsTable data={data.features}/>
                 <Button variant="secondary">Explore</Button>
             </Card.Body>
