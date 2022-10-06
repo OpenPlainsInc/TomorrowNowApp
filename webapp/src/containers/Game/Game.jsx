@@ -41,6 +41,7 @@ import { parsers } from '../../components/Grass/Utils';
 import { countyStyle, selectStyle, streamStyle } from '../../components/OpenLayers/Sources/hucBoundaries';
 import { NLCDCard } from './NLCDCard';
 import { SurveyStatsCard } from './SurveyStatsCard';
+import NLCDTemporalMask from './NLCDTemporalMask';
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
 
@@ -63,7 +64,10 @@ const Game = ({params}) => {
   const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
   const [osmSource, setOsmSource] = useState(osm()); 
   const basinStyle = vectorStyles.Polygon
+
   const [selectedHuc12, setSelectedHuc12] = useState(null)
+  const [selectedHuc12Feature, setSelectedHuc12Feature] = useState(null)
+
   // let selectedHuc12 = {}
   let nlcdsource = useNLCDSource({year:'2019', dataType:'land_cover', region:'L48'});
   const [selectedHuc12Props, setSelectedHuc12Props]  = useState(null);
@@ -106,6 +110,7 @@ const Game = ({params}) => {
         if (el.get('name') === 'seletedHuc12') {
           huc12SelectionToUpdate = el;
         }
+        // let tmpSelectedFeatures = []
         if (el.get('name') === "HUC12_VT") {
           e.map.forEachFeatureAtPixel(e.pixel, function (f, layer) {
             let properties = f.getProperties()
@@ -116,11 +121,14 @@ const Game = ({params}) => {
                 if (properties.huc12 !== selectedHuc12) {
                   let nlcdYear = 2019
                   let feature = toFeature(f, 'geometry')
+                  setSelectedHuc12Feature(feature)
+                  // tmpSelectedFeatures.push(feature)
                     let geom = new GeoJSON().writeFeature(feature, {
                       dataProjection: 'EPSG:5070', 
                       featureProjection: 'EPSG:4326' 
                     })
-                 
+                  // setSelectedHuc12Feature(tmpSelectedFeatures)
+
                   // Test the use of geoblaze here to run in browser stats opperations
                   // console.log(f.constructor)
                   // console.log("f:", f.getGeometry().getFlatCoordinates().reduce((previousValue, currentValue) => [previousValue, currentValue],[]))
@@ -504,6 +512,13 @@ const Game = ({params}) => {
                   :  
                   <SurveyStatsCard surveyData={surveyData}></SurveyStatsCard>
                 }
+                {selectedHuc12Props ? 
+                  <NLCDTemporalMask 
+                    watershedName={selectedHuc12Props.name}
+                    feature={selectedHuc12Feature} 
+                    center={center} 
+                    mask={null}/>
+                : null}
               </Row>
             </Col>
                

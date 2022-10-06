@@ -1,25 +1,6 @@
-/*
- * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/OpenLayers/Sources/VectorSource.jsx
- * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
- * Created Date: Wednesday, April 6th 2022, 9:24:07 pm
- * Author: Corey White
- * 
- * Copyright (c) 2022 Corey White
- */
-
-
-/*
- * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/components/OpenLayers/Sources/TileWMS.jsx
- * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
- * Created Date: Wednesday, April 6th 2022, 2:33:10 pm
- * Author: Corey White
- * 
- * Copyright (c) 2022 Corey White
- */
-
-
+import React, {useState} from "react";
 import OLVectorSource from "ol/source/Vector";
-// 
+import GeoJSON from 'ol/format/GeoJSON';
 
 /**
  * React component to for OpenLayer Vector source.
@@ -34,6 +15,29 @@ const VectorSource = ((props)=>{
     let source = new OLVectorSource({
         ...props
     })
+    return source
+     
+})
+
+export const useGeojsonSource = (({geojsonObject, ...props})=>{ 
+    // const [vectorSource, setVectorSource] = useState(null)
+    // console.log("props", props)
+    let loadFeatures = (features) => {
+        // console.log("loadFeatures", features)
+        if (features instanceof GeoJSON) {
+            return features
+        }
+        if (features) {
+           return new GeoJSON().readFeatures(features)
+        }
+        return new GeoJSON()
+    }
+    
+    let source = new OLVectorSource({
+        ...props,
+        features: loadFeatures(geojsonObject)
+    })
+
     return source
      
 })
