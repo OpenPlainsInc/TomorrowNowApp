@@ -16,3 +16,6 @@ r.mask raster='roads' maskcats=0
 # years = ','.join([str(i) for i in range(2016, 2039)])
 
 r.futures.demand development='urban_2001,urban_2006,urban_2011,urban_2016' subregions='counties' observed_population='population_trend.csv' projected_population='population_projection.csv' simulation_times='2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038' plot='plot_demand.png' demand='demand.csv' separator='comma' method='logarithmic,logarithmic2,exp_approach'
+
+# Preprocess
+# use logarithmic approach.

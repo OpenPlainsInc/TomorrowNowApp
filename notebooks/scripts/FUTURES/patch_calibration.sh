@@ -1,4 +1,4 @@
-# Patch Calibration
+# Patch Calibration (Skip calibration for now)
 g.region vector=counties@PERMANENT align=landuse_2016@PERMANENT
 r.mask raster='roads' maskcats=0
 r.futures.calib development_start='urban_2001' development_end='urban_2016' subregions='counties' patch_sizes='patches.csv' patch_threshold=1800 -ls       
