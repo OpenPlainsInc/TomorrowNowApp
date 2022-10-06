@@ -1,20 +1,5 @@
-// /* CSS HEX */
-// --mantis: #7ac74fff;
-// --pistachio: #a1cf6bff;
-// --green-yellow-crayola: #d5d887ff;
-// --buff: #e0c879ff;
-// --terra-cotta: #e87461ff;
-
-// /* CSS HSL */
-// --mantis: hsla(98, 52%, 55%, 1);
-// --pistachio: hsla(88, 51%, 62%, 1);
-// --green-yellow-crayola: hsla(62, 51%, 69%, 1);
-// --buff: hsla(46, 62%, 68%, 1);
-// --terra-cotta: hsla(8, 75%, 65%, 1);
-
-
-
 // https://coolors.co/7ac74f-a1cf6b-d5d887-e0c879-e87461
+// @import "node_modules/bootstrap/scss/bootstrap";
 // @import "~bootstrap/scss/bootstrap";
 
 /* SCSS HEX */
@@ -25,6 +10,8 @@ $buff: #e0c879ff;
 $terra-cotta: #e87461ff;
 
 // Savana Pallete
+
+$savan-white:#fbfbfb;
 // https://www.color-hex.com/color-palette/36240
 $savan-primary: #657e96;
 // $primary-light:
@@ -73,6 +60,9 @@ $theme-colors: (
     "dark": rgb(0, 0, 0)
    
 );
+
+$white: $savan-white;
+$body-bg: $savan-white;
 
 
 body { padding-top: 50px; }
