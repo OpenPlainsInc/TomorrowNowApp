@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 11 2022                                               #
+# Last Modified: Sun Oct 16 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -35,7 +35,26 @@ from django.contrib.gis.geos import Point
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from django.contrib.auth.models import User
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from .models import DrainRequest, OpenPlainsModel
+from .models import DrainRequest, OpenPlainsModel, ModelGoal, Goal
+
+
+class GoalSerializer(serializers.ModelSerializer):
+    privacy = serializers.CharField(source='get_privacy_display')
+    status = serializers.CharField(source='get_status_display')
+
+    class Meta:
+        model = Goal
+        fields = '__all__'
+
+
+class ModelGoalSerializer(serializers.ModelSerializer):
+    privacy = serializers.CharField(source='get_privacy_display')
+    status = serializers.CharField(source='get_status_display')
+    goal = GoalSerializer()
+
+    class Meta:
+        model = ModelGoal
+        fields = ['privacy', 'status', 'name', 'goal']
 
 
 class DrainRequestSerializer(GeoFeatureModelSerializer):
@@ -49,10 +68,13 @@ class DrainRequestSerializer(GeoFeatureModelSerializer):
 class OPModelSerializer(serializers.ModelSerializer):
 
     owner = serializers.ReadOnlyField(source='owner.username')
+    status = serializers.CharField(source='get_status_display')
+    goals = ModelGoalSerializer(many=True, read_only=True)  # serializers.PrimaryKeyRelatedField(many=True, queryset=ModelGoal.objects.all())
+    privacy = serializers.CharField(source='get_privacy_display')  # (ChoiceField(choices=PrivacyEnum)
 
     class Meta:
         model = OpenPlainsModel
-        fields = ['name', 'description', 'privacy', 'mapset', 'owner']
+        fields = ['name', 'description', 'privacy', 'mapset', 'owner', 'slug', 'status', 'goals']
 
 
 class UserSerializer(serializers.ModelSerializer):

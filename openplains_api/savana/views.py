@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 11 2022                                               #
+# Last Modified: Sun Oct 16 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -37,10 +37,13 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.http import FileResponse, HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.views import APIView
 from django.views import generic
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.db.models.functions import Distance
 from django.middleware.csrf import get_token
+
+from .models.OPModel import OpenPlainsModel
 from .models import TestGCSResourceModel
 from .models import DrainRequest
 from .serializers import DrainRequestSerializer
@@ -53,10 +56,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+from rest_framework.response import Response
+from knox.auth import TokenAuthentication
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.gis.geos import Point, Polygon
-from .serializers import UserSerializer
+from .serializers import UserSerializer, OPModelSerializer
 
 import requests
 import base64
@@ -82,6 +87,18 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = UserSerializer
+
+
+class OpModelList(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = OpenPlainsModel.objects.all()
+    serializer_class = OPModelSerializer
+
+    def get(self, request, format=None):
+        models = OpenPlainsModel.objects.all()
+        serializer = OPModelSerializer(models, many=True)
+        return Response(serializer.data)
 
 
 def resourceStatus(user_id, resource_id):

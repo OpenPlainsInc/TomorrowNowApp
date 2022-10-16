@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 04 2022                                               #
+# Last Modified: Sun Oct 16 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,6 +30,7 @@
 #                                                                              #
 ###############################################################################
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class StatusEnum(models.TextChoices):
@@ -40,5 +41,5 @@ class StatusEnum(models.TextChoices):
 
 
 class PrivacyEnum(models.TextChoices):
-    PUBLIC = "PU", "Public"
-    PRIVATE = "PR", "Private"
+    PUBLIC = "PU", _("Public")
+    PRIVATE = "PR", _("Private")

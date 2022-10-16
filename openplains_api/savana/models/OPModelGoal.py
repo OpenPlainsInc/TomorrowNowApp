@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Oct 05 2022                                               #
+# Last Modified: Sun Oct 16 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -45,7 +45,7 @@ class ModelGoal(models.Model):
     status = models.CharField(max_length=2, choices=(StatusEnum.choices), default=StatusEnum.INITIATING)
     privacy = models.CharField(max_length=2, choices=(PrivacyEnum.choices), default=PrivacyEnum.PRIVATE)
     goal = models.ForeignKey(Goal, editable=True, on_delete=models.CASCADE, null=True)
-    model = models.ForeignKey("savana.OpenPlainsModel", editable=True, on_delete=models.CASCADE, null=True)
+    model = models.ForeignKey("savana.OpenPlainsModel", editable=True, on_delete=models.CASCADE, null=True, related_name='goals')
 
     def __str__(self):
         return self.name

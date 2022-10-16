@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 11 2022                                               #
+# Last Modified: Sun Oct 16 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -58,8 +58,8 @@ class OpenPlainsModel(models.Model):
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='opmodel')
     slug = models.SlugField(null=False, unique=True)  # new
 
-    def goals(self):
-        return ModelGoal.objects.get(model=self)
+    # def goals(self):
+    #     return ModelGoal.objects.get(model=self)
 
     def region():
         """

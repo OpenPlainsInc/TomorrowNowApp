@@ -12,6 +12,7 @@ urlpatterns = [
     path('ping/', views.ping),
     path('users/', views.UserList.as_view()),
     path('users/<int:pk>/', views.UserDetail.as_view()),
+    path('models/', views.OpModelList.as_view(), name="op-models"),
     path('g/locations/', views.gLocations, name="ListLocations"),
     path('g/locations/<str:location_name>', views.gLocation, name="Location"),
     path('g/locations/<str:location_name>/info', cache_page(60 * 15)(views.gLocationInfo), name="LocationInfo"),
