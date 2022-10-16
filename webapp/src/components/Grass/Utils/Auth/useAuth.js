@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Jun 06 2022
+ * Last Modified: Sun Oct 16 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,53 +31,60 @@
  */
 
 import React, { useState } from "react"
-import AuthContext from "./AuthContext";
-import admin from "./admin";
+import auth from "./auth";
 import { useLocalStorage } from "../useLocalStorage";
+import { useToken } from "./useToken";
 
 /**
  * Auth hook to authenticate user and restrict routes
  * @returns
  */
-function useAuth() {
-    // const [authed, setAuthed] = useState(false);
-    const [authed, setAuthed] = useLocalStorage('authed', false)
+export const useAuth = () => {
+    const [currentUser, setCurrentUser, removeUser] = useLocalStorage('user', null)
+    const {token, setToken, clearToken, isTokenValid} = useToken()
+    const isAuthenticated = () => {
+      let isValid = isTokenValid(token)
+      return isValid;
+    }
+    const [authed, setAuthed] = useState(isAuthenticated())
+
+    const saveCurrentUserContext = async (token) => {
+      let user = await auth.getUser(token)
+      console.log(user)
+      setCurrentUser(user)
+      return user
+    }
+
     const login = async ({username, password}) => {
-      let res = await admin.login({username, password})
+      let res = await auth.login({username, password})
       // Set the auth state from the response
-      setAuthed(res.auth)
+      setToken({token: res.token, expiry: res.expiry})
+      setAuthed(isTokenValid())
+      saveCurrentUserContext(res)
       return res
     }
 
     const logout = async () => {
-      let res = await admin.logout()
+      let res = await auth.logout(token)
+      console.log("Logout Response:", res)
       // Set the auth state from the response
-      setAuthed(false);
+      if (res.ok) {
+        clearToken();
+        setAuthed(false)
+        removeUser()
+      }
+      
       return res
     }
 
 
+
+
     return {
-        authed,
         login,
-        logout() {
-          return new Promise((res) => {
-            setAuthed(false);
-            res();
-          });
-        },
+        logout,
+        authed,
+        currentUser
     };
     
-}
-
-// Passes AuthContext into childern so they recieve updates in context.
-// Updating AuthContext will trigger a rerender in all subscribed components. 
-export function AuthProvider({ children }) {
-  const auth = useAuth();
-  console.log(auth)
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
-}
-
-export default function AuthConsumer() {
-  return React.useContext(AuthContext);
 }

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 04 2022                                               #
+# Last Modified: Tue Oct 11 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -50,13 +50,13 @@ from django.core.cache import cache
 # from .serializers import WorldBorderSerializer
 from rest_framework import viewsets, generics
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.parsers import JSONParser
 from rest_framework import status
-
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.gis.geos import Point, Polygon
-
+from .serializers import UserSerializer
 
 import requests
 import base64
@@ -70,6 +70,18 @@ from .utils import actinia as acp
 
 def ping(request):
     return JsonResponse({'result': 'OK'})
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = UserSerializer
 
 
 def resourceStatus(user_id, resource_id):

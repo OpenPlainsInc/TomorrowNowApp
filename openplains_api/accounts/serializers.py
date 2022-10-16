@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Jun 06 2022                                               #
+# Last Modified: Fri Oct 14 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -30,23 +30,50 @@
 #                                                                              #
 ###############################################################################
 
-from dataclasses import fields
+# from dataclasses import fields
 from django.contrib.auth import authenticate
-from rest_framework import serializers
+from rest_framework.serializers import Serializer, ModelSerializer, CharField, EmailField, ValidationError
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.models import User
+from knox.models import AuthToken
 
 
-class LoginSerializer(serializers.Serializer):
+class UserSerializer(ModelSerializer):
+    email = EmailField(
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    username = CharField(
+        max_length=32,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    password = CharField(min_length=8, write_only=True)
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            validated_data['username'],
+            validated_data['email'],
+            validated_data['password']
+        )
+        return user
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password')
+
+
+class LoginSerializer(Serializer):
     """
     This serializer defines two fields for authentication:
       * username
       * password.
     It will try to authenticate the user with when validated.
     """
-    username = serializers.CharField(
+    username = CharField(
         label="Username",
         write_only=True
     )
-    password = serializers.CharField(
+    password = CharField(
         label="Password",
         # This will be used when the DRF browsable API is enabled
         style={'input_type': 'password'},
@@ -66,11 +93,25 @@ class LoginSerializer(serializers.Serializer):
             if not user:
                 # If we don't have a regular user, raise a ValidationError
                 msg = 'Access denied: wrong username or password.'
-                raise serializers.ValidationError(msg, code='authorization')
+                raise ValidationError(msg, code='authorization')
         else:
             msg = 'Both "username" and "password" are required.'
-            raise serializers.ValidationError(msg, code='authorization')
+            raise ValidationError(msg, code='authorization')
         # We have a valid user, put it in the serializer's validated_data.
         # It will be used in the view.
         attrs['user'] = user
         return attrs
+
+
+class UserProfileSerializer(ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]
+
+
+class UserDetailSerializer(Serializer):
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]

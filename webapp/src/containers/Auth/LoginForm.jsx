@@ -14,8 +14,7 @@ import Row from "react-bootstrap/Row"
 import { LinkContainer } from "react-router-bootstrap"
 import {useForm, Controller} from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../../components/Grass/Utils/Auth/useAuth";
-
+import {useAuth} from "../../components/Grass/Utils/Auth/useAuth";
 /**
  * LoginForm component 
  * @returns {<LoginForm>}
@@ -28,10 +27,7 @@ export const LoginForm = () => {
       e.preventDefault()
       clearErrors()
       let loginResponse = await login(data)
-      if (loginResponse.auth && loginResponse.redirect) {
-        return navigate('/dashboard', {replace: true})
-      }
-
+     
       let responseError = await loginResponse.non_field_errors
 
       // return throw new Error(loginResponse)
@@ -41,10 +37,15 @@ export const LoginForm = () => {
         setError('server_error', {type: 'custom', message: responseError})
         console.log(responseError, errors)
       }
+
+      if (loginResponse.token && loginResponse.expiry) { //Replace with token is valid
+        return navigate('/dashboard', {replace: true})
+      }
+
   }
 
   const onError = async (errResponse, e) => {
-    console.log(errors, e)
+    console.log(e)
     let error = await errResponse.non_field_errors
     if (error.non_field_errors) {
       setError('server_error', {type: 'custom', message: error})

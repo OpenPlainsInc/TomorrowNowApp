@@ -14,12 +14,14 @@ import { Route } from "react-router-dom";
 import Login from '../containers/Auth/Login';
 import ResetPassword from "../containers/Auth/ResetPassword";
 import Signup from "../containers/Auth/Signup";
+import Logout from "../containers/Auth/Logout";
 
 
 const AuthRoutes = (
   <Fragment>
     <Route path="login" element={<Login /> } />
     <Route path="signup" element={<Signup /> } />
+    <Route path="logout" element={<Logout /> } />
     <Route path="reset" element={<ResetPassword /> } />
   </Fragment>
 )

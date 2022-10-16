@@ -1,11 +1,11 @@
 /*
- * Filename: settings.js
+ * Filename: AuthProvider.js
  * Project: TomorrowNow
- * File Created: Friday June 3rd 2022
+ * File Created: Thursday October 13th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 11 2022
+ * Last Modified: Fri Oct 14 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,14 +29,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+import { useState, useEffect } from 'react';
+// import { getUser } from './auth.js'
+import AuthContext from './AuthContext'
+import { useLocalStorage } from '../useLocalStorage';
+// import {useToken} from './useToken'
+// Passes AuthContext into childern so they recieve updates in context.
+// Updating AuthContext will trigger a rerender in all subscribed components. 
+export function AuthProvider({ children }) {
+    const [currentUser, setCurrentUser, removeUser] = useLocalStorage('user', null)
+    // const { token } = useToken()
+    // const [currentUser, setCurrentUser] = useState(user);
 
-const API_BASE_URL = "http://localhost:8005"
-const ACTINIA_BASE_URL = `${API_BASE_URL}/savana`
-// const AUTH_BASE_URL = `${API_BASE_URL}/accounts`
-const AUTH_BASE_URL = `${API_BASE_URL}/api`
-
-export const settings = {
-    API_BASE_URL,
-    ACTINIA_BASE_URL,
-    AUTH_BASE_URL
-}
+    // useEffect(() => {
+    //     setCurrentUser(currentUser)
+    // }, [currentUser]);
+ 
+    return (
+        <AuthContext.Provider value={{
+            currentUser,
+            setCurrentUser,
+            removeUser
+        }}>
+            {children}
+        </AuthContext.Provider>
+    );
+  }
+  

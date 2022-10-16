@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Jun 06 2022
+ * Last Modified: Fri Oct 14 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,87 +30,109 @@
  * 
  */
 
-import { settings } from "../../Settings"
+// import { settings } from "../../Settings"
 
-/**
- * Log user in using their credentials
- * @param {String} username 
- * @param {String} userPassword 
- */
-export const login = async({username, password}) => {
+// /**
+//  * Log user in using their credentials
+//  * @param {String} username 
+//  * @param {String} userPassword 
+//  */
+// export const login = async({username, password}) => {
     
-    try {
-        let data = {username, password}
-        console.log("Attempting Login", username, password)
-        let url = new URL(`${settings.AUTH_BASE_URL}/login/`)
-        let response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                // 'Authorization': `Basic ${btoa(username + ":" + password)}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-
-        let res = await response
-        if (res.status === 202) {
-            return {auth: true, redirect: true}
-        }
+//     try {
+//         let data = {username, password}
+//         console.log("Attempting Login", username, password)
+//         let url = new URL(`${settings.AUTH_BASE_URL}/auth/login/`)
+//         let response = await fetch(url, {
+//             method: 'POST',
+//             headers: {
+//                 'Authorization': `Basic ${btoa(username + ":" + password)}`,
+//                 'Content-Type': 'application/json'
+//             },
+//             // body: JSON.stringify(data)
+//         })
+       
+//         let res = await response
+//         let json = await res.json()
+//         return json
         
-        if (res.status === 400) {
-            let json = res.json()
-            return {...json, auth: false, redirect: false}
-        }
-    }
-    catch (e) {
-        console.log(e)
-        return e
-        // {"non_field_errors":["Access denied: wrong username or password."]}
-    }
-}
+
+//     }
+//     catch (e) {
+//         console.log(e)
+//         return e
+//         // {"non_field_errors":["Access denied: wrong username or password."]}
+//     }
+// }
 
 
-/**
- * Logs user out of current session and navigates back to login view from current view.
- */
-export const logout = () => {
+// /**
+//  * Logs user out of current session and navigates back to login view from current view.
+//  */
+// export const logout = async () => {
+//     try {
+//         console.log("Attempting Logout")
+//         let url = new URL(`${settings.AUTH_BASE_URL}/logout/`)
+        
+//         let response = await fetch(url, {
+//             method: 'POST',
+//             // headers: {
+//             //     'Authorization': `Basic ${btoa(username + ":" + password)}`,
+//             //     'Content-Type': 'application/json'
+//             // }
+//         })
 
-}
+//         let res = await response
+//         if (res.status === 202) {
+//             return {auth: true, redirect: true}
+//         }
+        
+//         if (res.status === 400) {
+//             let json = res.json()
+//             return {...json, auth: false, redirect: false}
+//         }
+//     }
+//     catch (e) {
+//         console.log(e)
+//         return e
+//         // {"non_field_errors":["Access denied: wrong username or password."]}
+//     }
+// }
 
 
-export const isAuthValid = () => {
+// export const isAuthValid = () => {
 
-}
+// }
 
-function getCookie(name) {
-    let cookieValue = null;
+// function getCookie(name) {
+//     let cookieValue = null;
 
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
+//     if (document.cookie && document.cookie !== '') {
+//         const cookies = document.cookie.split(';');
+//         for (let i = 0; i < cookies.length; i++) {
+//             const cookie = cookies[i].trim();
 
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//             // Does this cookie string begin with the name we want?
+//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
+//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
 
-                break;
-            }
-        }
-    }
+//                 break;
+//             }
+//         }
+//     }
 
-    return cookieValue;
-}
+//     return cookieValue;
+// }
 
-export const useCSRFTtoken = () => {
-    const csrftoken = getCookie('csrftoken');
-    return csrftoken;
-} 
+// export const useCSRFTtoken = () => {
+//     const csrftoken = getCookie('csrftoken');
+//     return csrftoken;
+// } 
 
-const admin = {
-    login,
-    logout,
-    isAuthValid
-}
+// const admin = {
+//     login,
+//     logout,
+//     isAuthValid
+// }
 
-export default admin;
+// export default admin;

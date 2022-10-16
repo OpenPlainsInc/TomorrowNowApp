@@ -12,9 +12,22 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Image from 'react-bootstrap/Image'
+import { useAuth } from '../../components/Grass/Utils/Auth/useAuth'
+import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react'
 
 export const AuthContainer = ({children}) => {
+    let navigate = useNavigate();
+    const {authed} = useAuth()
+    
+    
 
+    useEffect(()=> {
+        console.log("Is Authenticated: ",authed)
+        if (authed) { //Replace with token is valid
+            return navigate('/dashboard', {replace: true})
+        }
+    }, [authed, navigate])
 
     return(
         <Container className={"text-dark"} style={{marginTop:'-50px', height: '100vh'}}>
@@ -22,8 +35,8 @@ export const AuthContainer = ({children}) => {
                 
                 <Col/>
                 <Col>
-                <Image fluid src="./banner_v1.png"></Image>
-                {children}
+                    <Image fluid src="./banner_v1.png"></Image>
+                    {children}
                 </Col>
                 <Col/>
             </Row>

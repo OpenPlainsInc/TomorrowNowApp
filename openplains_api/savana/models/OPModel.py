@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Oct 05 2022                                               #
+# Last Modified: Tue Oct 11 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -55,7 +55,7 @@ class OpenPlainsModel(models.Model):
     status = models.CharField(max_length=2, choices=(StatusEnum.choices), default=StatusEnum.INITIATING)
     privacy = models.CharField(max_length=2, choices=(PrivacyEnum.choices), default=PrivacyEnum.PRIVATE)
     mapset = models.CharField(max_length=250)  # TODO: Switch to Mapset Model
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='opmodel')
     slug = models.SlugField(null=False, unique=True)  # new
 
     def goals(self):
@@ -65,6 +65,9 @@ class OpenPlainsModel(models.Model):
         """
         Add Compuational Region
         """
+        pass
+
+    def scenarios_count():
         pass
 
     def __str__(self):

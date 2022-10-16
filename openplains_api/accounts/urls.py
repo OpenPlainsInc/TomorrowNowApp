@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Jun 06 2022                                               #
+# Last Modified: Fri Oct 14 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -32,9 +32,13 @@
 
 
 from django.urls import path
-
+# from django.conf.urls import url
 from accounts import views
 
 urlpatterns = [
     path('login/', views.LoginView.as_view()),
+    path('users/', views.UserCreate.as_view(), name='account-create'),
+    # path('api/users/<user_id>', views.UserCreate.as_view(), name='account-create'),
+    # path('users/current/profile/', views.UserProfile.as_view(), name='user-profile'),
+    path('users/<str:user_id>/profile/', views.UserProfile.as_view(), name='user-profile'),
 ]

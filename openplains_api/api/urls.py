@@ -19,13 +19,14 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('accounts.urls')),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    path('api/auth/', include('knox.urls')),
     path('savana/', include('savana.urls')),
     path('world/', include('world.urls')),
-    path('grassapp/', include('grassapp.urls')),
-    path('accounts/', include('accounts.urls')),
-    path('admin/', admin.site.urls),
-    # path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('grassapp/', include('grassapp.urls'))
 ]
 
 if settings.DEBUG:

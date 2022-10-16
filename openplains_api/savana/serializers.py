@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Sep 20 2022                                               #
+# Last Modified: Tue Oct 11 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -33,8 +33,9 @@
 from rest_framework import serializers
 from django.contrib.gis.geos import Point
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
-
-from .models import DrainRequest
+from django.contrib.auth.models import User
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from .models import DrainRequest, OpenPlainsModel
 
 
 class DrainRequestSerializer(GeoFeatureModelSerializer):
@@ -45,6 +46,21 @@ class DrainRequestSerializer(GeoFeatureModelSerializer):
         fields = ('point',)
 
 
+class OPModelSerializer(serializers.ModelSerializer):
+
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = OpenPlainsModel
+        fields = ['name', 'description', 'privacy', 'mapset', 'owner']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    opmodels = serializers.PrimaryKeyRelatedField(many=True, queryset=OpenPlainsModel.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'opmodels']
 
 # { cat: 11, color: "#476ba1", label: "Open Water", … }
 # ​​

@@ -3,13 +3,16 @@ import { DashboardList } from "./DashboardList";
 import { Spinner } from "react-bootstrap";
 import { useDataSource } from "../../components/Grass/Utils";
 import Grass from "../../components/Grass/grass";
+import { useAuth } from "../../components/Grass/Utils/Auth/useAuth";
 
 export default function Dashboard() {
+  // const { currentUser,setCurrentUser} = useAuthContext()
+  let {currentUser} = useAuth()
   const rasters = useDataSource({getDataFunc: Grass.getRasterLayers, params: ['nc_spm_08', 'PERMANENT']})
-
-  let title = 'Dashboard'
+  // console.log(currentUser)
+  let title = `Welcome ${currentUser?.username}`
   let style =   { padding: "1rem 0" }
-  
+ 
   return (
      
       <main style={style}>

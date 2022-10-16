@@ -1,11 +1,11 @@
 /*
- * Filename: settings.js
+ * Filename: useAuthContext.js
  * Project: TomorrowNow
- * File Created: Friday June 3rd 2022
+ * File Created: Thursday October 13th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 11 2022
+ * Last Modified: Fri Oct 14 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,13 +30,15 @@
  * 
  */
 
-const API_BASE_URL = "http://localhost:8005"
-const ACTINIA_BASE_URL = `${API_BASE_URL}/savana`
-// const AUTH_BASE_URL = `${API_BASE_URL}/accounts`
-const AUTH_BASE_URL = `${API_BASE_URL}/api`
+import { useContext } from 'react';
+import AuthContext from "./AuthContext";
 
-export const settings = {
-    API_BASE_URL,
-    ACTINIA_BASE_URL,
-    AUTH_BASE_URL
-}
+export const useAuthContext = () => {
+ const {currentUser} = useContext(AuthContext);
+ console.log(currentUser)
+//  if (currentUser === undefined) {
+//     throw new Error("useAuthContext can only be used inside AuthProvider");
+//  }
+ return currentUser;
+};
+

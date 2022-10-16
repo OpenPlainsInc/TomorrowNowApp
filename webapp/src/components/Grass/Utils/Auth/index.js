@@ -1,11 +1,11 @@
 /*
- * Filename: settings.js
+ * Filename: index.js
  * Project: TomorrowNow
- * File Created: Friday June 3rd 2022
+ * File Created: Thursday October 13th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 11 2022
+ * Last Modified: Fri Oct 14 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -30,13 +30,18 @@
  * 
  */
 
-const API_BASE_URL = "http://localhost:8005"
-const ACTINIA_BASE_URL = `${API_BASE_URL}/savana`
-// const AUTH_BASE_URL = `${API_BASE_URL}/accounts`
-const AUTH_BASE_URL = `${API_BASE_URL}/api`
 
-export const settings = {
-    API_BASE_URL,
-    ACTINIA_BASE_URL,
-    AUTH_BASE_URL
+import {useAuth} from "./useAuth"
+import {useToken} from "./useToken"
+// import { RequireAuth } from "./RequireAuth";
+import { AuthProvider } from "./AuthProvider";
+import { useAuthContext } from "./useAuthContext";
+const auth = {
+    useAuth,
+    useToken,
+    // RequireAuth,
+    AuthProvider,
+    useAuthContext
 }
+
+export default auth;

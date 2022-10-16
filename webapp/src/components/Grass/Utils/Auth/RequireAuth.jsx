@@ -7,16 +7,13 @@
  * Copyright (c) 2022 Corey White
  */
 
-import useAuth from "./useAuth"
+import {useAuthContext} from "./useAuthContext"
 import { Navigate, useLocation } from "react-router-dom"
 
 export const RequireAuth = ({ children }) => {
-    const { authed } = useAuth();
-    const location = useLocation();
-
-    return authed === true ? (
-        children
-      ) : (
-        <Navigate to="/login" replace state={{ path: location.pathname }} />
-      );
+  const context = useAuthContext();
+    if (context === undefined || context === null) {
+      return <Navigate to="/login" replace />
+    }
+    return children;
 }
