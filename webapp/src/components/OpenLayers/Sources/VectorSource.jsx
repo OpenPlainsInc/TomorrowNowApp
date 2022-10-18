@@ -19,6 +19,16 @@ const VectorSource = ((props)=>{
      
 })
 
+export const useVectorSource = ((props)=> {
+    let source = new OLVectorSource({
+        ...props
+    })
+    
+    const [vectorSource, setVectorSource] = useState(source);
+
+    return vectorSource
+})  
+
 export const useGeojsonSource = (({geojsonObject, ...props})=>{ 
     // const [vectorSource, setVectorSource] = useState(null)
     // console.log("props", props)

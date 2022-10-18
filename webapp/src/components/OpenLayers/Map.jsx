@@ -8,7 +8,7 @@ import {
 
 
 
-const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map", altView=null, triggerExternalLayerRender=null}) => {
+const Map = ({ children, zoom, center, projection='EPSG:3857', extent=undefined, mapClass="ol-map", altView=null, triggerExternalLayerRender=null}) => {
   const mapRef = useRef();
   const [map, setMap] = useState(null);
  
@@ -18,7 +18,8 @@ const Map = ({ children, zoom, center, projection='EPSG:3857', mapClass="ol-map"
     let view = new OLView({ 
       zoom, 
       center,
-      projection 
+      projection,
+      extent 
     })
   
     let options = {

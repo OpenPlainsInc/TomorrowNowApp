@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Tue Oct 18 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,13 +34,21 @@ import Badge from 'react-bootstrap/Badge';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useNavigate } from 'react-router-dom';
 
-const TableActionsButtonGroup = () => {
+const TableActionsButtonGroup = ({modelId}) => {
+    let navigate = useNavigate();
+
+    const startModel = (e, modelId) => {
+        e.preventDefault()
+        return navigate(`/futures/${modelId}/scenarios`, {replace: true})
+    }
+
     return (
         <DropdownButton as={ButtonGroup} variant="dark" className="mb-2" title="Actions" id="bg-nested-dropdown">
-            <Dropdown.Item eventKey="1">Start</Dropdown.Item>
+            <Dropdown.Item eventKey="1" onClick={(e)=>startModel(e, modelId)}>Start</Dropdown.Item>
             <Dropdown.Item eventKey="2">Edit</Dropdown.Item>
-            <Dropdown.Item eventKey="2">Delete</Dropdown.Item>
+            <Dropdown.Item eventKey="3">Delete</Dropdown.Item>
         </DropdownButton> 
     )
     
@@ -81,7 +89,7 @@ const ModelsTable = ({data}) => {
                                 </td>
                                 <td>{r.properties.status}</td>
                                 <td>
-                                    <TableActionsButtonGroup/>
+                                    <TableActionsButtonGroup modelId={r.properties.id}/>
                                 </td>
                             </tr>
                         )

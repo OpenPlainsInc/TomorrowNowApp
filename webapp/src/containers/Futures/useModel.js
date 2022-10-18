@@ -1,7 +1,7 @@
 /*
- * Filename: index.js
+ * Filename: useModel.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Tuesday October 18th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -29,19 +29,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+import { settings } from "../../components/Grass/Settings"
+import { useDataSource } from "../../components/Grass/Utils"
 
-import Controls from "./Controls";
-import FullScreenControl from "./FullScreenControl";
-import ZoomSliderControl from "./ZoomSliderControl";
-import ScaleLineControl from "./ScaleLineControl";
-import RotateControl from "./RotateControl";
-import EditMapControl from "./EditMapControl";
+export const useModel = ({modelId}) => {
+    const URL = `${settings.ACTINIA_BASE_URL}/model/${modelId}`
+    const fetchModel = async(params) => {
+        const response = await fetch(URL)
+        return response
+    }
 
-export default Controls
-export {
-	FullScreenControl,
-    ZoomSliderControl,
-    ScaleLineControl,
-    RotateControl,
-    EditMapControl
+    const {data, errors, isloading } = useDataSource({fetchModel, params: [modelId]})
+
+    return {data, errors, isloading }
 }

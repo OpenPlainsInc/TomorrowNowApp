@@ -1,7 +1,7 @@
 /*
- * Filename: index.js
+ * Filename: Model.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Tuesday October 18th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -29,19 +29,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+import { useState } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import ModelMap from './ModelMap';
+import { ProtectedArea } from './ProtectedArea';
+import Collection from 'ol/Collection'
 
-import Controls from "./Controls";
-import FullScreenControl from "./FullScreenControl";
-import ZoomSliderControl from "./ZoomSliderControl";
-import ScaleLineControl from "./ScaleLineControl";
-import RotateControl from "./RotateControl";
-import EditMapControl from "./EditMapControl";
+export default function ModelContainer() {
+    
+    const devRestrictionsCollection = new Collection()
+   
+    const [devRestrictions, setDevRestrictions] = useState(devRestrictionsCollection);
 
-export default Controls
-export {
-	FullScreenControl,
-    ZoomSliderControl,
-    ScaleLineControl,
-    RotateControl,
-    EditMapControl
+    return (
+        <Container fluid className="bg-light text-dark">
+            <Row>
+              <Col md={9}>
+                <ModelMap devRestrictions={devRestrictions}></ModelMap>
+              </Col>
+              <Col md={3}>
+                <ProtectedArea devRestrictions={devRestrictions}></ProtectedArea>
+              </Col>
+            </Row>
+        </Container>
+    )
 }

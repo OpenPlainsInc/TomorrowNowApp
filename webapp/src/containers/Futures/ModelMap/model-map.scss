@@ -1,0 +1,41 @@
+/*
+ * Filename: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp/src/containers/Futures/ModelMap/model-map.scss
+ * Path: /home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/webapp
+ * Created Date: Tuesday, October 18th 2022, 11:43:53 am
+ * Author: Corey White
+ * 
+ * Copyright (c) 2022 Corey White
+ */
+
+
+ @use '../../../App.scss' as colors;
+
+
+ html,body {
+     height: 100%; 
+     width: 100%;
+     background-color: colors.$savan-tan;
+ }
+ // .map-fullscreen {
+ //     height: auto; 
+ //     position: relative; 
+ //     height: 50rem;
+ //     width: 100%;
+ //     // top: 0; 
+ //     // bottom: 0; 
+ //     // left: 0; 
+ //     // right: 33.33%;
+ //     margin-top: 50px;
+ // }
+ 
+ .map-fullscreen {
+     height: auto; 
+     position: absolute; 
+     // height: 50rem;
+     // width: 100%;
+     top: 0; 
+     bottom: 0; 
+     left: 0; 
+     right: 33.333%;
+     margin-top: 50px;
+ }
