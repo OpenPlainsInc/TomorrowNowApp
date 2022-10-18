@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Oct 16 2022                                               #
+# Last Modified: Mon Oct 17 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -35,7 +35,16 @@ from django.contrib.gis.geos import Point
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from django.contrib.auth.models import User
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from .models import DrainRequest, OpenPlainsModel, ModelGoal, Goal
+from .models import DrainRequest, OpenPlainsModel, ModelGoal, Goal, ModelExtent
+from world.serializers import CountyGeoidSerializer
+
+
+class ModelExtentSerializer(serializers.ModelSerializer):
+    county = CountyGeoidSerializer()
+
+    class Meta:
+        model = ModelExtent
+        fields = ['county']
 
 
 class GoalSerializer(serializers.ModelSerializer):
@@ -71,10 +80,11 @@ class OPModelSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='get_status_display')
     goals = ModelGoalSerializer(many=True, read_only=True)  # serializers.PrimaryKeyRelatedField(many=True, queryset=ModelGoal.objects.all())
     privacy = serializers.CharField(source='get_privacy_display')  # (ChoiceField(choices=PrivacyEnum)
+    counties = ModelExtentSerializer(many=True, read_only=True)
 
     class Meta:
         model = OpenPlainsModel
-        fields = ['name', 'description', 'privacy', 'mapset', 'owner', 'slug', 'status', 'goals']
+        fields = ['id', 'name', 'description', 'privacy', 'mapset', 'owner', 'slug', 'status', 'goals', 'counties']
 
 
 class UserSerializer(serializers.ModelSerializer):

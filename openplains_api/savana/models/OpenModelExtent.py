@@ -1,7 +1,7 @@
 ###############################################################################
-# Filename: __init__.py                                                        #
+# Filename: OpenModelExtent.py                                                 #
 # Project: TomorrowNow                                                         #
-# File Created: Tuesday May 10th 2022                                          #
+# File Created: Monday October 17th 2022                                       #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
@@ -29,7 +29,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 #                                                                              #
 ###############################################################################
+from django.db import models
 
-from .Huc12 import Huc12
-from .WorldBoarder import WorldBorder
-from .County import County
+
+class ModelExtent(models.Model):
+    """A feature representing part or all of a models extent"""
+
+    model = models.ForeignKey("savana.OpenPlainsModel", editable=True, on_delete=models.CASCADE, null=False, related_name='counties')
+    county = models.ForeignKey("world.County", editable=True, on_delete=models.CASCADE, null=False)

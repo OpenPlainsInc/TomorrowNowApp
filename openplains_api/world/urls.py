@@ -13,5 +13,6 @@ urlpatterns = [
     path('map', views.mapview, name="Map"),
     path('countries/', cache_page(60 * 15)(views.WorldAPIView.as_view()), name='countires'),
     path('population/', cache_page(60 * 15)(views.WorldAPIViewCustom.as_view()), name='population'),
+    path('counties/', cache_page(60 * 15)(views.WorldAPIViewCustom.as_view()), name='counties'),
     path('room/<str:room_name>/', views.room, name='room'),
 ]

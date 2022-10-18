@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 04 2022                                               #
+# Last Modified: Mon Oct 17 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -38,3 +38,4 @@ from .OPEnums import StatusEnum, PrivacyEnum
 from .OPGoal import Goal
 from .OPModel import OpenPlainsModel
 from .OPModelGoal import ModelGoal
+from .OpenModelExtent import ModelExtent

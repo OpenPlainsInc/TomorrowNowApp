@@ -7,14 +7,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.db.models.functions import Distance
-from .serializers import WorldBorderSerializer
+from .serializers import WorldBorderSerializer, CountyBoarderSerializer
 from rest_framework import viewsets, generics
 from .filters import WorldPopulationFilter   
 import requests
 
 # Create your views here.
 
-from .models import WorldBorder
+from .models import WorldBorder, County
 
 longitude = -80.191788
 latitude = 25.761681
@@ -63,3 +63,10 @@ class WorldAPIViewCustom(generics.ListAPIView):
     queryset = WorldBorder.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = WorldPopulationFilter
+
+
+class CountyAPIView(generics.ListAPIView):
+    serializer_class = CountyBoarderSerializer
+    queryset = County.objects.all().order_by('geoid')
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['geoid', 'statefp', 'countyfp']
