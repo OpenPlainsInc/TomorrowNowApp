@@ -47,6 +47,7 @@ export const ModelAnalyticCard = ({label, value, icon, tooltip}) => {
                 <Card.Title>{label}
                     <InfoToolTip desc={tooltip}/>
                 </Card.Title>
+                <Card.Text><small>Updated 3 minutes ago</small></Card.Text>
             </Card.Footer>
         </Card>
     )

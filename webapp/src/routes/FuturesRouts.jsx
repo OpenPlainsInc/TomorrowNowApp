@@ -24,6 +24,12 @@ const FuturesRoutes = (
       </ModelDetailsContainer>
       }>
     </Route>
+    <Route path="futures/:modelId/analytics" element={
+      <ModelDetailsContainer>
+        <ModelDetails/>
+      </ModelDetailsContainer>
+      }>
+    </Route>
     <Route path="futures/:modelId/scenarios" element={<ModelContainer/>}></Route>
     <Route path="futures" element={<Futures />}></Route>
     {/* <Route path="futures" element={<Futures />}>

@@ -49,10 +49,16 @@ const TableActionsButtonGroup = ({modelId}) => {
         return navigate(`/futures/${modelId}`, {replace: true})
     }
 
+    const analyticsModel = (e, modelId) => {
+        e.preventDefault()
+        return navigate(`/futures/${modelId}/analytics`, {replace: true})
+    }
+
     return (
         <DropdownButton as={ButtonGroup} variant="dark" className="mb-2" title="Actions" id="bg-nested-dropdown">
             <Dropdown.Item eventKey="1" onClick={(e)=>startModel(e, modelId)}>Start</Dropdown.Item>
             <Dropdown.Item eventKey="2" onClick={(e)=>editModel(e, modelId)}>Edit</Dropdown.Item>
+            <Dropdown.Item eventKey="2" onClick={(e)=>analyticsModel(e, modelId)}>Analytics</Dropdown.Item>
             <Dropdown.Item eventKey="3">Delete</Dropdown.Item>
         </DropdownButton> 
     )

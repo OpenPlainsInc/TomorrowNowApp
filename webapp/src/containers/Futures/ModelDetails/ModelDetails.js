@@ -73,7 +73,7 @@ export const ModelDetails = ({model, errors, isloading}) => {
                 </Col>
                 <Col md={3}>
                     <ModelAnalyticCard 
-                        label={"Scenarios Run"} 
+                        label={"Scenarios"} 
                         value={203} 
                         icon={"fa-map-location"}
                         tooltip={"The total number of urban development scenarios ran for the model."}
