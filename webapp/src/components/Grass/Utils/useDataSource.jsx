@@ -22,7 +22,7 @@ export const useDataSource = ({getDataFunc, params = []}) => {
     const [data, setData] = useState(null)
     const [ isloading, setIsLoading ] = useState(false)
     const [ errors, setErrors ] = useState(null)
-
+    // console.log("useDataSource", params)
     useEffect(()=> {
         if (!getDataFunc) return;
         if (data || isloading || errors) return;

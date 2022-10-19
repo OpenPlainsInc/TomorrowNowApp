@@ -1,11 +1,11 @@
 /*
- * Filename: Model.js
+ * Filename: ModelDetailsContainer.js
  * Project: TomorrowNow
- * File Created: Tuesday October 18th 2022
+ * File Created: Wednesday October 19th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 18 2022
+ * Last Modified: Wed Oct 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,39 +29,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import ModelMap from './ModelMap';
-import { ProtectedArea } from './ProtectedArea';
+
 import Collection from 'ol/Collection'
-import { SidePanel } from './SidePanel';
 import Tab from 'react-bootstrap/Tab';
+import { useLocation, Outlet, useParams } from "react-router-dom";
+import { useModel } from '../useModel'
 
-export default function ModelContainer() {
-    
-    const devRestrictionsCollection = new Collection()
-   
-    const [devRestrictions, setDevRestrictions] = useState(devRestrictionsCollection);
+export default function ModelDetailsContainer({ children }) {
+    let {modelId} = useParams();
+    // console.log(location, modelId)
 
+    let {data, errors, isloading} = useModel({modelId})
+    console.log(data, errors, isloading)
     return (
-        <Container fluid className="bg-light text-dark">
-            <Row>
-              <Col md={9}>
-                <ModelMap devRestrictions={devRestrictions}></ModelMap>
-              </Col>
-              <Col md={3}>
-                <SidePanel>
-                <Tab eventKey="restrictions" title="Development Restrictions">
-                    <ProtectedArea devRestrictions={devRestrictions}></ProtectedArea>
-                </Tab>
-                <Tab eventKey="chat" title="Chat">
-                    <input type="textarea" placeholder='admin: sup dog?' />
-                </Tab>
-                </SidePanel>
-              </Col>
-            </Row>
+        <Container fluid className="bg-light text-dark" style={{paddingTop: 20, height: '100vh'}}>
+            <div>
+                {
+                    React.Children.map(children, child => {
+                        if (React.isValidElement(child)) {
+                            return React.cloneElement(child, {'model' : data, errors, isloading})
+                        }
+                        return child
+                    })
+                }
+            </div>
         </Container>
     )
 }

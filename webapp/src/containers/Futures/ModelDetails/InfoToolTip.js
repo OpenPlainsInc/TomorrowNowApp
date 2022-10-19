@@ -1,7 +1,7 @@
 /*
- * Filename: useModel.js
+ * Filename: InfoToolTip.js
  * Project: TomorrowNow
- * File Created: Tuesday October 18th 2022
+ * File Created: Wednesday October 19th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -29,28 +29,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import { settings } from "../../components/Grass/Settings"
-import { useDataSource } from "../../components/Grass/Utils"
-import { useToken } from "../../components/Grass/Utils/Auth/useToken"
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import {Tooltip as BSTooltip } from 'react-bootstrap';
+import Badge from 'react-bootstrap/Badge';
+import { useEffect } from 'react';
 
-export const useModel = ({modelId}) => {
-    const { token } = useToken()
-    const URL = `${settings.ACTINIA_BASE_URL}/models/${modelId}/`
-    // console.log(URL)
-    const fetchModel = async(params) => {
-        console.log("fetchModel")
-        const response = await fetch(URL, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Token ${token.token}`,
-                'Content-Type': 'application/json'
-            }
-        })
-        let res = await response.json()
-        return res
-    }
+export const InfoToolTip = ({desc=null}) => {
 
-    const {data, errors, isloading } = useDataSource({getDataFunc: fetchModel, params: [modelId]})
-
-    return {data, errors, isloading }
+    return (
+        <OverlayTrigger overlay={<BSTooltip id="tooltip-disabled">{desc}</BSTooltip>}>
+            <Badge bg="primary" style={{ 'cursor': 'pointer', 'marginLeft':'5px' }}>{"?"}</Badge>
+        </OverlayTrigger>
+    )
 }

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 18 2022
+ * Last Modified: Wed Oct 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -44,10 +44,15 @@ const TableActionsButtonGroup = ({modelId}) => {
         return navigate(`/futures/${modelId}/scenarios`, {replace: true})
     }
 
+    const editModel = (e, modelId) => {
+        e.preventDefault()
+        return navigate(`/futures/${modelId}`, {replace: true})
+    }
+
     return (
         <DropdownButton as={ButtonGroup} variant="dark" className="mb-2" title="Actions" id="bg-nested-dropdown">
             <Dropdown.Item eventKey="1" onClick={(e)=>startModel(e, modelId)}>Start</Dropdown.Item>
-            <Dropdown.Item eventKey="2">Edit</Dropdown.Item>
+            <Dropdown.Item eventKey="2" onClick={(e)=>editModel(e, modelId)}>Edit</Dropdown.Item>
             <Dropdown.Item eventKey="3">Delete</Dropdown.Item>
         </DropdownButton> 
     )

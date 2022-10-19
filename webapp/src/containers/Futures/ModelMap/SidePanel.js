@@ -1,11 +1,11 @@
 /*
- * Filename: useModel.js
+ * Filename: SidePanel.js
  * Project: TomorrowNow
  * File Created: Tuesday October 18th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Tue Oct 18 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,28 +29,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import { settings } from "../../components/Grass/Settings"
-import { useDataSource } from "../../components/Grass/Utils"
-import { useToken } from "../../components/Grass/Utils/Auth/useToken"
 
-export const useModel = ({modelId}) => {
-    const { token } = useToken()
-    const URL = `${settings.ACTINIA_BASE_URL}/models/${modelId}/`
-    // console.log(URL)
-    const fetchModel = async(params) => {
-        console.log("fetchModel")
-        const response = await fetch(URL, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Token ${token.token}`,
-                'Content-Type': 'application/json'
-            }
-        })
-        let res = await response.json()
-        return res
-    }
+import { useState } from 'react';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import { ProtectedArea } from './ProtectedArea';
 
-    const {data, errors, isloading } = useDataSource({getDataFunc: fetchModel, params: [modelId]})
-
-    return {data, errors, isloading }
+export const SidePanel = ({children}) => {
+    const [key, setKey] = useState('scenario');
+    return (
+        <Tabs
+            id="model-sidebar-tabs"
+            activeKey={key}
+            onSelect={(k) => setKey(k)}
+            className="mb-3"
+            fill
+            >
+            <Tab eventKey="scenario" title="Scenario">
+                Hello
+            </Tab>
+            {children}
+        </Tabs>
+    )
 }

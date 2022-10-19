@@ -1,7 +1,7 @@
 /*
- * Filename: useModel.js
+ * Filename: ModelAnalyticCard.js
  * Project: TomorrowNow
- * File Created: Tuesday October 18th 2022
+ * File Created: Wednesday October 19th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -29,28 +29,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import { settings } from "../../components/Grass/Settings"
-import { useDataSource } from "../../components/Grass/Utils"
-import { useToken } from "../../components/Grass/Utils/Auth/useToken"
+import Card from 'react-bootstrap/Card';
+import { InfoToolTip } from './InfoToolTip';
 
-export const useModel = ({modelId}) => {
-    const { token } = useToken()
-    const URL = `${settings.ACTINIA_BASE_URL}/models/${modelId}/`
-    // console.log(URL)
-    const fetchModel = async(params) => {
-        console.log("fetchModel")
-        const response = await fetch(URL, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Token ${token.token}`,
-                'Content-Type': 'application/json'
-            }
-        })
-        let res = await response.json()
-        return res
-    }
+export const ModelAnalyticCard = ({label, value, icon, tooltip}) => {
 
-    const {data, errors, isloading } = useDataSource({getDataFunc: fetchModel, params: [modelId]})
-
-    return {data, errors, isloading }
+    return(
+        <Card style={{ width: '30rem', paddingTop: '1rem'}}>
+            <Card.Img variant="top" className={`fa-solid ${icon} fa-5x`}/>
+            <Card.Body>
+            
+                <Card.Text variant="h1" style={{"textAlign": "center", "fontSize": "200%"}}>{value}</Card.Text>
+                {/* <ModelsTable data={data.features}/> */}
+                {/* <Button variant="secondary">Explore</Button> */}
+            </Card.Body>
+            <Card.Footer>
+                <Card.Title>{label}
+                    <InfoToolTip desc={tooltip}/>
+                </Card.Title>
+            </Card.Footer>
+        </Card>
+    )
 }

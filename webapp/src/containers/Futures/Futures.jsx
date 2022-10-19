@@ -24,21 +24,6 @@ export default function Futures() {
   const {token} = useToken()
   const [mockModelss, setMockModelss] = useState(null)
   
-  useEffect(()=> {
-    (async()=> {
-      let url = 'http://localhost:8005/savana/models/'
-      let response = await fetch(url, {
-        headers: {
-          'Authorization': `Token ${token.token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      let data = await response.json()
-      console.log('Models Data:', data)
-      setMockModelss(data)
-
-    })()
-  },[])
 
     return (
         <Container fluid className="bg-light text-dark" style={{paddingTop: 20, height: '100vh'}}>
@@ -59,7 +44,7 @@ export default function Futures() {
               </div> */}
             </Col>
           </Row>
-          
+          <Outlet/>
         </Container>
         
     );

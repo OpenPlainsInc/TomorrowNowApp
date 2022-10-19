@@ -39,7 +39,18 @@ import { useEffect } from 'react';
 export const ProtectedArea = ({devRestrictions}) => {
 
     const [data, setData] = useState([])
-    
+    const currencyFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    })
+
+    const estimateLandCost = (km2) => {
+        const AVG_COST_PER_ACRE = 124862.00;
+        const km2ToAcreConstant = 247.105;
+        const estCostRaw = (km2 * km2ToAcreConstant * AVG_COST_PER_ACRE).toFixed(2)
+        const formatedCost = currencyFormatter.format(estCostRaw)
+        return {estCostRaw, formatedCost}
+    }
     /**
      * Handles events where a new restriction is added to the map.
      */
@@ -77,7 +88,7 @@ export const ProtectedArea = ({devRestrictions}) => {
 
 
     return (
-        <Card style={{ width: '18rem' }}>
+        <Card>
             {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
             <Card.Body>
                 <Card.Title>Development Restrictions</Card.Title>
@@ -90,7 +101,7 @@ export const ProtectedArea = ({devRestrictions}) => {
                                 >
                                     <div className="ms-2 me-auto">
                                         <div className="fw-bold">{d.landuse}</div>
-                                        Something here
+                                        Est. Cost: {estimateLandCost(d.area).formatedCost}
                                     </div>
                                     <Badge bg="primary" pill>{d.area} km<sup>2</sup></Badge>
                                 </ListGroup.Item>

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Oct 16 2022                                               #
+# Last Modified: Wed Oct 19 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -99,6 +99,38 @@ class OpModelList(APIView):
         models = OpenPlainsModel.objects.all()
         serializer = OPModelSerializer(models, many=True)
         return Response(serializer.data)
+
+
+class OpModelDetails(APIView):
+    """View an OpenPlains model's details"""
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = OpenPlainsModel.objects.all()
+    serializer_class = OPModelSerializer
+
+    def get_object(self, model_id):
+        try:
+            return OpenPlainsModel.objects.get(pk=model_id)
+        except OpenPlainsModel.DoesNotExist:
+            raise Http404
+
+    def get(self, request, model_id, format=None):
+        model = self.get_object(model_id)
+        serializer = OPModelSerializer(model)
+        return Response(serializer.data)
+
+    def put(self, request, model_id, format=None):
+        model = self.get_object(model_id)
+        serializer = OPModelSerializer(model, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, model_id, format=None):
+        model = self.get_object(model_id)
+        model.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 def resourceStatus(user_id, resource_id):

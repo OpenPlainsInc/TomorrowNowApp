@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 18 2022
+ * Last Modified: Wed Oct 19 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -32,7 +32,7 @@
 import './model-map.scss'
 import {useState, useEffect} from 'react'
 import Map from '../../../components/OpenLayers/Map';
-import Controls, {FullScreenControl, ZoomSliderControl, ScaleLineControl} from '../../../components/OpenLayers/Controls';
+import Controls, {ZoomSliderControl, ScaleLineControl} from '../../../components/OpenLayers/Controls';
 import Layers from '../../../components/OpenLayers/Layers/Layers';
 import TileLayer from "../../../components/OpenLayers/Layers/TileLayer"
 
@@ -54,38 +54,7 @@ export default function ModelMap({devRestrictions}) {
     const [center, setCenter] = useState([-8773686.675374346,4287950.809332017]);
     const [zoom, setZoom] = useState(9);
 
-    // let countySource = useVectorTileSource({
-    //     layerName:"savana:cb_2018_us_county_500k",
-    //     baseUrl:`http://localhost:8600/geoserver/gwc/service/wmts`,
-    //     epsg: PROJECTION
-    //   })
-    // const devRestrictionsCollection = new Collection()
-   
-   
-
-    // const [devRestrictions, setDevRestrictions] = useState(devRestrictionsCollection);
-    // devRestrictions.on('add', (e, index, target, type) => {
-    //     e.preventDefault()
-    //     console.log(e.element, e.index, e.target, e.ype)
-    //     console.log(devRestrictions.item(e.index))
-    //     console.log(e.target)
-    //     e.target.forEach((f) => console.log(f.getGeometry().getArea() / 1e6))
-    // })
-    // devRestrictions.on('remove', (element, index, target, type) => console.log(element, index, target, type))
-    // devRestrictions.on('change', (element, index, target, type) => console.log(element, index, target, type))
-    // devRestrictions.on('error', (element, index, target, type) => console.log(element, index, target, type))
     const interactionSource = useVectorSource({wrapX: false})
-
-    
-
-    // useEffect(() => {
-    //     const currentDevelopmentRestrictions = () => {
-    //         // let features = interactionSource.getFeatures()
-    //         devRestrictions.forEach(f => console.log(f))
-    //         // console.log(features)
-    //     }
-    //     currentDevelopmentRestrictions()
-    // }, [devRestrictions])
     
 
     return (
@@ -98,7 +67,7 @@ export default function ModelMap({devRestrictions}) {
             extent={EXTENT}
         >
             <Layers>
-                <TileLayer source={osmSource} opacity={0.5}></TileLayer>
+                <TileLayer source={osmSource} opacity={1.0}></TileLayer>
                 <VectorLayer source={interactionSource}/>
                 {/* <VectorTileLayer 
                     layerName="seletedCounties" 
