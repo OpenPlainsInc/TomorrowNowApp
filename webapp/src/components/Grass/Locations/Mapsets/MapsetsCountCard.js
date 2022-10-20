@@ -1,11 +1,11 @@
 /*
- * Filename: ModelAnalyticCard.js
+ * Filename: MapsetsCountCard.js
  * Project: TomorrowNow
- * File Created: Wednesday October 19th 2022
+ * File Created: Thursday October 20th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Thu Oct 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,26 +29,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import Card from 'react-bootstrap/Card';
-import { InfoToolTip } from './InfoToolTip';
 
-export const ModelAnalyticCard = ({label, value, icon, tooltip}) => {
+
+import { AnalyticSummaryCard } from '../../Utils/AnalyticSummaryCard';
+
+
+export const MapsetsCountCard = ({mapsetCount}) => {
 
     return(
-        <Card style={{  paddingTop: '1rem'}}>
-            <Card.Img variant="top" className={`fa-solid ${icon} fa-5x`}/>
-            <Card.Body>
-            
-                <Card.Text variant="h1" style={{"textAlign": "center", "fontSize": "200%"}}>{value}</Card.Text>
-                {/* <ModelsTable data={data.features}/> */}
-                {/* <Button variant="secondary">Explore</Button> */}
-            </Card.Body>
-            <Card.Footer>
-                <Card.Title>{label}
-                    <InfoToolTip desc={tooltip}/>
-                </Card.Title>
-                <Card.Text><small>Updated 3 minutes ago</small></Card.Text>
-            </Card.Footer>
-        </Card>
+        <AnalyticSummaryCard
+            label="Mapsets"
+            value={mapsetCount}
+            icon={"fa-map"}
+            tooltip={"The total number of mapsets in the location."}
+        />
     )
 }

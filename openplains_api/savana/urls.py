@@ -22,7 +22,7 @@ urlpatterns = [
     path('g/locations/<str:location_name>/mapsets/<str:mapset_name>/info', cache_page(60 * 15)(views.gMapsetInfo), name="MapsetInfo"),
     path('g/locations/<str:location_name>/mapsets/<str:mapset_name>/raster_layers', cache_page(60 * 15)(views.gListRasters), name="ListRaster"),
     path('g/locations/<str:location_name>/mapsets/<str:mapset_name>/vector_layers', cache_page(60 * 15)(views.gListVectors), name="ListVector"),
-
+    path('g/locations/<str:location_name>/mapsets/<str:mapset_name>/lock', views.gMapsetLock, name="mapset-lock"),
     path('g/modules', cache_page(60 * 15)(views.gModules), name="gModules"),
     path('g/modules/<str:grassmodule>', cache_page(60 * 15)(views.gModule), name="gModule"),
 

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Wed Oct 19 2022                                               #
+# Last Modified: Thu Oct 20 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -236,6 +236,43 @@ def gMapset(request, location_name, mapset_name):
     DELETE /locations/{locations_name}/mapsets/{mapset_name}
     """
     url = f"{acp.baseUrl()}/locations/{location_name}/mapsets/{mapset_name}"
+    if request.method == 'POST':
+        r = requests.post(url, auth=acp.auth())
+        print(f"Request URL: {url}")
+        # cache.delete_many(keys=cache.keys('*.grass_locations.*'))
+        return JsonResponse({"response": r.json()}, safe=False)
+
+    if request.method == 'DELETE':
+        r = requests.delete(url, auth=acp.auth())
+        print(f"Request URL: {url}")
+        if r.status_code == 200:
+            # cache.delete_many(keys=cache.keys('*.grass_locations.*'))
+            return JsonResponse({"response": r.json()}, safe=False)
+        else:
+            return JsonResponse({"response": r.json()}, safe=False)
+
+    # TODO - Set up proper error handling and reponse messages
+    return JsonResponse({"error": "gLocation View: Fix Me"})
+
+
+@api_view(['GET', 'POST', 'DELETE'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def gMapsetLock(request, location_name, mapset_name):
+    """
+    Create or Delete Mapset
+    Actinia Route
+    POST /locations/{locations_name}/mapsets/{mapset_name}/lock
+    DELETE /locations/{locations_name}/mapsets/{mapset_name}lock
+    """
+    url = f"{acp.baseUrl()}/locations/{location_name}/mapsets/{mapset_name}/lock"
+
+    if request.method == 'GET':
+        r = requests.get(url, auth=acp.auth())
+        print(f"Request URL: {url}")
+        # cache.delete_many(keys=cache.keys('*.grass_locations.*'))
+        return JsonResponse({"response": r.json()}, safe=False)
+
     if request.method == 'POST':
         r = requests.post(url, auth=acp.auth())
         print(f"Request URL: {url}")

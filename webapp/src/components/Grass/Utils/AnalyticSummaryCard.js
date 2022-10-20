@@ -1,11 +1,11 @@
 /*
- * Filename: ModelAnalyticCard.js
+ * Filename: AnalyticSummaryCard.js
  * Project: TomorrowNow
- * File Created: Wednesday October 19th 2022
+ * File Created: Thursday October 20th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Thu Oct 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,10 +29,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+
+
 import Card from 'react-bootstrap/Card';
 import { InfoToolTip } from './InfoToolTip';
 
-export const ModelAnalyticCard = ({label, value, icon, tooltip}) => {
+export const AnalyticSummaryCard = ({label, value, icon, tooltip}) => {
 
     return(
         <Card style={{  paddingTop: '1rem'}}>
@@ -47,7 +49,7 @@ export const ModelAnalyticCard = ({label, value, icon, tooltip}) => {
                 <Card.Title>{label}
                     <InfoToolTip desc={tooltip}/>
                 </Card.Title>
-                <Card.Text><small>Updated 3 minutes ago</small></Card.Text>
+                {/* <Card.Text><small>Updated 3 minutes ago</small></Card.Text> */}
             </Card.Footer>
         </Card>
     )

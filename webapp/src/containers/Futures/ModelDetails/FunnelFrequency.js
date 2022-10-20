@@ -69,7 +69,7 @@ export const FunnelFrequency = () => {
                 data={data}
                 isAnimationActive
             >
-                <LabelList position="center" fill="#000" stroke="none" dataKey="name" />
+                <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
             </Funnel>
         </FunnelChart>
     )

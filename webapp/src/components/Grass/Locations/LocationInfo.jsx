@@ -22,28 +22,54 @@
 
 import React, { useState, useEffect } from "react"
 import { parserProjection } from "../Utils/jsonparsers"
-// import "./location.scss";
+import { useMapsets } from "./Mapsets/useMapsets"
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { MapsetsCountCard } from "./Mapsets/MapsetsCountCard";
+import { Mapset } from "./Mapsets/Mapset";
+import { ComputationalRegion } from "./ComputationalRegion";
+import { ProjectionCardView } from "./ProjectionCardView";
+import { MapsetsAdminTable } from "./Mapsets/MapsetAdminTable";
 
 export const LocationInfo = ({locationId, grassLocation}) => {
   const [locationInfo, setLocationInfo] = useState(null)
-  let errors = grassLocation.errors
-
+  let locationErrors = grassLocation.errors
+  const {mapsets, errors, isLoading} = useMapsets({locationName: locationId})
+  const [stringProjection, setStringProjection] = useState(null)
   useEffect(() => {
     if (!grassLocation.data || locationInfo) return;
       setLocationInfo(grassLocation.data.processResults)
+      setStringProjection(JSON.stringify(parserProjection(grassLocation.data.processResults.projection, ","), null, 2))
   }, [grassLocation, locationInfo])
 
   return (
     <div>
+      
     { 
 
-      locationInfo ?
-          <>
-            <h1 data-testid="locationNameText">{locationId}</h1>
-            <code>{JSON.stringify(parserProjection(locationInfo.projection, ","), null, 2)}</code>
-            <pre>{JSON.stringify(locationInfo.region, null, 2)}</pre>
-          </>
-      : errors ? <p>{errors}</p> : <></>
+   stringProjection ?
+      <>
+        <Row>
+          <h1 data-testid="locationNameText">{locationId}</h1>
+          <Col md={3}>
+            <MapsetsCountCard mapsetCount={mapsets?.processResults.length}></MapsetsCountCard>
+          </Col>
+          <Col md={5}>
+            <ComputationalRegion region={locationInfo?.region}/>
+          </Col>
+          <Col md={4}>
+            <ProjectionCardView projection={stringProjection}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <MapsetsAdminTable 
+              mapsets={mapsets?.processResults} 
+              locationName={locationId}/>
+          </Col>
+        </Row>
+      </>
+      : locationErrors ? <p>{locationErrors}</p> : <></>
     }
     </div>
   )

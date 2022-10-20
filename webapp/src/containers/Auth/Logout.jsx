@@ -23,16 +23,16 @@ export default function Logout() {
         (async () => {
             let logoutResponse = await logout()
             console.log(logoutResponse)
-            if (logoutResponse.ok) {
+            // if (logoutResponse.ok) {
                 setLoggedOut(true)
                 return navigate('/login', {replace: true})
-            }
+            // }
             // if (loginResponse.token && loginResponse.expiry) { //Replace with token is valid
               // setToken(loginResponse.token)
             //   return navigate('/login', {replace: true})
             // }
         })()
-    }, [loggedOut])
+    }, [loggedOut, logout, navigate])
    
 
     return (

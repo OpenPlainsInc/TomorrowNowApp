@@ -1,11 +1,11 @@
 /*
- * Filename: ModelAnalyticCard.js
+ * Filename: useVectors.js
  * Project: TomorrowNow
- * File Created: Wednesday October 19th 2022
+ * File Created: Thursday October 20th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Thu Oct 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -29,26 +29,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
-import Card from 'react-bootstrap/Card';
-import { InfoToolTip } from './InfoToolTip';
+import grass from "@openplains/grass-js-client";
+import { useState, useEffect } from "react";
+import { useDataSource } from '../../../Utils';
+export const useVectors = ({locationName, mapsetName}) => {
+    const {data, errors, isLoading} = useDataSource({
+        getDataFunc: grass.routes.Layers.vectors, 
+        params: [locationName, mapsetName]
+    })
+    
+    const [vectors, setVectors] = useState(null)
 
-export const ModelAnalyticCard = ({label, value, icon, tooltip}) => {
+    useEffect(() => {
+        setVectors(data)
+    },[locationName, mapsetName, data])
 
-    return(
-        <Card style={{  paddingTop: '1rem'}}>
-            <Card.Img variant="top" className={`fa-solid ${icon} fa-5x`}/>
-            <Card.Body>
-            
-                <Card.Text variant="h1" style={{"textAlign": "center", "fontSize": "200%"}}>{value}</Card.Text>
-                {/* <ModelsTable data={data.features}/> */}
-                {/* <Button variant="secondary">Explore</Button> */}
-            </Card.Body>
-            <Card.Footer>
-                <Card.Title>{label}
-                    <InfoToolTip desc={tooltip}/>
-                </Card.Title>
-                <Card.Text><small>Updated 3 minutes ago</small></Card.Text>
-            </Card.Footer>
-        </Card>
-    )
+    return {vectors, errors, isLoading}
 }
+

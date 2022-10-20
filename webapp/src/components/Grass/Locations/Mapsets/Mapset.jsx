@@ -8,9 +8,14 @@
  */
 
 import React, {useState} from "react";
+import { useRasters } from "./Layers/useRasters";
+import { useMapset } from "./useMapset";
 
 export const Mapset = ({locationName, mapsetName}) => {
-
+    const {mapset, errors, isLoading} = useMapset({locationName, mapsetName})
+    const { rasters } = useRasters({locationName, mapsetName})
+    console.log("mapset:", mapset)
+    console.log("rasters:", rasters?.processResults)
     return (
         <div>{`${locationName}: ${mapsetName}`}</div>
     )

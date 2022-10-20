@@ -30,8 +30,7 @@ export const useDataSource = ({getDataFunc, params = []}) => {
         (async () => {
             try {
                 setIsLoading(true)
-                let result = await getDataFunc(...params)    
-                console.log(result)      
+                let result = await getDataFunc(...params)      
                 setData(result)
             } catch (errs) {
                 setErrors(errs)
