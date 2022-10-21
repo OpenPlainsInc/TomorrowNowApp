@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Sep 26 2022
+ * Last Modified: Thu Oct 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -121,7 +121,7 @@ const ModelDetailView = ({modelId=null, selectedCounties=[], modelDesisEditable=
                         <Form.Label>Goals</Form.Label>
                         <Controller 
                             control={methods.control}
-                            name={"goals.natural"}
+                            name={"goals.protect_natural_reasources"}
                             defaultValue="" 
                             render={({ field: { onChange, onBlur, value, ref } }) => (  
                                 <Form.Check
@@ -138,7 +138,7 @@ const ModelDetailView = ({modelId=null, selectedCounties=[], modelDesisEditable=
                        
                             <Controller 
                                 control={methods.control}
-                                name={"goals.fragment"}
+                                name={"goals.limit_landscape_fragmentation"}
                                 defaultValue="" 
                                 render={({ field: { onChange, onBlur, value, ref } }) => (  
                                     <Form.Check
@@ -153,7 +153,22 @@ const ModelDetailView = ({modelId=null, selectedCounties=[], modelDesisEditable=
 
                             <Controller 
                                 control={methods.control}
-                                name={"goals.floodRoad"}
+                                name={"goals.protect_water_quality"}
+                                defaultValue="" 
+                                render={({ field: { onChange, onBlur, value, ref } }) => (  
+                                    <Form.Check
+                                    ref={ref}
+                                    type="switch"
+                                    name="goalsGroup"
+                                    label="Protect Water Quality"
+                                    onChange={onChange}
+                                    autoFocus/>
+                                )}
+                            />
+
+                            <Controller 
+                                control={methods.control}
+                                name={"goals.reduce_flooding_over_roads"}
                                 defaultValue="" 
                                 render={({ field: { onChange, onBlur, value, ref } }) => (  
                                     <Form.Check
@@ -168,7 +183,7 @@ const ModelDetailView = ({modelId=null, selectedCounties=[], modelDesisEditable=
 
                             <Controller 
                                 control={methods.control}
-                                name={"goals.floodDamage"}
+                                name={"goals.reduce_property_damage_flooding"}
                                 defaultValue="" 
                                 render={({ field: { onChange, onBlur, value, ref } }) => (  
                                     <Form.Check

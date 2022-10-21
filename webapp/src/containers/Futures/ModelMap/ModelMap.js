@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Thu Oct 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -45,6 +45,7 @@ import { useVectorTileSource } from '../../../components/OpenLayers/Sources';
 import { VectorTileLayer } from '../../../components/OpenLayers/Layers/VectorTileLayer';
 import { countyStyle } from '../countySelectStyle';
 import Collection from 'ol/Collection'
+import ActiniaGeoTiff from '../../../components/OpenLayers/Sources/ActiniaGeoTiff';
 
 export default function ModelMap({devRestrictions}) {
     const county_geoids = ['37183', '37063', '37135']
@@ -69,6 +70,11 @@ export default function ModelMap({devRestrictions}) {
             <Layers>
                 <TileLayer source={osmSource} opacity={1.0}></TileLayer>
                 <VectorLayer source={interactionSource}/>
+                <ActiniaGeoTiff
+                    rasterName={"final"}
+                    locationName={"futures_triangle_nc"}
+                    mapsetName={"futures_test"}
+                />
                 {/* <VectorTileLayer 
                     layerName="seletedCounties" 
                     renderMode="vector"

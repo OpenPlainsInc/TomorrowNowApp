@@ -38,10 +38,14 @@ RUN apt-get update \
 
 # Install Actinia Python Client
 ENV ACTINIA_CLI_VERSION="0.1.2"
-RUN wget https://github.com/mundialis/actinia-python-client/releases/download/$ACTINIA_CLI_VERSION/actinia_python_client-$ACTINIA_CLI_VERSION-py3-none-any.whl
-RUN pip install actinia_python_client-$ACTINIA_CLI_VERSION-py3-none-any.whl
+# RUN wget https://github.com/mundialis/actinia-python-client/releases/download/$ACTINIA_CLI_VERSION/actinia_python_client-$ACTINIA_CLI_VERSION-py3-none-any.whl
+# RUN pip install actinia_python_client-$ACTINIA_CLI_VERSION-py3-none-any.whl
 
-WORKDIR /code
+# Temp work around because the lastest version with my changes isn't released yet.
+WORKDIR /tmp
+RUN wget https://github.com/mundialis/actinia-python-client/archive/refs/heads/main.zip
+RUN pip install -e .
+
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 COPY . /code/

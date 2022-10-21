@@ -46,7 +46,7 @@ from django.middleware.csrf import get_token
 from .models.OPModel import OpenPlainsModel
 from .models import TestGCSResourceModel
 from .models import DrainRequest
-from .serializers import DrainRequestSerializer
+from .serializers import CreateModelSerializer, DrainRequestSerializer
 from django.core.files.base import ContentFile
 from django.core.cache import cache
 
@@ -92,13 +92,21 @@ class UserDetail(generics.RetrieveAPIView):
 class OpModelList(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = OpenPlainsModel.objects.all()
-    serializer_class = OPModelSerializer
+    # queryset = OpenPlainsModel.objects.all()
+    # serializer_class = OPModelSerializer
 
     def get(self, request, format=None):
         models = OpenPlainsModel.objects.all()
         serializer = OPModelSerializer(models, many=True)
         return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print("Hello POSTER")
+        serializer = CreateModelSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.create(serializer.data)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OpModelDetails(APIView):
@@ -344,7 +352,7 @@ def rRenderImage(request, location_name, raster_name, mapset_name):
     Actinia Route
     GET /locations/{location_name}/mapsets/{mapset_name}/raster_layers/{raster_name}/render
     """
-
+    print(mapset_name)
     url = f"{acp.baseUrl()}/locations/{location_name}/mapsets/" \
           f"{mapset_name}/raster_layers/{raster_name}/render"
 
@@ -1035,3 +1043,30 @@ def gModule(request, grassmodule):
 
     # TODO - Set up proper error handling and reponse messages
     return JsonResponse({"error": "gModules View: Fix Me"})
+
+
+# class FuturesIngest(APIView):
+
+#     def post()
+# @api_view(['GET', 'POST'])
+# @permission_classes([AllowAny])
+# @csrf_exempt
+# def futuresIngest(request):
+#     """
+#     futures Ingest
+#     """
+#     if request.method == 'GET':
+#         # TODO
+#         return JsonResponse({'route': 'GET: Futures Ingest'})
+
+#     if request.method == 'POST':
+
+       
+#         print(f"Response: {r.json()}")
+#         requestModel = DrainRequestSerializer(data={"point": db_point})
+#         if (requestModel.is_valid()):
+#             print("serializer data:", requestModel.validated_data)
+#             requestModel.save()
+#             return JsonResponse({"savana_response": requestModel.data, "response": jsonResponse}, status=status.HTTP_201_CREATED)
+#         else:
+#             return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse, 'errors': requestModel.errors})

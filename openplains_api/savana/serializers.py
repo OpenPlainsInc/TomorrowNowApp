@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Oct 17 2022                                               #
+# Last Modified: Thu Oct 20 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -35,8 +35,11 @@ from django.contrib.gis.geos import Point
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from django.contrib.auth.models import User
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from .models import DrainRequest, OpenPlainsModel, ModelGoal, Goal, ModelExtent
+from .models import DrainRequest, OpenPlainsModel, ModelGoal, Goal, ModelExtent, OPEnums
+from .models.OPEnums import StatusEnum
 from world.serializers import CountyGeoidSerializer
+from world.models import County
+from .tasks import ingestData
 
 
 class ModelExtentSerializer(serializers.ModelSerializer):
@@ -93,6 +96,54 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'opmodels']
+
+
+class StringListField(serializers.ListField):
+    child = serializers.CharField()
+
+
+class CreateModelSerializer(serializers.Serializer):
+    modelName = status = serializers.CharField(max_length=100)
+    modelDescription = serializers.CharField(max_length=250)  # The model name
+    status = serializers.ChoiceField(choices=(StatusEnum.choices), default=StatusEnum.INITIATING)
+    goals = serializers.JSONField()
+    counties = StringListField(min_length=1, max_length=5, allow_empty=False)
+
+    def create(self, validated_data):
+        print("creating new model")
+        print("Validated Data: ", validated_data)
+        print("Context: ", self.context)
+        print("Context Request: ", self.context['request'].user)
+        owner = self.context['request'].user
+        opModel = OpenPlainsModel.objects.create(
+            name=validated_data['modelName'],
+            description=validated_data['modelDescription'],
+            status=validated_data['status'],
+            owner=owner
+        )
+
+        # Set the model extent based on the county.
+        for county in County.objects.filter(geoid__in=validated_data['counties']):
+            ModelExtent.objects.create(
+                model=opModel,
+                county=county
+            )
+
+        # Set goals for the model
+        for k, v in validated_data['goals'].items():
+            if v:
+                goal = Goal.objects.get(slug=k)
+                print("The goal is ", goal.label)
+                ModelGoal.objects.create(
+                    goal=goal,
+                    model=opModel
+                )
+
+        # Ingest County Data Into Mapset
+        # This is a celery task
+        ingestData.delay(opModel.id, opModel.mapset, opModel.geoids())
+        return opModel
+
 
 # { cat: 11, color: "#476ba1", label: "Open Water", … }
 # ​​

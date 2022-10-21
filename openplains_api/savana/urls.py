@@ -60,7 +60,5 @@ urlpatterns = [
     # path('model/<str:model_id>/futures/<str:futures_id>/scenario', views.rGeoTiff, name="vSamplingSync"),
     # path('model/<str:model_id>/futures/<str:futures_id>/scenario/<str:scenario_id>', views.rGeoTiff, name="vSamplingSync"),
 
-
-    
     path('i', views.ping, name='i')
 ]

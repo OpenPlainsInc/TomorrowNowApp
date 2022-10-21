@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Oct 16 2022                                               #
+# Last Modified: Thu Oct 20 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -32,11 +32,14 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-from django.template.defaultfilters import slugify  # new
+from django.template.defaultfilters import slugify
+
+from world.models.County import County  # new
 from .OPEnums import PrivacyEnum, StatusEnum
 from .OPModelGoal import ModelGoal
+from .OpenModelExtent import ModelExtent
 from savana.utils import actinia as acp
-
+import requests
 # class GoalsEnum(models.TextChoices):
 #     PROTECT = "PNR", "Protect Natural Reasources"
 #     FRAGMENT = "LLF", "Limit Landscape Fragmentation"
@@ -61,7 +64,7 @@ class OpenPlainsModel(models.Model):
     # def goals(self):
     #     return ModelGoal.objects.get(model=self)
 
-    def region():
+    def region(self):
         """
         Add Compuational Region
         """
@@ -77,10 +80,44 @@ class OpenPlainsModel(models.Model):
         return reverse("opmodel_detail", kwargs={"slug": self.slug})
 
     def _create_mapset(self):
-        acp.location["CONUS"].create_mapset(self.slug)
+        print("Creating Mapset: ", self.slug)
+        client = acp.initActiniaClient()  # Add the users credentials
+        locations = client.get_locations()
+        print("Locations", locations)
+        mapsets = locations["CONUS"].get_mapsets()
+        print("Mapsets", mapsets)
+        mapsetName = self.slug.replace('-', '_')
+        locations["CONUS"].create_mapset(mapsetName)
+        self.mapset = mapsetName
 
     def save(self, *args, **kwargs):  # new
+        print("SAVE: Creating new modeling object with override on the model")
         if not self.slug:
             self.slug = slugify(self.name)
+            print("slug:", self.slug)
+        if not self.mapset:
             self._create_mapset()
         return super().save(*args, **kwargs)
+
+    def create(self, *args, **kwargs):  # new
+        print("CREATE: Creating new modeling object with override on the model")
+        if not self.slug and self.mapset:
+            self.slug = slugify(self.name)
+        if not self.mapset:
+            self._create_mapset()
+        return super().create(*args, **kwargs)
+
+    def geoids(self):
+        url = f"{acp.baseUrl()}/locations/CONUS/mapsets/{self.mapset}/processing_async"
+
+        print(f"Actinia Request Url: {url}")
+        counties = self.counties.all()
+        countyIds = map(str, [c.county.geoid for c in counties])
+        geoids = "geoid in ("
+        for c, v in enumerate(countyIds):
+            if (c == 0):
+                geoids = geoids + f"'{v}'"
+            else:
+                geoids = geoids + f",'{v}'"
+        geoids = geoids + ")"
+        return geoids

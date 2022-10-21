@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 18 2022
+ * Last Modified: Thu Oct 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -48,6 +48,12 @@ export const useAuth = () => {
     }
     const [authed, setAuthed] = useState(isAuthenticated())
 
+    const clearAuthFromLocalStorage = () => {
+        clearToken();
+        setAuthed(false)
+        removeUser()
+    }
+
     const saveCurrentUserContext = async (token) => {
       let user = await auth.getUser(token)
       console.log(user)
@@ -65,16 +71,15 @@ export const useAuth = () => {
     }
 
     const logout = async () => {
-      let res = await auth.logout(token)
-      console.log("Logout Response:", res)
-      // Set the auth state from the response
-      if (res.ok) {
-        clearToken();
-        setAuthed(false)
-        removeUser()
+      if (authed) {
+        let res = await auth.logout(token)
+        console.log("Logout Response:", res)
+        clearAuthFromLocalStorage()
+        return res;
       }
-      
-      return res
+      clearAuthFromLocalStorage()
+      let fakeRes = await null;
+      return fakeRes
     }
 
 

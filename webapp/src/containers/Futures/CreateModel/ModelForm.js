@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Sep 23 2022
+ * Last Modified: Thu Oct 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -71,18 +71,22 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import SelectCountiesMap from './SelectCountiesMap';
 import ModelDetailView from '../ModelDetialView';
-
+import { useToken } from '../../../components/Grass/Utils/Auth/useToken';
+import { settings } from '../../../components/Grass/Settings';
 
 const ModelForm = ({children}) => {
+    const {token, isTokenValid} = useToken()
+    const ACTINIA_BASE_URL = settings.ACTINIA_BASE_URL;
     let defaultValues = {
         modelName: "", 
         senarios: 0, 
         users: [],
         goals: {
-            fragment: false,
-            natural: false,
-            floodRoad: false,
-            floodDamage: false
+            limit_landscape_fragmentation: false,
+            reduce_property_damage_flooding: false,
+            protect_water_quality: false,
+            reduce_flooding_over_roads: false,
+            protect_natural_reasources: false
         },
         counties: [],
         spatialTemporalScale: {
@@ -95,14 +99,40 @@ const ModelForm = ({children}) => {
                 extent: 10 //years
             }
         },
-        status: null
+        // status: null
     }
 
     const methods = useForm({
         defaultValues
       });
+
+    const createModel = (async (formData) => {
+        /**
+         * Route: /savana/models/
+        */
+        if (!isTokenValid()) return; 
+        try {
+            const url = new URL(`${ACTINIA_BASE_URL}/models/`)
+            let res = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({...formData}),
+                headers: {
+                    'Authorization': `Token ${token.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            let data = await res.json();
+            console.log("response:", data)
+            return data                  
+          } catch (e) {
+            console.log(e);
+        }
+    })
     
-    const onSubmit = data => console.log(data);
+    const onSubmit = data => {
+        console.log("Form Data", data)
+        let model = createModel(data)
+    }
 
 
     return(
