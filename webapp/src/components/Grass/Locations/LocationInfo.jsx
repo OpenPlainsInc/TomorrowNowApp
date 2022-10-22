@@ -50,7 +50,14 @@ export const LocationInfo = ({locationId, grassLocation}) => {
    stringProjection ?
       <>
         <Row>
-          <h1 data-testid="locationNameText">{locationId}</h1>
+          {/* <h1 data-testid="locationNameText">{locationId}</h1> */}
+          <Col>
+            <MapsetsAdminTable 
+              mapsets={mapsets?.processResults} 
+              locationName={locationId}/>
+          </Col>
+        </Row>
+        <Row>
           <Col md={3}>
             <MapsetsCountCard mapsetCount={mapsets?.processResults.length}></MapsetsCountCard>
           </Col>
@@ -59,13 +66,6 @@ export const LocationInfo = ({locationId, grassLocation}) => {
           </Col>
           <Col md={4}>
             <ProjectionCardView projection={stringProjection}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <MapsetsAdminTable 
-              mapsets={mapsets?.processResults} 
-              locationName={locationId}/>
           </Col>
         </Row>
       </>

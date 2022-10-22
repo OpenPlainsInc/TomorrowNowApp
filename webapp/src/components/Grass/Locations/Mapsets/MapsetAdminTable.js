@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Oct 20 2022
+ * Last Modified: Fri Oct 21 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -77,7 +77,7 @@ const MapsetAdminTableRow = ({locationName, mapsetName}) => {
 export const MapsetsAdminTable = ({locationName, mapsets}) => {
 
     return (
-        <Card style={{  marginTop: '1rem'}}>
+        <Card style={{  marginBottom: '1rem'}}>
             <Card.Header>
                 <Card.Title>Mapsets</Card.Title>
             </Card.Header>

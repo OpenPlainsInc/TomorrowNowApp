@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Oct 20 2022
+ * Last Modified: Fri Oct 21 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -73,9 +73,11 @@ import SelectCountiesMap from './SelectCountiesMap';
 import ModelDetailView from '../ModelDetialView';
 import { useToken } from '../../../components/Grass/Utils/Auth/useToken';
 import { settings } from '../../../components/Grass/Settings';
+import { useNavigate } from 'react-router-dom';
 
 const ModelForm = ({children}) => {
     const {token, isTokenValid} = useToken()
+    const navigate = useNavigate()
     const ACTINIA_BASE_URL = settings.ACTINIA_BASE_URL;
     let defaultValues = {
         modelName: "", 
@@ -121,9 +123,13 @@ const ModelForm = ({children}) => {
                     'Content-Type': 'application/json'
                 }
             });
-            let data = await res.json();
-            console.log("response:", data)
-            return data                  
+            console.log(res)
+            if (res.ok) {
+                let data = await res.json();
+                console.log("response:", data)
+                return navigate(`/futures/${data.id}`, {replace: true})
+            }
+                          
           } catch (e) {
             console.log(e);
         }
@@ -132,6 +138,8 @@ const ModelForm = ({children}) => {
     const onSubmit = data => {
         console.log("Form Data", data)
         let model = createModel(data)
+        console.log(model)
+        
     }
 
 

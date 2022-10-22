@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Oct 20 2022                                               #
+# Last Modified: Fri Oct 21 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -165,16 +165,18 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
         model_id = event['model_id']
         user_id = acp.currentUser()  # scope["user"]
         resources = event['resources']
+        print("Task Message: ", message)
         # accepted, running, finished, terminated, error'
         if message in ['accepted', 'running']:
             tasks.asyncModelUpdateResourceStatus.delay(model_id, user_id, resource_id, "model_setup")
 
         elif message == 'finished':
-
+            print("Model Finished Import")
             # TODO - figure out why this isn't updatating the model.
             model = OpenPlainsModel.objects.get(pk=model_id)
             model.status = StatusEnum.READY
             model.save()
+            print("Model Status Updated to Ready")
 
             await self.send(text_data=json.dumps({
                 'type': "model_setup",

@@ -25,3 +25,4 @@ pyparsing>=3.0.8
 pydot>=1.4.2
 Werkzeug>=2.1.1
 pystac-client>=0.5.0
+actinia-python-client @ https://github.com/mundialis/actinia-python-client/archive/refs/tags/0.1.2.zip

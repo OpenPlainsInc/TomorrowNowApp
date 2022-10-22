@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Oct 20 2022                                               #
+# Last Modified: Fri Oct 21 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -998,7 +998,7 @@ def rDrain(request):
             return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse, 'errors': requestModel.errors})
 
 
-def gModules(request):
+def gModules(requmodelst):
     """
     Get a list of all grass modules that are avaliable to user.
     Actinia Route
@@ -1069,4 +1069,4 @@ def gModule(request, grassmodule):
 #             requestModel.save()
 #             return JsonResponse({"savana_response": requestModel.data, "response": jsonResponse}, status=status.HTTP_201_CREATED)
 #         else:
-#             return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse, 'errors': requestModel.errors})
+#             return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse, 'errors': requestModel.errors})modelmodel
