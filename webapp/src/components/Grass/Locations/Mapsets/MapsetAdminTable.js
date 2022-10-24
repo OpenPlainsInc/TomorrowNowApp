@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Oct 21 2022
+ * Last Modified: Mon Oct 24 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -37,13 +37,54 @@ import { Mapset } from './Mapset';
 import {useLock} from '../Mapsets/LockManagment/useLock';
 import { useEffect, useState } from 'react';
 
+import Badge from 'react-bootstrap/Badge';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
+import { useNavigate } from 'react-router-dom';
+
+const TableActionsButtonGroup = ({modelId}) => {
+    let navigate = useNavigate();
+
+    const createLock = (e, modelId) => {
+        e.preventDefault()
+        return navigate(`/futures/${modelId}/scenarios`, {replace: true})
+    }
+
+    const removeLock = (e, modelId) => {
+        e.preventDefault()
+        return navigate(`/futures/${modelId}`, {replace: true})
+    }
+
+    const exploreMapset = (e, modelId) => {
+        e.preventDefault()
+        return navigate(`/futures/${modelId}/analytics`, {replace: true})
+    }
+
+    return (
+        <DropdownButton as={ButtonGroup} variant="dark" className="mb-2" title="Actions" id="bg-nested-dropdown">
+            <Dropdown.Item eventKey="1" onClick={(e)=>createLock(e, modelId)}>Create Lock</Dropdown.Item>
+            <Dropdown.Item eventKey="2" onClick={(e)=>removeLock(e, modelId)}>Delete Lock</Dropdown.Item>
+            <Dropdown.Item eventKey="2" onClick={(e)=>exploreMapset(e, modelId)}>Explore</Dropdown.Item>
+            <Dropdown.Item eventKey="3">Delete</Dropdown.Item>
+        </DropdownButton> 
+    )
+    
+}
+
 const MapsetAdminTableRow = ({locationName, mapsetName}) => {
     const {rasters} = useRasters({locationName, mapsetName})
     const {vectors} = useVectors({locationName, mapsetName})
-    const {isLocked} = useLock({locationName, mapsetName})
+    const {isLocked, removeLock} = useLock({locationName, mapsetName})
     const [numRasters, setNumRasters] = useState(0)
     const [numVectors, setNumVectors] = useState(0)
     const [lock, setLock] = useState(null)
+
+    const deleteLock = (e) => {
+        e.preventDefault()
+        let data = removeLock()
+        console.log(data)
+    }
 
     useEffect(()=> {
         if (!rasters) return;
@@ -70,6 +111,14 @@ const MapsetAdminTableRow = ({locationName, mapsetName}) => {
             <td>{numRasters}</td>
             <td>{numVectors}</td>
             <td>{lock}</td>
+            <td>
+                <DropdownButton as={ButtonGroup} variant="primary" className="mb-2" title="Actions" id="bg-nested-dropdown">
+                    {/* <Dropdown.Item eventKey="1" onClick={(e)=>createLock(e, modelId)}>Create Lock</Dropdown.Item> */}
+                    <Dropdown.Item eventKey="2" onClick={(e)=>deleteLock(e)}>Delete Lock</Dropdown.Item>
+                    {/* <Dropdown.Item eventKey="2" onClick={(e)=>exploreMapset(e, modelId)}>Explore</Dropdown.Item> */}
+                    {/* <Dropdown.Item eventKey="3">Delete</Dropdown.Item> */}
+                </DropdownButton>
+            </td>
         </tr>
     )
 }
@@ -89,6 +138,7 @@ export const MapsetsAdminTable = ({locationName, mapsets}) => {
                         <th># Rasters</th>
                         <th># Vectors</th>
                         <th>Lock</th>
+                        <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

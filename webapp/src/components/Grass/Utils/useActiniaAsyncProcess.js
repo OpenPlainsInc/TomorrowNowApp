@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Sep 02 2022
+ * Last Modified: Mon Oct 24 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,7 +34,7 @@ import React, {useState, useEffect, useCallback} from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 const ACTINIA_SOCKET_URL = 'ws://localhost:8005/ws/savana/resource/'
 
-export const useActiniaAsyncProcess = ({status, resourceId}) => {
+export const useActiniaAsyncProcess = ({status, resourceId, messageType="resource_message"}) => {
     const [socketUrl, setSocketUrl] = useState(null); // pending...
     const [messageHistory, setMessageHistory] = useState(['test']);
     const { sendJsonMessage, lastMessage, lastJsonMessage, readyState } = useWebSocket(socketUrl, { share: false });
@@ -60,8 +60,8 @@ export const useActiniaAsyncProcess = ({status, resourceId}) => {
     useEffect(()=> {
         if (readyState !== ReadyState.OPEN) return;
         console.log("Sending Websocket Message: ", status)
-        setMessageHistory([{message: status, resource_id: resourceId}])
-        sendJsonMessage({message: status, resource_id: resourceId})
+        setMessageHistory([{message: status, resource_id: resourceId, message_type: messageType}])
+        sendJsonMessage({message: status, resource_id: resourceId, message_type: messageType})
     },[readyState])
 
     // // Log last message from Websocket

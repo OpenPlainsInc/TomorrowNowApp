@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Oct 20 2022
+ * Last Modified: Mon Oct 24 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -43,9 +43,19 @@ export const useLock = ({locationName, mapsetName}) => {
 
     const [isLocked, setIsLocked] = useState(null)
 
+    const removeLock = async () => {
+        let res = await grass.routes.Mapsets.deleteLock(locationName, mapsetName)
+        console.log(res)
+        if (res.status === 'finished' && res.httpCode === 200) {
+            setIsLocked("Mapset lock state: False")
+        }
+        return res
+    }
+
     useEffect(()=> {
         setIsLocked(data)
     },[locationName, mapsetName, data])
 
-    return {isLocked, errors, isLoading}
+
+    return {isLocked, errors, isLoading, removeLock}
 }

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sat Oct 22 2022                                               #
+# Last Modified: Mon Oct 24 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -55,6 +55,7 @@ def asyncResourceStatus(user_id, resource_id, message_type="resource_message"):
     r = requests.get(url, auth=acp.auth())
     data = r.json()
     print(f"asyncResourceStatus: {r.status_code}")
+    print(r)
     if r.status_code == 200:
         channel_layer = get_channel_layer()
         resource_name = resource_id.replace('-', '_')
@@ -338,6 +339,51 @@ def ingestData(modelId, mapset, geoids):
         ]
     }
 
+    null_protected_areas = {
+        "module": "r.null",
+        "id": "r.null_1804289383",
+        "inputs": [
+            {
+                "param": "map",
+                "value": "protected_areas"
+            },
+            {
+                "param": "null",
+                "value": "0"
+            }
+        ]
+    }
+
+    urban_2001 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2001 = if(nlcd_2001_cog >= 21 && nlcd_2001_cog <= 24, 1, if(nlcd_2001_cog == 11 || nlcd_2001_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    urban_2004 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2004 = if(nlcd_2004_cog >= 21 && nlcd_2004_cog <= 24, 1, if(nlcd_2004_cog == 11 || nlcd_2004_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
     def importCOG(cog_name, year):
         return {
             "module": "r.import",
@@ -386,34 +432,9 @@ def ingestData(modelId, mapset, geoids):
         populate_column,
         counties_to_raster,
         import_protected_areas,
-        {
-            "module": "r.null",
-            "id": "r.null_1804289383",
-            "inputs": [
-                {
-                    "param": "map",
-                    "value": "protected_areas"
-                },
-                {
-                    "param": "null",
-                    "value": "0"
-                }
-            ]
-        },
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2001 = if(nlcd_2001_cog >= 21 && nlcd_2001_cog <= 24, 1, if(nlcd_2001_cog == 11 || nlcd_2001_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
+        null_protected_areas,
+        urban_2001,
+        urban_2004,
         {
             "module": "r.mapcalc",
             "id": "r.mapcalc_1804289383",

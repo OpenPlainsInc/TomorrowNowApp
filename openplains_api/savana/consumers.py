@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Oct 21 2022                                               #
+# Last Modified: Mon Oct 24 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -80,8 +80,8 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         resource_id = text_data_json['resource_id']
-        model_id = text_data_json['model_id'] if text_data_json.has_key('model_id') else None
-        message_type = text_data_json['message_type']
+        model_id = text_data_json['model_id'] if 'model_id' in text_data_json else None
+        message_type = text_data_json['message_type'] if 'message_type' in text_data_json else None
         print("ActiniaResourceConsumer: Recieve Message", message)
 
         # Send message to room group
