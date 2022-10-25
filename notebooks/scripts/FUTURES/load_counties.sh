@@ -2,9 +2,7 @@
 v.in.ogr input="PG:host=db port=5432 dbname=actinia user=actinia password=actinia" layer=cb_2018_us_county_500k where="geoid in ('48113','48397','48085','48439','48121')" output=counties location="cb_2018_us_county_500k"
 v.proj in=counties location=cb_2018_us_county_500k mapset=PERMANENT
 
-# Next Request
 # Load NLCD data for each year
-# Convert counties to raster TODO: Convert on geoid attribute (need to cast to Int)
 g.region res=30 vector=counties
 r.import input=/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2019_cog.tif memory=10000 extent=region output=nlcd_2019_cog resolution=region
 r.import input=/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2016_cog.tif memory=10000 extent=region output=nlcd_2016_cog resolution=region

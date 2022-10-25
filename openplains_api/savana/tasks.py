@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Oct 24 2022                                               #
+# Last Modified: Tue Oct 25 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -37,15 +37,6 @@ from .utils import actinia as acp
 import requests
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-
-
-# @shared_task()
-# def ingest_futures_counties():
-
-
-@shared_task()
-def add(x, y):
-    return x + y
 
 
 @shared_task()
@@ -236,7 +227,7 @@ def ingestData(modelId, mapset, geoids):
         "inputs": [
             {
                 "param": "input",
-                "value": f"counties"
+                "value": "counties"
             },
             {
                 "param": "layer",
@@ -248,13 +239,12 @@ def ingestData(modelId, mapset, geoids):
             },
             {
                 "param": "use",
-                # "value": "attr"
-                "value": "val"
+                "value": "attr"
             },
-            # {
-            #     "param": "attribute_column",
-            #     "value": "attr"
-            # },
+            {
+                "param": "attribute_column",
+                "value": "geoid_value"
+            },
             {
                 "param": "value",
                 "value": "1"
@@ -384,6 +374,455 @@ def ingestData(modelId, mapset, geoids):
         ]
     }
 
+    urban_2006 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2006 = if(nlcd_2006_cog >= 21 && nlcd_2006_cog <= 24, 1, if(nlcd_2006_cog == 11 || nlcd_2006_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    urban_2008 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2008 = if(nlcd_2008_cog >= 21 && nlcd_2008_cog <= 24, 1, if(nlcd_2008_cog == 11 || nlcd_2008_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    urban_2011 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2011 = if(nlcd_2011_cog >= 21 && nlcd_2011_cog <= 24, 1, if(nlcd_2011_cog == 11 || nlcd_2011_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    urban_2013 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2013 = if(nlcd_2013_cog >= 21 && nlcd_2013_cog <= 24, 1, if(nlcd_2013_cog == 11 || nlcd_2013_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    urban_2016 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2016 = if(nlcd_2016_cog >= 20 && nlcd_2016_cog <= 24, 1, if(nlcd_2016_cog == 11 || nlcd_2016_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    urban_2019 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2019 = if(nlcd_2019_cog >= 20 && nlcd_2019_cog <= 24, 1, if(nlcd_2019_cog == 11 || nlcd_2019_cog >= 90 || protected_areas, null(), 0))"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    dist_to_protected = {
+        "module": "r.grow.distance",
+        "id": "r.grow.distance_1804289383",
+        "inputs": [
+            {
+            "param": "input",
+            "value": "protected_areas"
+            },
+            {
+            "param": "metric",
+            "value": "euclidean"
+            }
+        ],
+        "outputs": [
+            {
+            "param": "distance",
+            "value": "dist_to_protected"
+            }
+        ]
+    }
+
+    water = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+            "param": "expression",
+            "value": "water = if(nlcd_2019_cog == 11, 1, null())"
+            },
+            {
+            "param": "region",
+            "value": "current"
+            }
+        ]
+    }
+
+    dist_to_water = {
+        "module": "r.grow.distance",
+        "id": "r.grow.distance_1804289383",
+        "inputs": [
+            {
+            "param": "input",
+            "value": "water"
+            },
+            {
+            "param": "metric",
+            "value": "euclidean"
+            }
+        ],
+        "outputs": [
+            {
+            "param": "distance",
+            "value": "dist_to_water"
+            }
+        ]
+    }
+
+    forest = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+            "param": "expression",
+            "value": "forest = if(nlcd_2019_cog >= 41 && nlcd_2019_cog <= 43, 1, 0)"
+            },
+            {
+            "param": "region",
+            "value": "current"
+            }
+        ]
+    }
+
+    forest_2001 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+            "param": "expression",
+            "value": "forest_2001 = if(nlcd_2001_cog >= 40 && nlcd_2001_cog <= 43, 1, 0)"
+            },
+            {
+            "param": "region",
+            "value": "current"
+            }
+        ]
+    }
+
+    forest_smooth = {
+        "module": "r.neighbors",
+        "id": "r.neighbors_1804289383",
+        "flags": "c",
+        "inputs": [
+            {
+                "param": "input",
+                "value": "forest"
+            },
+            {
+                "param": "size",
+                "value": "37"
+            },
+            {
+                "param": "method",
+                "value": "average"
+            },
+            {
+                "param": "weighting_function",
+                "value": "none"
+            },
+            {
+                "param": "nprocs",
+                "value": "10"
+            },
+            {
+                "param": "memory",
+                "value": "3000"
+            }
+        ],
+        "outputs": [
+            {
+                "param": "output",
+                "value": "forest_smooth"
+            }
+        ]
+    }
+
+    forest_2001_smooth = {
+        "module": "r.neighbors",
+        "id": "r.neighbors_1804289383",
+        "flags": "c",
+        "inputs": [
+            {
+                "param": "input",
+                "value": "forest_2001"
+            },
+            {
+                "param": "size",
+                "value": "37"
+            },
+            {
+                "param": "method",
+                "value": "average"
+            },
+            {
+                "param": "weighting_function",
+                "value": "none"
+            },
+            {
+                "param": "nprocs",
+                "value": "10"
+            },
+            {
+                "param": "memory",
+                "value": "3000"
+            }
+        ],
+        "outputs": [
+            {
+                "param": "output",
+                "value": "forest_2001_smooth"
+            }
+        ]
+    },
+
+    urban_2001_nonull = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2001_nonull = if(isnull(urban_2001), 0, urban_2001)"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    },
+
+    urban_2019_nonull = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_2019_nonull = if(isnull(urban_2019), 0, urban_2019)"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    },
+
+    devpressure_30_05_01_2001 = {
+        "module": "r.futures.devpressure",
+        "id": "r.futures.devpressure_1804289383",
+        "flags": "n",
+        "inputs": [
+            {
+                "param": "input",
+                "value": "urban_2001_nonull"
+            },
+            {
+                "param": "method",
+                "value": "gravity"
+            },
+            {
+                "param": "size",
+                "value": "30"
+            },
+            {
+                "param": "gamma",
+                "value": "0.5"
+            },
+            {
+                "param": "scaling_factor",
+                "value": "0.1"
+            },
+            {
+                "param": "nprocs",
+                "value": "1"
+            }
+        ],
+        "outputs": [
+            {
+                "param": "output",
+                "value": "devpressure_30_05_01_2001"
+            }
+        ]
+    }
+
+    devpressure_30_05_01_2019 = {
+        "module": "r.futures.devpressure",
+        "id": "r.futures.devpressure_1804289383",
+        "flags": "n",
+        "inputs": [
+            {
+                "param": "input",
+                "value": "urban_2019_nonull"
+            },
+            {
+                "param": "method",
+                "value": "gravity"
+            },
+            {
+                "param": "size",
+                "value": "30"
+            },
+            {
+                "param": "gamma",
+                "value": "0.5"
+            },
+            {
+                "param": "scaling_factor",
+                "value": "0.1"
+            },
+            {
+                "param": "nprocs",
+                "value": "1"
+            }
+        ],
+        "outputs": [
+            {
+                "param": "output",
+                "value": "devpressure_30_05_01_2019"
+            }
+        ]
+    },
+
+    dist_to_water_km = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "dist_to_water_km = dist_to_water / 1000"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    dist_to_protected_km = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "dist_to_protected_km = dist_to_protected / 1000"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    forest_smooth_perc = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "forest_smooth_perc = forest_smooth * 100"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    forest_2001_smooth_perc = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "forest_2001_smooth_perc = forest_smooth * 100"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    },
+
+    urban_change_01_19 = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_change_01_19 = if(urban_2019 == 1, if(urban_2001 == 0, 1, null()), 0)"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
+    urban_change_clip = {
+        "module": "r.mapcalc",
+        "id": "r.mapcalc_1804289383",
+        "inputs": [
+            {
+                "param": "expression",
+                "value": "urban_change_clip = if(counties, urban_change_01_19)"
+            },
+            {
+                "param": "region",
+                "value": "current"
+            }
+        ]
+    }
+
     def importCOG(cog_name, year):
         return {
             "module": "r.import",
@@ -435,174 +874,30 @@ def ingestData(modelId, mapset, geoids):
         null_protected_areas,
         urban_2001,
         urban_2004,
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2004 = if(nlcd_2004_cog >= 21 && nlcd_2004_cog <= 24, 1, if(nlcd_2004_cog == 11 || nlcd_2004_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2006 = if(nlcd_2006_cog >= 21 && nlcd_2006_cog <= 24, 1, if(nlcd_2006_cog == 11 || nlcd_2006_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2008 = if(nlcd_2008_cog >= 21 && nlcd_2008_cog <= 24, 1, if(nlcd_2008_cog == 11 || nlcd_2008_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2011 = if(nlcd_2011_cog >= 21 && nlcd_2011_cog <= 24, 1, if(nlcd_2011_cog == 11 || nlcd_2011_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2013 = if(nlcd_2013_cog >= 21 && nlcd_2013_cog <= 24, 1, if(nlcd_2013_cog == 11 || nlcd_2013_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2016 = if(nlcd_2016_cog >= 20 && nlcd_2016_cog <= 24, 1, if(nlcd_2016_cog == 11 || nlcd_2016_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
-        {
-            "module": "r.mapcalc",
-            "id": "r.mapcalc_1804289383",
-            "inputs": [
-                {
-                    "param": "expression",
-                    "value": "urban_2019 = if(nlcd_2019_cog >= 20 && nlcd_2019_cog <= 24, 1, if(nlcd_2019_cog == 11 || nlcd_2019_cog >= 90 || protected_areas, null(), 0))"
-                },
-                {
-                    "param": "region",
-                    "value": "current"
-                }
-            ]
-        },
-        {
-            "module": "v.to.rast",
-            "id": "v.to.rast_1804289383",
-            "inputs": [
-                {
-                    "param": "input",
-                    "value": "counties"
-                },
-                {
-                    "param": "layer",
-                    "value": "1"
-                },
-                {
-                    "param": "type",
-                    "value": "area"
-                },
-                {
-                    "param": "use",
-                    "value": "val"
-                },
-                {
-                    "param": "value",
-                    "value": "1"
-                },
-                {
-                    "param": "memory",
-                    "value": "3000"
-                }
-            ],
-            "outputs": [
-                {
-                    "param": "output",
-                    "value": "counties"
-                }
-            ]
-        },
-        {
-            "module": "r.null",
-            "id": "r.null_1804289383",
-            "inputs": [
-                {
-                    "param": "map",
-                    "value": "protected_areas"
-                },
-                {
-                    "param": "setnull",
-                    "value": "0"
-                }
-            ]
-        },
-        {
-            "module": "r.grow.distance",
-            "id": "r.grow.distance_1804289383",
-            "inputs": [
-                {
-                    "param": "input",
-                    "value": "protected_areas"
-                },
-                {
-                    "param": "metric",
-                    "value": "euclidean"
-                }
-            ],
-            "outputs": [
-                {
-                    "param": "distance",
-                    "value": "dist_to_protected"
-                }
-            ]
-        }
+        urban_2006,
+        urban_2008,
+        urban_2011,
+        urban_2013,
+        urban_2016,
+        urban_2019,
+        null_protected_areas,
+        dist_to_protected,
+        water,
+        dist_to_water,
+        forest,
+        forest_2001,
+        forest_smooth,
+        forest_2001_smooth,
+        urban_2001_nonull,
+        urban_2019_nonull,
+        devpressure_30_05_01_2001,
+        devpressure_30_05_01_2019,
+        dist_to_water_km,
+        dist_to_protected_km,
+        forest_smooth_perc,
+        forest_2001_smooth_perc,
+        urban_change_01_19,
+        urban_change_clip
     ]
 
     pc = acp.create_actinia_process_chain(grass_commands)
@@ -613,7 +908,7 @@ def ingestData(modelId, mapset, geoids):
         json=pc,
         headers={"content-type": "application/json; charset=utf-8"}
     )
-    
+
     jsonResponse = r.json()
     print(jsonResponse)
     asyncModelUpdateResourceStatus.delay(modelId, jsonResponse['user_id'], jsonResponse['resource_id'], message_type="model_setup")
