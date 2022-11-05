@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Sat Nov 05 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -37,7 +37,7 @@ import { useState, useEffect } from 'react'
 import { ModelAnalyticCard } from './ModelAnalyticCard'
 import { SnakeyScenario } from './SnakeyScenario'
 import { ModelGraphCard } from './ModelGraphCard'
-import { FunnelFrequency } from './FunnelFrequency'
+import { FrequecyBarChart } from './FrequecyBarChart'
 
 export const ModelDetails = ({model, errors, isloading}) => {
     console.log("ModelDetails", model, errors, isloading)
@@ -112,7 +112,7 @@ export const ModelDetails = ({model, errors, isloading}) => {
                         label={"Most Frequent Intervention"} 
                         tooltip={"The most frequently used intervention stratagies."}
                     >
-                        <FunnelFrequency/>
+                        <FrequecyBarChart/>
                     </ModelGraphCard>
                 </Col>
             </Row>
