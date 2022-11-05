@@ -9,6 +9,7 @@ const VectorLayer = ({ layerName, source, style, zIndex = 0, handleClickEvent=nu
 
   useEffect(() => {
     if (!map) return;
+    if (!source) return;
     let vectorLayer = new OLVectorLayer({
       source,
       style

@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Oct 20 2022
+ * Last Modified: Fri Nov 04 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -62,7 +62,7 @@ export default function ModelMap({devRestrictions}) {
         
         <Map 
             projection={PROJECTION} 
-            mapClass="map-fullscreen" 
+            mapClass="model-map-fullscreen" 
             center={center} 
             zoom={zoom}
             extent={EXTENT}

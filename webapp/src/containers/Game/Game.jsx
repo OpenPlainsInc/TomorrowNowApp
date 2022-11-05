@@ -367,6 +367,14 @@ const Game = ({params}) => {
           <Container fluid className="bg-light text-dark">
               
             <Row>
+              <Col md={2}>
+                <Card className="bg-secondary-light text-dark">
+                    <Card.Body>
+                        <Card.Title>NLCD Land Cover Categories</Card.Title>
+                    </Card.Body>
+                    <NLCDLegend categories={nlcdColors.categories} family={true} ></NLCDLegend>
+                </Card>
+              </Col>
               <Col md={6}>
                 <Map mapClass="map-fullscreen" center={center} zoom={zoom} projection='EPSG:4326'>
                   <Layers>
@@ -514,7 +522,7 @@ const Game = ({params}) => {
                 }
                 {selectedHuc12Props ? 
                   <NLCDTemporalMask 
-                    watershedName={selectedHuc12Props.name}
+                    watershed={selectedHuc12Props}
                     feature={selectedHuc12Feature} 
                     center={center} 
                     mask={null}/>
@@ -522,14 +530,14 @@ const Game = ({params}) => {
               </Row>
             </Col>
                
-            <Col md={2}>
+            {/* <Col md={2}>
               <Card className="bg-secondary-light text-dark">
                   <Card.Body>
                       <Card.Title>NLCD Land Cover Categories</Card.Title>
                   </Card.Body>
                   <NLCDLegend categories={nlcdColors.categories} family={true} ></NLCDLegend>
               </Card>
-            </Col>
+            </Col> */}
           </Row>
         </Container>
       )
