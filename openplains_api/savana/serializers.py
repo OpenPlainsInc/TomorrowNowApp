@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Oct 20 2022                                               #
+# Last Modified: Sat Nov 05 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -71,10 +71,13 @@ class ModelGoalSerializer(serializers.ModelSerializer):
 
 class DrainRequestSerializer(GeoFeatureModelSerializer):
     """ A class to serialize locations as GeoJSON compatible data """
+
+    # owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = DrainRequest
         geo_field = 'point'
-        fields = ('point',)
+        fields = ('point', 'huc12')
 
 
 class OPModelSerializer(serializers.ModelSerializer):

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Oct 24 2022                                               #
+# Last Modified: Tue Oct 25 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -114,7 +114,7 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
                 'resource_id': resource_id
             }))
             tasks.asyncResourceStatus.delay(user_id, resource_id, "resource_message")
-            
+
         elif message == 'finished':
             resources = event['resources']
             resource_owner = acp.currentUser()

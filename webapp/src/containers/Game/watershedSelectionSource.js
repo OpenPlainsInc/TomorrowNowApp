@@ -1,7 +1,7 @@
 /*
- * Filename: rDrain.js
+ * Filename: watershedSelectionSource.js
  * Project: TomorrowNow
- * File Created: Thursday May 19th 2022
+ * File Created: Saturday November 5th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,28 +30,28 @@
  * 
  */
 
-const API_HOST = "http://localhost:8005/savana"
+import GeoJSON from 'ol/format/GeoJSON';
+import VectorSource from 'ol/source/Vector';
+import {tile as tileStrategy} from 'ol/loadingstrategy';
+import {createXYZ} from 'ol/tilegrid';
+import React, { useEffect, useState } from 'react';
 
-export const rDrain = async (coords, extent, huc12) => {
-    try {
-        let geojson = [{
-            point: coords.join(','),
-            extent: extent,
-            huc12: huc12
-        }]
-        let url = new URL(`${API_HOST}/r/drain/`)
-        console.log(coords)
-        const res = await fetch(url, {
-            method: "POST",
-            body: JSON.stringify(geojson),
-            headers: {
-                'Content-Type': 'application/json'
-            }  
-        });
-        const data = await res.json();
-        return data
-    } catch (e) {
-        console.log(e);
-        return e
-    }
+export const watershedSelectionSource = ({huc12}) => {
+
+        console.log("Huc12", huc12)
+        const serviceUrl = "http://localhost:8600/geoserver/savana/ows?service=WFS" + 
+        "&version=1.0.0&request=GetFeature&typeName=savana%3Ahuc_12" +
+        "&maxFeatures=50&outputFormat=application%2Fjson&PropertyName=name,huc12,geom" + 
+        `&CQL_FILTER=huc12='${huc12}'&srsName=EPSG:4326`
+     
+        const vectorSource = new VectorSource({
+            format: new GeoJSON(),
+            url: serviceUrl
+        })
+ 
+
+    return vectorSource
 }
+
+
+

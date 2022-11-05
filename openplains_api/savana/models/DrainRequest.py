@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Sep 20 2022                                               #
+# Last Modified: Sat Nov 05 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -39,8 +39,10 @@ class DrainRequest(models.Model):
     # id = models.AutoField()
     created = models.DateTimeField(auto_now_add=True)
     point = models.PointField(srid=4326)
-
+    huc12 = models.CharField(max_length=250, null=True)  # convert this to ForeignKey later.
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='watershed_analysis', null=True)
     # Returns the string representation of the model.
+
     def __str__(self):
         return self.name
 

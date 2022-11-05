@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Fri Oct 21 2022                                               #
+# Last Modified: Sat Nov 05 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -499,11 +499,12 @@ def rDrain(request):
 
     if request.method == 'POST':
 
-        # mapset_name = "basin_test"
-        mapset_name = "hydro"
+        # Use if saving results to persistent database
+        # mapset_name = "hydro"
+        # url = f"{acp.baseUrl()}/locations/CONUS/mapsets/{mapset_name}/processing_async"
 
-        # url = f"{acp.baseUrl()}/locations/{acp.location()}/mapsets/{mapset_name}/processing_async"
-        url = f"{acp.baseUrl()}/locations/CONUS/mapsets/{mapset_name}/processing_async"
+        # Use if running ad-hoc analysis using ephemeral database
+        url = f"{acp.baseUrl()}/locations/CONUS/processing_async_export"
 
         print(f"Actinia Request Url: {url}")
         # body_unicode = request.body.decode('utf-8')
@@ -511,7 +512,6 @@ def rDrain(request):
         coords = request.data[0]['point'].split(',')
         point = Point(float(coords[0]), float(coords[1]), srid=4326)
         db_point = point
-
         # point.transform(ct=3358)
         point.transform(ct=5070)
         # point.transform(ct=6542)
@@ -531,6 +531,79 @@ def rDrain(request):
 
         minx, miny = extent_ne
         maxx, maxy = extent_sw
+
+        # Get HUC12 id
+        huc12 = request.data[0]['huc12']
+        output_huc12 = f"huc12_{huc12}"
+        print("Calculating Contributing Area with HUC12", huc12)
+
+        import_huc12 = {
+            "module": "v.in.ogr",
+            "flags": "",
+            "id": f"v.in.ogr_hydro_{huc12}",
+            "inputs": [
+                {
+                    "param": "input",
+                    "value": "PG:host=db port=5432 dbname=actinia user=actinia password=actinia"
+                },
+                {
+                    "param": "layer",
+                    "value": "wbdhu12_a_us_september2021 — WBDHU12"
+                },
+                {
+                    "param": "where",
+                    "value": f"huc12='{huc12}'"  # This is currently dangerous an needs to be sanitized
+                },
+                {
+                    "param": "location",
+                    "value": output_huc12
+                }
+            ],
+            "outputs": [
+                {
+                    "param": "output",
+                    "value": output_huc12
+                }
+            ]
+        }
+
+        reproject = {
+            "module": "v.proj",
+            "id": f"v.proj_hydro_{huc12}",
+            "inputs": [
+                {
+                    "param": "location",
+                    "value": output_huc12
+                },
+                {
+                    "param": "mapset",
+                    "value": "PERMANENT"
+                },
+                {
+                    "param": "input",
+                    "value": output_huc12
+                },
+                {
+                    "param": "smax",
+                    "value": "10000"
+                }
+            ]
+        }
+
+        set_region = {
+            "module": "g.region",
+            "id": f"g.region_hydro_{huc12}",
+            "inputs": [
+                {
+                    "param": "res",
+                    "value": "30"
+                },
+                {
+                    "param": "vector",
+                    "value": output_huc12
+                }
+            ]
+        }
 
         def importCOG(cog_name, year):
             return [
@@ -585,36 +658,44 @@ def rDrain(request):
             ]
 
         grass_commands = [
-            {
-                "module": "g.region",
-                "id": "g.region_1804289",
-                "inputs": [
-                    # {
-                    #     "param": "align",
-                    #     "value": "direction_3k_10m_d"
-                    # },
-                    {
-                        "param": "res",
-                        "value": "30"
-                    },
-                    {
-                        "param": "n",
-                        "value": str(maxy)
-                    },
-                    {
-                        "param": "e",
-                        "value": str(maxx)
-                    },
-                    {
-                        "param": "s",
-                        "value": str(miny)
-                    },
-                    {
-                        "param": "w",
-                        "value": str(minx)
-                    }
-                ]
-            },
+            import_huc12,
+            reproject,
+            set_region,
+            # {
+            #     "module": "g.region",
+            #     "id": "g.region_1804289",
+            #     "inputs": [
+            #         # {
+            #         #     "import_descr": {
+            #         #         "source": "PG:host=db port=5432 dbname=actinia user=actinia password=actinia",
+            #         #         "type": "postgis",
+            #         #         "vector_layer": "wbdhu12_a_us_september2021 — WBDHU12"
+            #         #     },
+            #         #     "param": "vector",
+            #         #     "value": "wbdhuc12"
+            #         # },
+            #         {
+            #             "param": "res",
+            #             "value": "30"
+            #         },
+            #         {
+            #             "param": "n",
+            #             "value": str(maxy)
+            #         },
+            #         {
+            #             "param": "e",
+            #             "value": str(maxx)
+            #         },
+            #         {
+            #             "param": "s",
+            #             "value": str(miny)
+            #         },
+            #         {
+            #             "param": "w",
+            #             "value": str(minx)
+            #         }
+            #     ]
+            # },
             {
                 "module": "r.import",
                 "id": "r.import_usgs30m_cog",
@@ -813,6 +894,7 @@ def rDrain(request):
             {
                 "module": "r.to.vect",
                 "id": "r.to.vect_1804289383",
+                "flags": "s",
                 "inputs": [
                     {
                         "param": "input",
@@ -838,7 +920,7 @@ def rDrain(request):
                 "module": "r.mask",
                 "id": "r.mask",
                 "inputs": [
-                    {               
+                    {
                         "param": "raster",
                         "value": "point_basin"
                     },
@@ -978,6 +1060,13 @@ def rDrain(request):
                         "value": "PG:host=db port=5432 dbname=actinia user=actinia password=actinia"
                     }
                 ]
+            },
+            {
+                "id": "r.mask_1804289383",
+                "flags": "r",
+                "inputs": [],
+                "module": "r.mask",
+                "outputs": []
             }
         ]
         pc = acp.create_actinia_process_chain(grass_commands)
@@ -989,21 +1078,20 @@ def rDrain(request):
         )
         jsonResponse = r.json()
         print(f"Response: {r.json()}")
-        requestModel = DrainRequestSerializer(data={"point": db_point})
+        requestModel = DrainRequestSerializer(data={"point": db_point, "huc12": huc12}, context={'request': request})
         if (requestModel.is_valid()):
             print("serializer data:", requestModel.validated_data)
-            requestModel.save()
             return JsonResponse({"savana_response": requestModel.data, "response": jsonResponse}, status=status.HTTP_201_CREATED)
         else:
             return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse, 'errors': requestModel.errors})
 
 
-def gModules(requmodelst):
+def gModules(request):
     """
     Get a list of all grass modules that are avaliable to user.
     Actinia Route
     GET /grass_modules
-    Parameters 
+    Parameters
         tag
         category
         family (d,db,g,i,m,ps,r,r3,t,test,v)
@@ -1043,30 +1131,3 @@ def gModule(request, grassmodule):
 
     # TODO - Set up proper error handling and reponse messages
     return JsonResponse({"error": "gModules View: Fix Me"})
-
-
-# class FuturesIngest(APIView):
-
-#     def post()
-# @api_view(['GET', 'POST'])
-# @permission_classes([AllowAny])
-# @csrf_exempt
-# def futuresIngest(request):
-#     """
-#     futures Ingest
-#     """
-#     if request.method == 'GET':
-#         # TODO
-#         return JsonResponse({'route': 'GET: Futures Ingest'})
-
-#     if request.method == 'POST':
-
-       
-#         print(f"Response: {r.json()}")
-#         requestModel = DrainRequestSerializer(data={"point": db_point})
-#         if (requestModel.is_valid()):
-#             print("serializer data:", requestModel.validated_data)
-#             requestModel.save()
-#             return JsonResponse({"savana_response": requestModel.data, "response": jsonResponse}, status=status.HTTP_201_CREATED)
-#         else:
-#             return JsonResponse({'route': 'r.drain', 'params': request.data, 'pc': pc, 'response': jsonResponse, 'errors': requestModel.errors})modelmodel

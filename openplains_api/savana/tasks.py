@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 25 2022                                               #
+# Last Modified: Sat Nov 05 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -272,7 +272,7 @@ def ingestData(modelId, mapset, geoids):
             },
             {
                 "param": "vector",
-                "value": f"counties"
+                "value": "counties"
             }
         ]
     }
@@ -287,11 +287,11 @@ def ingestData(modelId, mapset, geoids):
             },
             {
                 "param": "vector",
-                "value": f"counties"
+                "value": "counties"
             },
             {
                 "param": "align",
-                "value": f"nlcd_2019_cog"
+                "value": "nlcd_2019_cog"
             }
         ]
     }

@@ -221,9 +221,9 @@ const Game = ({params}) => {
       const extent = view.calculateExtent()
       console.log('extent', extent, 'resolution', view.getResolution())
       
-      async function runProcess(coords, extent) {
+      async function runProcess(coords, extent, huc12) {
         setBasinRaster(null)
-        let data = await rDrain(coords, extent)
+        let data = await rDrain(coords, extent, huc12)
         console.log("response:", data)             
         setResourceId(data.response.resource_id)
         setStatus(data.response.status)
@@ -237,17 +237,8 @@ const Game = ({params}) => {
                 // let fid = f.getId();
                 let hucExtent = f.getExtent()
                 setExtent(hucExtent)
-                runProcess(e.coordinate, hucExtent)
-                // if (properties.huc12 !== selectedHuc12) {
-                //   let nlcdYear = 2019
-                  
-                //   let feature = toFeature(f, 'geometry')
-                //     let geom = new GeoJSON().writeFeature(feature, {
-                //       dataProjection: 'EPSG:5070', 
-                //       featureProjection: 'EPSG:4326' 
-                //     })
-      
-                // }
+                console.log(properties)
+                runProcess(e.coordinate, hucExtent, properties.huc12)
               }
             })
           }
