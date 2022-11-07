@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 18 2022                                               #
+# Last Modified: Sun Nov 06 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -37,18 +37,3 @@ class ModelExtent(models.Model):
 
     model = models.ForeignKey("savana.OpenPlainsModel", editable=True, on_delete=models.CASCADE, null=False, related_name='counties')
     county = models.ForeignKey("world.County", editable=True, on_delete=models.CASCADE, null=False)
-
-## SQL to get centroid and extent as geojson
-#     WITH
-# 	_region AS (
-# 		SELECT
-# 			geoid,
-# 			geom
-# 		FROM world_county as counties
-# 		WHERE geoid in ('37183', '37063', '37135')
-# 	)
-
-# SELECT
-# 	ST_ASGEOJSON(ST_CENTROID(ST_UNION(geom))) as centroid,
-# 	ST_ASGEOJSON(ST_Extent(geom)) as extent
-# FROM _region

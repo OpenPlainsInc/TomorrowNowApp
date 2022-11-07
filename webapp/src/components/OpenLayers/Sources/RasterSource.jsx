@@ -9,6 +9,7 @@
 import Raster from "ol/source/Raster"
 // https://openlayers.org/en/latest/apidoc/module-ol_source_Raster.html
 export const RasterSource = (props) => {
+    console.log(props)
     let source = new Raster({
         ...props
     })

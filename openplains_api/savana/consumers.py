@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Oct 25 2022                                               #
+# Last Modified: Mon Nov 07 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -121,11 +121,12 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
             print("Resource Owner: ", resource_owner)
             if (len(resources) > 0):
                 file_name = resources[0].split('/')[-1]
-                resource_location = os.path.join('actinia-core-data', 'resources', resource_owner, resource_id, file_name)
+                resource_location = os.path.join('/actinia_core', 'resources', resource_owner, resource_id, file_name)
+                print("Resource Location: ", resource_location)
+                # resource_location = os.path.join('/vsicurl/', resources[0])
                 rst = GDALRaster(resource_location, write=False)
                 print("GDAL RASTER Statistics: ", rst.bands[0].statistics())
                 raster_stats = rst.bands[0].statistics()
-                # print("GDAL RASTER Color: ", rst.bands[0].color_interp())
                 await self.send(text_data=json.dumps({
                     'type': "resource_message",
                     'message': message,
@@ -160,6 +161,7 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
         print("ActiniaResourceConsumer: model_setup", self.channel_layer)
         print("ActiniaResourceConsumer: Resource message event", event)
 
+        status = event['status']
         message = event['message']
         resource_id = event['resource_id']
         model_id = event['model_id']
@@ -167,10 +169,10 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
         resources = event['resources']
         print("Task Message: ", message)
         # accepted, running, finished, terminated, error'
-        if message in ['accepted', 'running']:
+        if status in ['accepted', 'running']:
             tasks.asyncModelUpdateResourceStatus.delay(model_id, user_id, resource_id, "model_setup")
 
-        elif message == 'finished':
+        elif status == 'finished':
             print("Model Finished Import")
             # TODO - figure out why this isn't updatating the model.
             model = OpenPlainsModel.objects.get(pk=model_id)

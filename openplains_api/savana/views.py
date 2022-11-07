@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sat Nov 05 2022                                               #
+# Last Modified: Sun Nov 06 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -101,7 +101,6 @@ class OpModelList(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        print("Hello POSTER")
         serializer = CreateModelSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.create(serializer.data)
@@ -472,7 +471,7 @@ def streamCOG(request, raster_name, resource_id):
     resource_owner = acp.currentUser()
     print("Resource Owner: ", resource_owner)
     file_name = f'{raster_name}.tif'
-    resource_location = os.path.join('actinia-core-data', 'resources', resource_owner, resource_id, file_name)
+    resource_location = os.path.join('/actinia_core', 'resources', resource_owner, resource_id, file_name)
     print("Resource Location: ", resource_location)
     try:
         file = open(resource_location, 'rb')

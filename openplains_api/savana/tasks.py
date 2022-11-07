@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sat Nov 05 2022                                               #
+# Last Modified: Mon Nov 07 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -96,20 +96,32 @@ def asyncModelUpdateResourceStatus(model_id, user_id, resource_id, message_type=
         response_message = {
             "model_id": model_id,
             "type": message_type,
-            "message": updated_status,
+            "status": updated_status,
             "resource_id": resource_id,
             "resources": resources,
-            "process_log": process_log
+            "process_log": process_log,
+            "time_delta": data['time_delta'],
+            "progress": data['progress'],
+            "active_message": ['message']
         }
 
         return async_to_sync(channel_layer.group_send)(resource_group, response_message)
 
 
 @shared_task()
-def ingestData(modelId, mapset, geoids):
+def ingestData(modelId, location, geoids):
     print("Starting Ingest")
-    url = f"{acp.baseUrl()}/locations/CONUS/mapsets/{mapset}/processing_async"
+    url = f"{acp.baseUrl()}/locations/{location}/mapsets/PERMANENT/processing_async"
+    mapset = location
 
+    r = requests.get(
+        f"{acp.baseUrl()}/actinia_templates/f3300b76-9843-46ab-be4d-1c31ae5af97c",
+        auth=acp.auth(),
+        headers={"content-type": "application/json; charset=utf-8"}
+    )
+    template_pc = r.json()['template']
+    template_pc['list'][0]['inputs'][2]['value'] = geoids
+    pc = template_pc
     # importer_list =  {
     #     "id": "importer_1",
     #     "module": "importer",
@@ -136,7 +148,7 @@ def ingestData(modelId, mapset, geoids):
     import_counties = {
         "module": "v.in.ogr",
         "flags": "",
-        "id": f"v.in.ogr_{modelId}_{mapset}",
+        "id": f"v.in.ogr_{modelId}_{location}",
         "inputs": [
             {
                 "param": "input",
@@ -469,18 +481,18 @@ def ingestData(modelId, mapset, geoids):
         "id": "r.grow.distance_1804289383",
         "inputs": [
             {
-            "param": "input",
-            "value": "protected_areas"
+                "param": "input",
+                "value": "protected_areas"
             },
             {
-            "param": "metric",
-            "value": "euclidean"
+                "param": "metric",
+                "value": "euclidean"
             }
         ],
         "outputs": [
             {
-            "param": "distance",
-            "value": "dist_to_protected"
+                "param": "distance",
+                "value": "dist_to_protected"
             }
         ]
     }
@@ -490,12 +502,12 @@ def ingestData(modelId, mapset, geoids):
         "id": "r.mapcalc_1804289383",
         "inputs": [
             {
-            "param": "expression",
-            "value": "water = if(nlcd_2019_cog == 11, 1, null())"
+                "param": "expression",
+                "value": "water = if(nlcd_2019_cog == 11, 1, null())"
             },
             {
-            "param": "region",
-            "value": "current"
+                "param": "region",
+                "value": "current"
             }
         ]
     }
@@ -505,18 +517,18 @@ def ingestData(modelId, mapset, geoids):
         "id": "r.grow.distance_1804289383",
         "inputs": [
             {
-            "param": "input",
-            "value": "water"
+                "param": "input",
+                "value": "water"
             },
             {
-            "param": "metric",
-            "value": "euclidean"
+                "param": "metric",
+                "value": "euclidean"
             }
         ],
         "outputs": [
             {
-            "param": "distance",
-            "value": "dist_to_water"
+                "param": "distance",
+                "value": "dist_to_water"
             }
         ]
     }
@@ -526,34 +538,34 @@ def ingestData(modelId, mapset, geoids):
         "id": "r.mapcalc_1804289383",
         "inputs": [
             {
-            "param": "expression",
-            "value": "forest = if(nlcd_2019_cog >= 41 && nlcd_2019_cog <= 43, 1, 0)"
+                "param": "expression",
+                "value": "forest = if(nlcd_2019_cog >= 41 && nlcd_2019_cog <= 43, 1, 0)"
             },
             {
-            "param": "region",
-            "value": "current"
+                "param": "region",
+                "value": "current"
             }
         ]
     }
 
     forest_2001 = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_forest_2001",
         "inputs": [
             {
-            "param": "expression",
-            "value": "forest_2001 = if(nlcd_2001_cog >= 40 && nlcd_2001_cog <= 43, 1, 0)"
+                "param": "expression",
+                "value": "forest_2001 = if(nlcd_2001_cog >= 40 && nlcd_2001_cog <= 43, 1, 0)"
             },
             {
-            "param": "region",
-            "value": "current"
+                "param": "region",
+                "value": "current"
             }
         ]
     }
 
     forest_smooth = {
         "module": "r.neighbors",
-        "id": "r.neighbors_1804289383",
+        "id": "r.neighbors_forest_smooth",
         "flags": "c",
         "inputs": [
             {
@@ -591,7 +603,7 @@ def ingestData(modelId, mapset, geoids):
 
     forest_2001_smooth = {
         "module": "r.neighbors",
-        "id": "r.neighbors_1804289383",
+        "id": "r.neighbors_forest_2001_smooth",
         "flags": "c",
         "inputs": [
             {
@@ -629,7 +641,7 @@ def ingestData(modelId, mapset, geoids):
 
     urban_2001_nonull = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_urban_2001_nonull",
         "inputs": [
             {
                 "param": "expression",
@@ -644,7 +656,7 @@ def ingestData(modelId, mapset, geoids):
 
     urban_2019_nonull = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_urban_2019_nonull",
         "inputs": [
             {
                 "param": "expression",
@@ -735,7 +747,7 @@ def ingestData(modelId, mapset, geoids):
 
     dist_to_water_km = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_dist_to_water_km",
         "inputs": [
             {
                 "param": "expression",
@@ -750,7 +762,7 @@ def ingestData(modelId, mapset, geoids):
 
     dist_to_protected_km = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_dist_to_protected_km",
         "inputs": [
             {
                 "param": "expression",
@@ -765,7 +777,7 @@ def ingestData(modelId, mapset, geoids):
 
     forest_smooth_perc = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_forest_smooth_perc",
         "inputs": [
             {
                 "param": "expression",
@@ -780,7 +792,7 @@ def ingestData(modelId, mapset, geoids):
 
     forest_2001_smooth_perc = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_forest_2001_smooth_perc",
         "inputs": [
             {
                 "param": "expression",
@@ -795,7 +807,7 @@ def ingestData(modelId, mapset, geoids):
 
     urban_change_01_19 = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_urban_change_01_19",
         "inputs": [
             {
                 "param": "expression",
@@ -810,7 +822,7 @@ def ingestData(modelId, mapset, geoids):
 
     urban_change_clip = {
         "module": "r.mapcalc",
-        "id": "r.mapcalc_1804289383",
+        "id": "r.mapcalc_urban_change_clip",
         "inputs": [
             {
                 "param": "expression",
@@ -900,7 +912,7 @@ def ingestData(modelId, mapset, geoids):
         urban_change_clip
     ]
 
-    pc = acp.create_actinia_process_chain(grass_commands)
+    # pc = acp.create_actinia_process_chain(grass_commands)
 
     r = requests.post(
         url,

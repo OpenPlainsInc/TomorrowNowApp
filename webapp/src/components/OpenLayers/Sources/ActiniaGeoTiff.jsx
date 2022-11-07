@@ -118,7 +118,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     useEffect(()=> {
         (async () => {
             let data = await GrassColors.grass.fetchScheme(locationName, mapsetName, rasterName)
-            console.log("GRASS color scheme:", data)
+            console.log("Get GRASS color scheme data:", data)
             let scheme = GrassColors.grass.parseResults(data.response.process_results)
             setGrassColorScheme(scheme)
             console.log("GRASS color scheme:", scheme)
@@ -139,13 +139,14 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             forceXHR: true, 
             normalize: false, // set true for imagery
             convertToRGB: false,
-            interpolate: true, // set fault for discrete data
+            interpolate: false, // set fault for discrete data
             style: style
         }
         let tmpSource = GeoTIFFSource(sourceOptions)
         setSource(tmpSource)
-        
-        let colorPalette = color === 'grass' && !rasterName.includes("nlcd") ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+        let colorPalette = color === 'grass' ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+
+        // let colorPalette = color === 'grass' && !rasterName.includes("nlcd") ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
         console.log("Color Palette Set: ", colorPalette)
         setTileColor(colorPalette)
         setTileStyle(prevState => ({

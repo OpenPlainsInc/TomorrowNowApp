@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Nov 04 2022
+ * Last Modified: Mon Nov 07 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -46,6 +46,7 @@ import { VectorTileLayer } from '../../../components/OpenLayers/Layers/VectorTil
 import { countyStyle } from '../countySelectStyle';
 import Collection from 'ol/Collection'
 import ActiniaGeoTiff from '../../../components/OpenLayers/Sources/ActiniaGeoTiff';
+import Reprojection from '../../../components/OpenLayers/Views/Reprojection';
 
 export default function ModelMap({devRestrictions}) {
     const county_geoids = ['37183', '37063', '37135']
@@ -65,15 +66,16 @@ export default function ModelMap({devRestrictions}) {
             mapClass="model-map-fullscreen" 
             center={center} 
             zoom={zoom}
-            extent={EXTENT}
+            
         >
             <Layers>
                 <TileLayer source={osmSource} opacity={1.0}></TileLayer>
                 <VectorLayer source={interactionSource}/>
                 <ActiniaGeoTiff
-                    rasterName={"final"}
-                    locationName={"futures_triangle_nc"}
-                    mapsetName={"futures_test"}
+                    rasterName={"nlcd_2019_cog"}
+                    locationName={"nc_research_triangle"}
+                    mapsetName={"PERMANENT"}
+                    color={"grass"}
                 />
                 {/* <VectorTileLayer 
                     layerName="seletedCounties" 
@@ -103,6 +105,8 @@ export default function ModelMap({devRestrictions}) {
                     <ScenarioControl/>
                 </ScenarioControls> */}
             </Controls>
+            
+            <Reprojection epsg='5070'></Reprojection> 
         </Map>
 
     )

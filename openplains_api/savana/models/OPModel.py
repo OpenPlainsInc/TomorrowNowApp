@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Oct 20 2022                                               #
+# Last Modified: Mon Nov 07 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -33,13 +33,15 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.template.defaultfilters import slugify
-
+from django.contrib.gis.db.models.aggregates import Union
+from django.contrib.gis.db.models.functions import Centroid, AsGeoJSON
 from world.models.County import County  # new
 from .OPEnums import PrivacyEnum, StatusEnum
 from .OPModelGoal import ModelGoal
 from .OpenModelExtent import ModelExtent
 from savana.utils import actinia as acp
 import requests
+
 # class GoalsEnum(models.TextChoices):
 #     PROTECT = "PNR", "Protect Natural Reasources"
 #     FRAGMENT = "LLF", "Limit Landscape Fragmentation"
@@ -57,6 +59,7 @@ class OpenPlainsModel(models.Model):
     description = models.CharField(max_length=250)  # The model description
     status = models.CharField(max_length=2, choices=(StatusEnum.choices), default=StatusEnum.INITIATING)
     privacy = models.CharField(max_length=2, choices=(PrivacyEnum.choices), default=PrivacyEnum.PRIVATE)
+    location = models.CharField(max_length=250, null=True)  # TODO: Switch to Location Model
     mapset = models.CharField(max_length=250)  # TODO: Switch to Mapset Model
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='opmodel')
     slug = models.SlugField(null=False, unique=True)  # new
@@ -79,40 +82,46 @@ class OpenPlainsModel(models.Model):
     def get_absolute_url(self):
         return reverse("opmodel_detail", kwargs={"slug": self.slug})
 
-    def _create_mapset(self):
+    def _create_location(self):
         print("Creating Mapset: ", self.slug)
         client = acp.initActiniaClient()  # Add the users credentials
+        location_name = self.slug.replace('-', '_')
+        self.location = location_name
+        client.create_location(location_name, 5070)
         locations = client.get_locations()
         print("Locations", locations)
-        mapsets = locations["CONUS"].get_mapsets()
+        mapsets = locations[location_name].get_mapsets()
         print("Mapsets", mapsets)
-        mapsetName = self.slug.replace('-', '_')
-        locations["CONUS"].create_mapset(mapsetName)
-        self.mapset = mapsetName
+        mapset_name = self.owner.username
+        locations[location_name].create_mapset(mapset_name)
+        self.mapset = mapset_name
 
     def save(self, *args, **kwargs):  # new
         print("SAVE: Creating new modeling object with override on the model")
         if not self.slug:
             self.slug = slugify(self.name)
             print("slug:", self.slug)
-        if not self.mapset:
-            self._create_mapset()
+        if not self.location:
+            self._create_location()
         return super().save(*args, **kwargs)
 
     def create(self, *args, **kwargs):  # new
         print("CREATE: Creating new modeling object with override on the model")
-        if not self.slug and self.mapset:
+        if not self.slug and self.location:
             self.slug = slugify(self.name)
-        if not self.mapset:
-            self._create_mapset()
+        if not self.location:
+            self._create_location()
         return super().create(*args, **kwargs)
 
-    def geoids(self):
-        url = f"{acp.baseUrl()}/locations/CONUS/mapsets/{self.mapset}/processing_async"
-
-        print(f"Actinia Request Url: {url}")
+    def _list_counties_geoid(self):
+        """Generate list of counties geoids"""
         counties = self.counties.all()
         countyIds = map(str, [c.county.geoid for c in counties])
+        return countyIds
+
+    def geoids(self):
+        """Create geoid SQL where query for Actinia county import"""
+        countyIds = self._list_counties_geoid()
         geoids = "geoid in ("
         for c, v in enumerate(countyIds):
             if (c == 0):
@@ -121,3 +130,10 @@ class OpenPlainsModel(models.Model):
                 geoids = geoids + f",'{v}'"
         geoids = geoids + ")"
         return geoids
+
+    def model_region_centroid(self, epsg=3358):
+        """Returns the centroid of the region of interest"""
+        county_geoids = self._list_counties_geoid()
+        centroid = County.objects.filter(geoid__in=county_geoids).aggregate(point=Centroid(Union('geom')))
+
+        return centroid

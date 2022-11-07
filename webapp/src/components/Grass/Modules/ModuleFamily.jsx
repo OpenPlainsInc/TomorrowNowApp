@@ -139,7 +139,7 @@ const ModuleFamily = ({icon, family, filter}) => {
             <Row>
               { modules.filter(filterModules).filter(m => textSearchFilter(m, filter)).slice(pageStart, pageEnd).map( (m, idx) => { 
                 return(       
-                    <Col key={idx} md={3}>
+                    <Col key={idx} md={2}>
                         <ModuleCard module={m} icon={icon}></ModuleCard>
                     </Col>     
                 )

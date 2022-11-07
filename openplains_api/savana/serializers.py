@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sat Nov 05 2022                                               #
+# Last Modified: Mon Nov 07 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -31,7 +31,7 @@
 ###############################################################################
 
 from rest_framework import serializers
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, GeometryCollection
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from django.contrib.auth.models import User
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -80,16 +80,23 @@ class DrainRequestSerializer(GeoFeatureModelSerializer):
         fields = ('point', 'huc12')
 
 
-class OPModelSerializer(serializers.ModelSerializer):
+class OPModelSerializer(GeoFeatureModelSerializer):
 
     owner = serializers.ReadOnlyField(source='owner.username')
     status = serializers.CharField(source='get_status_display')
     goals = ModelGoalSerializer(many=True, read_only=True)  # serializers.PrimaryKeyRelatedField(many=True, queryset=ModelGoal.objects.all())
     privacy = serializers.CharField(source='get_privacy_display')  # (ChoiceField(choices=PrivacyEnum)
     counties = ModelExtentSerializer(many=True, read_only=True)
+    centroid = GeometrySerializerMethodField()
+
+    def get_centroid(self, obj):
+        centroid = obj.model_region_centroid()['point']
+        return centroid
 
     class Meta:
         model = OpenPlainsModel
+        geo_field = 'centroid'
+        id_field = False
         fields = ['id', 'name', 'description', 'privacy', 'mapset', 'owner', 'slug', 'status', 'goals', 'counties']
 
 
@@ -144,7 +151,7 @@ class CreateModelSerializer(serializers.Serializer):
 
         # Ingest County Data Into Mapset
         # This is a celery task
-        ingestData.delay(opModel.id, opModel.mapset, opModel.geoids())
+        ingestData.delay(opModel.id, opModel.location, opModel.geoids())
         return opModel
 
 

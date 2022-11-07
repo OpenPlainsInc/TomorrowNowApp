@@ -6,6 +6,7 @@ import Map from "../../components/OpenLayers/Map"
 import Layers from "../../components/OpenLayers/Layers/Layers"
 import TileLayer from "../../components/OpenLayers/Layers/TileLayer"
 import VectorLayer from "../../components/OpenLayers/Layers/VectorLayer"
+import {ImageLayer} from "../../components/OpenLayers/Layers/ImageLayer"
 import osm from "../../components/OpenLayers/Sources/osm"
 import savanaSource from "../../components/OpenLayers/Sources/savana"
 import Controls from "../../components/OpenLayers/Controls/Controls";
@@ -42,6 +43,7 @@ import { countyStyle, selectStyle, streamStyle } from '../../components/OpenLaye
 import { NLCDCard } from './NLCDCard';
 import { SurveyStatsCard } from './SurveyStatsCard';
 import NLCDTemporalMask from './NLCDTemporalMask';
+import { RasterSource } from '../../components/OpenLayers/Sources/RasterSource';
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
 
@@ -59,7 +61,7 @@ const Game = ({params}) => {
   const [loadingAnimation, setLoadingAnimation] = useState(false)
   const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
   const [selectedBasin, setSelectedBasin] = useState(null)
-  // const wms3depSource = ned3DepSource({layer: 'Hillshade Multidirectional'})
+  const wms3depSource = ned3DepSource({layer: 'Height Ellipsoidal'})
   const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
   const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
   const [osmSource, setOsmSource] = useState(osm()); 
@@ -72,6 +74,15 @@ const Game = ({params}) => {
   let nlcdsource = useNLCDSource({year:'2019', dataType:'land_cover', region:'L48'});
   const [selectedHuc12Props, setSelectedHuc12Props]  = useState(null);
   // let nlcdCog = nlcdCOGSource({layer: 2019})
+
+  let nlcdRater = RasterSource({
+    sources: [wms3depSource],
+    operation: function (pixels, data) {
+      const pixel = pixels[0];
+      return pixel;
+    },
+  })
+
   let huc12Source = useVectorTileSource({
     layerName: "savana:huc_12",//"savana:counties_per_huc12",//"savana:huc_12",
     // baseUrl:`http://localhost:8600/geoserver/gwc/service/`,
@@ -472,6 +483,9 @@ const Game = ({params}) => {
                         layerName="point"
                         source={pointSource}
                         zIndex={1}
+                      />
+                      <ImageLayer
+                        source={nlcdRater}
                       />
                   </Layers>
 

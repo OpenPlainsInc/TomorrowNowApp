@@ -1,11 +1,11 @@
 /*
- * Filename: index.js
+ * Filename: useModels.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Sunday November 6th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sat Nov 05 2022
+ * Last Modified: Sun Nov 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -31,17 +31,29 @@
  */
 
 
-import Layers from "./Layers";
-import VectorLayer from "./VectorLayer";
-import TileLayer from "./TileLayer";
-import GraticuleLayer from "./GraticuleLayer"
-import VectorTileLayer from "ol/layer/VectorTile";
-import ImageLayer from "./ImageLayer";
-export {
-	Layers,
-	VectorLayer,
-	VectorTileLayer,
-	TileLayer,
-	GraticuleLayer,
-	ImageLayer
+import { settings } from "../../components/Grass/Settings"
+import { useDataSource } from "../../components/Grass/Utils"
+import { useToken } from "../../components/Grass/Utils/Auth/useToken"
+
+export const useModels = () => {
+    const { token } = useToken()
+    const URL = `${settings.ACTINIA_BASE_URL}/models`
+    // console.log(URL)
+    const fetchModel = async(params) => {
+        console.log("fetchModels")
+        const response = await fetch(URL, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Token ${token.token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        let res = await response.json()
+        console.log(res)
+        return res
+    }
+
+    const {data, errors, isloading } = useDataSource({getDataFunc: fetchModel, params: []})
+
+    return {data, errors, isloading }
 }

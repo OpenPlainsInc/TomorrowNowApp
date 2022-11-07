@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Sun Nov 06 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -83,16 +83,16 @@ const ModelsTable = ({data}) => {
                 { data ?
                     data.map((r, idx) => {
                         return (
-                            <tr key={r.properties.id + idx}>
+                            <tr key={r.properties.id}>
                                 <td>{r.properties.id}</td>
                                 <td>{r.properties.name}</td>
                                 <td>{r.properties.scenarios}</td>
                                 <td>
                                     {
-                                        r.properties.goals.map((goal, idx) => {
+                                        r.properties.goals.map((goal) => {
                                             return (
-                                                <div key={goal}>
-                                                    <Badge bg="primary">{goal}</Badge>{' '} 
+                                                <div key={`${goal.goal.id}-${r.properties.id}`}>
+                                                    <Badge bg="primary">{goal.goal.name}</Badge>{' '} 
                                                 </div>
                                             )
                                         })
@@ -100,7 +100,7 @@ const ModelsTable = ({data}) => {
                                 </td>
                                 <td>{r.properties.status}</td>
                                 <td>
-                                    <TableActionsButtonGroup modelId={r.properties.id}/>
+                                    <TableActionsButtonGroup modelId={r.properties.slug}/>
                                 </td>
                             </tr>
                         )

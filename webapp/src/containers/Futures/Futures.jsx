@@ -19,10 +19,13 @@ import FindModelMapCard from "./FindModelMapCard";
 import mockModelData from "./mockModelData";
 import { useEffect, useState } from "react";
 import { useToken } from "../../components/Grass/Utils/Auth/useToken";
+import { useModels } from './useModels';
+
 export default function Futures() {
   const mockModels = mockModelData()
   const {token} = useToken()
   const [mockModelss, setMockModelss] = useState(null)
+  const models = useModels()
   
 
     return (
@@ -38,7 +41,12 @@ export default function Futures() {
               </div>
             </Col>
             <Col md={8}>
-              <FindModelMapCard data={mockModels}/>
+              {
+                models?.data ? 
+                  <FindModelMapCard data={models.data}/>
+                : null
+              }
+              
               {/* <div style={{paddingTop: 20}}>
                 <ExistingModelsCard data={mockModels}/>
               </div> */}

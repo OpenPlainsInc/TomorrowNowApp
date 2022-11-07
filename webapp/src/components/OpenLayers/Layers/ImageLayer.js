@@ -1,7 +1,7 @@
 /*
- * Filename: index.js
+ * Filename: ImageLayer.js
  * Project: TomorrowNow
- * File Created: Thursday March 31st 2022
+ * File Created: Saturday November 5th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,18 +30,34 @@
  * 
  */
 
+import React, { useContext, useEffect, useState } from "react";
+import MapContext from "../MapContext";
+import OLImage from 'ol/layer/Image';
 
-import Layers from "./Layers";
-import VectorLayer from "./VectorLayer";
-import TileLayer from "./TileLayer";
-import GraticuleLayer from "./GraticuleLayer"
-import VectorTileLayer from "ol/layer/VectorTile";
-import ImageLayer from "./ImageLayer";
-export {
-	Layers,
-	VectorLayer,
-	VectorTileLayer,
-	TileLayer,
-	GraticuleLayer,
-	ImageLayer
+export const ImageLayer = ({source, layerName, zindex=1, ...props}) => {
+    const { map } = useContext(MapContext);
+    const [layer, setLayer] = useState(null)
+
+    useEffect(() => {
+      if (!map) return;
+      let imageLayer = new OLImage({
+        ...props,
+        source
+      });
+      imageLayer.setZIndex(zindex);
+      map.addLayer(imageLayer);
+      imageLayer.set('name', layerName)
+      setLayer(imageLayer)
+     
+    
+      return () => { 
+        if (map) {
+          map.removeLayer(imageLayer);
+          setLayer(null)
+        }
+      };
+    }, [map, source]);
+  
+    return null;
+
 }

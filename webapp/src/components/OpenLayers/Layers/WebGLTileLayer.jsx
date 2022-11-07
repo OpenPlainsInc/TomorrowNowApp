@@ -23,9 +23,9 @@ const WebGLTileLayer = ({
   const { map } = useContext(MapContext); 
   const [layer, setLayer] = useState(null)
 
-  // const onPostRender = (e) => {
+  // onPostRender = (e) => {
   //   console.log(e)
-  //   let kernel = filters.kernels.sharpen
+  //   let kernel = filters.kernels.blur
   //   let selectedKernel = filters.normalize(kernel)
   //   // filters.convolve(e, selectedKernel)
   //   filters.convolve(e, selectedKernel)
