@@ -1,0 +1,2 @@
+g.extension extension=v.in.osm
+v.in.osm input=/vsicrul/https://storage.googleapis.com/tomorrownow-actinia-dev/SpatialData/tennessee-latest.osm.pbf table=lines type=point,line output=roads where="highway is not null"
