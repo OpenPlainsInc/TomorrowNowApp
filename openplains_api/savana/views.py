@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Nov 06 2022                                               #
+# Last Modified: Tue Nov 08 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -706,7 +706,8 @@ def rDrain(request):
                     # },
                     {
                         "param": "input",
-                        "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/USGS_Seamless_DEM_1.vrt"
+                        "value": "/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/SpatialData/LC20_Elev_220_cog.tif"
+                        # "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/USGS_Seamless_DEM_1.vrt"
                     },
                     {
                         "param": "resample",
