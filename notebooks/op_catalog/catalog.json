@@ -1,0 +1,29 @@
+{
+  "type": "Catalog",
+  "id": "openplains",
+  "stac_version": "1.0.0",
+  "description": "STAC collection containing data used by OpenPlains.",
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/lclu/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/transportation/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "self",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": []
+}

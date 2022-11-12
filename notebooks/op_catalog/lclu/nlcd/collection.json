@@ -1,0 +1,38 @@
+{
+  "type": "Collection",
+  "id": "nlcd",
+  "stac_version": "1.0.0",
+  "description": "NLCD datasets 2001 - 2019",
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "parent",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/lclu/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": [],
+  "extent": {
+    "spatial": {
+      "bbox": [
+        -2362395,
+        221265,
+        2327655,
+        3267405
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2001-01-01T00:00:00Z",
+          "2019-01-01T00:00:00Z"
+        ]
+      ]
+    }
+  },
+  "license": "proprietary"
+}

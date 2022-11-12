@@ -1,0 +1,45 @@
+{
+  "type": "Collection",
+  "id": "roads",
+  "stac_version": "1.0.0",
+  "description": "Road Datasets",
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "item",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/transportation/roads/LC20_Roads_220_cog/LC20_Roads_220_cog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "parent",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/transportation/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": [],
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -2362395.0000000005,
+          221265.00000000047,
+          2327655.0000000005,
+          3267405.000000001
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2020-01-01T00:00:00Z",
+          "2020-01-01T00:00:00Z"
+        ]
+      ]
+    }
+  },
+  "license": "proprietary"
+}

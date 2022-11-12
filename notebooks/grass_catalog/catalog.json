@@ -1,0 +1,25 @@
+{
+  "type": "Catalog",
+  "id": "grassdata",
+  "stac_version": "1.0.0",
+  "description": "GRASS GIS STAC data catalog used by OpenPlains.",
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/grass_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/grass_catalog/nc_spm_08/collection.json",
+      "type": "application/json",
+      "title": "nc_spm_08"
+    },
+    {
+      "rel": "self",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/grass_catalog/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": []
+}

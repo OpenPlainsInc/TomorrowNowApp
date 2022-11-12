@@ -1,0 +1,47 @@
+{
+  "type": "Collection",
+  "id": "nc_spm_08",
+  "stac_version": "1.0.0",
+  "description": "GRASS GIS Sample Datasets",
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/grass_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/grass_catalog/nc_spm_08/PERMANENT/collection.json",
+      "type": "application/json",
+      "title": "PERMANENT"
+    },
+    {
+      "rel": "parent",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/grass_catalog/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
+  ],
+  "grass:type": "location",
+  "proj:epsg": 3358,
+  "sci:citation": "GRASS Development Team, 2022. Geographic Resources Analysis Support System (GRASS) Software, Version 8.0. Open Source Geospatial Foundation. https://grass.osgeo.org",
+  "title": "nc_spm_08",
+  "extent": {
+    "bbox": [
+      [
+        33.83,
+        -84.33,
+        36.59,
+        -75.38
+      ]
+    ]
+  },
+  "license": "GNU General Public License (GPL)",
+  "keywords": [
+    "GRASS GIS",
+    "Location"
+  ]
+}

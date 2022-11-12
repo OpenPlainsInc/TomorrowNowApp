@@ -1,0 +1,121 @@
+{
+  "type": "Feature",
+  "stac_version": "1.0.0",
+  "id": "LC20_Roads_220_cog",
+  "properties": {
+    "source": "https://www.landfire.gov/transportation.php",
+    "name": "LF 2020 Operational Roads",
+    "proj:epsg": 5070,
+    "datetime": "2020-01-01T00:00:00Z"
+  },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          2327655.0000000005,
+          221265.00000000047
+        ],
+        [
+          2327655.0000000005,
+          3267405.000000001
+        ],
+        [
+          -2362395.0000000005,
+          3267405.000000001
+        ],
+        [
+          -2362395.0000000005,
+          221265.00000000047
+        ],
+        [
+          2327655.0000000005,
+          221265.00000000047
+        ]
+      ]
+    ]
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "collection",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/transportation/roads/collection.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "parent",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/transportation/roads/collection.json",
+      "type": "application/json"
+    }
+  ],
+  "assets": {
+    "analytic": {
+      "href": "https://storage.googleapis.com/tomorrownow-actinia-dev/SpatialData/transportation/roads/LC20_Roads_220_cog.tif",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "LF 2020 Operational Roads",
+      "raster:bands": [
+        {
+          "classification:classes": [
+            {
+              "value": -9999,
+              "name": "Fill - NoData",
+              "description": "NoData",
+              "nodata": true
+            },
+            {
+              "value": 0,
+              "name": "Background Value",
+              "description": "Background Value.",
+              "color_hint": "000000"
+            },
+            {
+              "value": 20,
+              "name": "Primary road",
+              "description": "Interstates and other major roads. Pixels were derived from the 2018 NavStreets Street Data.",
+              "color_hint": "ff0101"
+            },
+            {
+              "value": 21,
+              "name": "Secondary road",
+              "description": "Non-interstate highways. Pixels were derived from the 2018 NavStreets Street Data.",
+              "color_hint": "ffff01"
+            },
+            {
+              "value": 22,
+              "name": "Tertiary road",
+              "description": "Any two-lane road. Pixels were derived from the 2018 NavStreets Street Data.",
+              "color_hint": "00f00f"
+            },
+            {
+              "value": 23,
+              "name": "Thinned road",
+              "description": "Small tertiary roads that generally are not paved and have been removed from the landcover but remain as part of the impervious surface product. Pixels were derived from the 2018 NavStreets Street Data",
+              "color_hint": "ffffff"
+            },
+            {
+              "value": 255,
+              "name": "NoData",
+              "description": "NoData",
+              "nodata": true
+            }
+          ]
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    }
+  },
+  "bbox": [
+    -2362395.0000000005,
+    221265.00000000047,
+    2327655.0000000005,
+    3267405.000000001
+  ],
+  "stac_extensions": [],
+  "collection": "roads"
+}

@@ -1,0 +1,24 @@
+{
+  "type": "Catalog",
+  "id": "lclu",
+  "stac_version": "1.0.0",
+  "description": "A catalog containing land cover land use data collections",
+  "links": [
+    {
+      "rel": "root",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/lclu/nlcd/collection.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "parent",
+      "href": "/home/coreywhite/Documents/GitHub/TomorrowNow/TomorrowNowApp/notebooks/op_catalog/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": []
+}
