@@ -50,8 +50,8 @@ export const LikertScaleSelect = ({label, responses, formKey, required=true}) =>
     }
 
     return (
-        <Form.Group className="mb-3" controlId={`likertgroup-${formKey}`}>
-            <Form.Label>{label}</Form.Label>
+        <Form.Group className="mb-12" controlId={`likertgroup-${formKey}`}>
+            <Form.Label><div className="fw-bold">{label}</div></Form.Label>
             { responses.map(option => {
                 return (
                     <Controller key={`inline-${inputName(label, option.text)}`}

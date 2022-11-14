@@ -59,11 +59,11 @@ export const ProtectedArea = ({devRestrictions}) => {
 
     // In the futures these values will be set by the model goal response from the API
     const likertResponses = [
-        {value: "-0.99", text: "Highly Decrease Likelihood of Development"},
-        {value:"-0.5", text: "Decrease Likelihood of Development"},  
-        {value: "0.0", text: "Status Quo"},
-        {value: "0.5", text: "Increase Likelihood of Development"},
-        {value: "0.99", text: "Highly Increase Likelihood of Development"}
+        {value: "-0.99", text: "Greatly reduce likelihood of Development"},
+        {value:"-0.5", text: "Reduce likelihood of development"},  
+        {value: "0.0", text: "Status quo"},
+        {value: "0.5", text: "Increase likelihood of development"},
+        {value: "0.99", text: "Greatly increase likelihood of development"}
     ]
 
     const estimateLandCost = (km2) => {
@@ -147,9 +147,14 @@ export const ProtectedArea = ({devRestrictions}) => {
     return (
         <Card>
             {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
-            <Card.Title>Development Potential</Card.Title>
+            <Card.Header>
+                <Card.Title>Development Potential</Card.Title>
+                {/* <Card.Text>Set an areas future development potential by drawing polygons on the map and selecting the likelihood the area will be developed in the future.</Card.Text> */}
+
+            </Card.Header>
+           
             <Card.Body>
-                <Card.Text>Set an areas future development potential by drawing polygons on the map and selecting the likelihood the area will be developed in the future.</Card.Text>
+                <Card.Text>Design an urban land use policy that will influence the future development potential of a designated area. Get started by drawing polygons on the map and selecting the likelihood the area will be developed in the future.</Card.Text>
                 <ListGroup as="ol" numbered>
                     { 
                         data.map((d, idx) => {
@@ -166,7 +171,7 @@ export const ProtectedArea = ({devRestrictions}) => {
                                         <LikertScaleSelect formKey={`development_potential.${idx}`} label={"Development Potential"} responses={likertResponses}/>
                                     </div>
                                     <Row md={12}>
-                                        <Button variant="danger" onClick={(e) => {removeItem(e, idx)}}>Remove</Button>
+                                        <Button variant="danger" onClick={(e) => {removeItem(e, idx)}}>X</Button>
                                     </Row>
                                     
                                 </ListGroup.Item>

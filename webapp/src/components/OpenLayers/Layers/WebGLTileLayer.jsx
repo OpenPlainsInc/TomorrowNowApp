@@ -3,6 +3,7 @@ import MapContext from "../MapContext";
 import OLWebGLTileLayer from 'ol/layer/WebGLTile';
 // import { Layer } from "ol/layer";
 import filters from "../Filters"
+import nlcdCats from "../Colors/nlcd";
 
 const WebGLTileLayer = ({ 
   layerName, 
@@ -24,19 +25,19 @@ const WebGLTileLayer = ({
   const [layer, setLayer] = useState(null)
 
   // onPostRender = (e) => {
-  //   console.log(e)
   //   let kernel = filters.kernels.blur
   //   let selectedKernel = filters.normalize(kernel)
-  //   // filters.convolve(e, selectedKernel)
   //   filters.convolve(e, selectedKernel)
-
   // }
 
   const onPointerMove = e => {
     const data = layer.getData(e.pixel)
     if (!data) return;
-    console.log("WebGLLayer: Data", data[0]);
-    // console.log("WebGLLayer: Props", layer.getData())
+    // console.log("WebGLLayer: Data", data[0], color);
+    // let newColors = nlcdCats.filterWebGLColors(data[0])
+    // console.log("WebGLLayer: New Color", data[0], newColors);
+    // layer.updateStyleVariables({newColors, exposure, contrast, saturation, gamma });
+    // layer.changed()
   }
 
   useEffect(() => {

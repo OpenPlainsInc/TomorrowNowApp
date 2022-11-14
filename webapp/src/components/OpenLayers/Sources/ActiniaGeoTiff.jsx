@@ -31,7 +31,8 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     minZoom = undefined,
     maxZoom = undefined,
     opacity = 0.5, 
-    zIndex = 0 
+    zIndex = 0,
+    geoTiffOptions = {}
 }) => {
  
     const [dataUrl, setDataUrl] = useState(null)
@@ -132,7 +133,7 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     // //Set Color Palette and Style once source is set
     useEffect(()=> {
         if (status !== 'finished') return;
-
+        // Figure out a smart way to set this 
         let sourceOptions = {
             sources: [{url: dataUrl}], 
             allowFullFile: true, 
@@ -140,11 +141,16 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
             normalize: false, // set true for imagery
             convertToRGB: false,
             interpolate: false, // set fault for discrete data
-            style: style
+            style: style,
+            ...geoTiffOptions
         }
         let tmpSource = GeoTIFFSource(sourceOptions)
         setSource(tmpSource)
-        let colorPalette = color === 'grass' ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+        let colorPalette = color
+        if (!Array.isArray(color)) {
+            colorPalette = color === 'grass' ? grassColorScheme :
+                GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+        }
 
         // let colorPalette = color === 'grass' && !rasterName.includes("nlcd") ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
         console.log("Color Palette Set: ", colorPalette)
@@ -160,13 +166,17 @@ const ActiniaGeoTiff = ({rasterName, mapsetName, locationName="nc_spm_08",
     useEffect(()=> {
         if (!source || !color) return;
         console.log("update color", color)
+        let colorPalette = color
+        if (!Array.isArray(color)) {
+            colorPalette = color !== 'grass' ? [
+                'interpolate',
+                ['linear'],
+                ['band', 1],
+                ...utils.getColorStops(color, dataRangeMin, dataRangeMax, 15, false)
+            ] : !rasterName.includes("nlcd") ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+        }
         
-        let colorPalette = color !== 'grass' ? [
-            'interpolate',
-            ['linear'],
-            ['band', 1],
-            ...utils.getColorStops(color, dataRangeMin, dataRangeMax, 15, false)
-        ] : !rasterName.includes("nlcd") ? grassColorScheme : GrassColors.utils.autoDetectPalette(rasterName, dataRangeMin, dataRangeMax, 15)
+        
         setTileColor(colorPalette)
         setTileStyle(prevState => ({
             ...style,

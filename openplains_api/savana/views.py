@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Nov 08 2022                                               #
+# Last Modified: Sun Nov 13 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -117,7 +117,7 @@ class OpModelDetails(APIView):
 
     def get_object(self, model_id):
         try:
-            return OpenPlainsModel.objects.get(pk=model_id)
+            return OpenPlainsModel.objects.get(slug=model_id)
         except OpenPlainsModel.DoesNotExist:
             raise Http404
 

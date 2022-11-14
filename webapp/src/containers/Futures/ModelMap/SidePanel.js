@@ -40,7 +40,7 @@ export const SidePanel = ({children}) => {
             id="model-sidebar-tabs"
             activeKey={key}
             onSelect={(k) => setKey(k)}
-            className="mb-3"
+            // className="mb-3"
             fill
             >
             {children}

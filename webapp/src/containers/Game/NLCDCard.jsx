@@ -15,7 +15,7 @@ import { chartDataFormat } from '../../components/Grass/Charts/chartDataFormat';
 export const NLCDCard = (({nlcdData, basinElevationInfo}) => {
 
     const nlcdTotalArea = (data) => {
-        const areaList = data.filter(c=> c.catDetails).map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
+        const areaList = data.filter(c=> c.year === '2019').map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
         return areaList.toFixed(2)
     }
 

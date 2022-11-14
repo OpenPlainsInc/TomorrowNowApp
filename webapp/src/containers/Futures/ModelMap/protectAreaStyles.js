@@ -31,28 +31,44 @@
  */
 
 
-import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
+import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
+import { set } from "ol/transform";
+
+import FillPattern from "ol-ext/style/FillPattern";
 
 
 
-
-export const protectAreaStyle = (value) => {
+export const protectAreaStyle = (value, idx) => {
     const style = new Style({
-        fill: new Fill({
-          color: 'rgba(255, 255, 255, 0.85)',
-        }),
         stroke: new Stroke({
-          color: '#000',
-          width: 2,
+          color: 'rgba(0,0,0, 1.0)',
+          width: 4,
+        }),
+        fill: new FillPattern({
+          pattern: "hatch",
+          spacing: 10,
+          size: 3,
+          color: 'rgba(208,121,68, 1.0)',
+        }),
+        text: new Text({
+          font: '16px sans-serif',
+          text: `ID: ${idx}`,
+          fill: new Fill({
+            color: 'rgba(0, 0, 0, 1.0)',
+          }),
+          stroke: new Stroke({
+            color: 'rgba(255, 255, 255, 1.0)',
+            width: 1,
+          }),
         })
       });
 
-      const glowstyle = new Style({
-        stroke: new Stroke({
-          color: 'RGB(200, 200, 200, 0.5)',
-          width: 3,
-        })
-      });
+      // const glowstyle = new Style({
+      //   stroke: new Stroke({
+      //     color: 'RGB(200, 200, 200, 0.95)',
+      //     width: 3,
+      //   })
+      // });
       
 
     // https://colorbrewer2.org/?type=diverging&scheme=BrBG&n=5
@@ -61,15 +77,20 @@ export const protectAreaStyle = (value) => {
         "0.5":'rgb(223,194,125, 0.85)',
         "0.0": 'rgb(245,245,245, 0.85)',
         "-0.5": 'rgb(128,205,193, 0.85)',
-        "-0.99" : 'rgb(1,133,113, 0.85)'
+        "-0.99" : 'rgb(1,133,113, 0.85)',
+        "black": 'rgb(0,0,0)'
     }
 
     if (colorScheme[value]) {
-        style.setFill(new Fill({
-            color: colorScheme[value],
-          }))
+        style.setFill(new FillPattern({
+          pattern: "hatch",
+          spacing: 10,
+          size: 3,
+          color: colorScheme["black"],
+        }))
+
     }
     console.log("style", style)
-    return [style, glowstyle]
+    return [style]
     
 }

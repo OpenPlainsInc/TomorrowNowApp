@@ -30,6 +30,7 @@
  * 
  */
 import { useState } from 'react';
+import {useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -41,8 +42,12 @@ import Tab from 'react-bootstrap/Tab';
 import Button from 'react-bootstrap/Button';
 import ScenarioForm from './ScenarioForm'
 import { useForm, useFormState } from "react-hook-form";
+import {useModel} from "../useModel";
 export default function ModelContainer() {
     const methods = useForm();
+    let {modelId} = useParams();
+    const model = useModel({modelId})
+    console.log("Model:", model)
     const { isValid, isDirty } = useFormState(methods);
     const devRestrictionsCollection = new Collection()
    
@@ -52,23 +57,28 @@ export default function ModelContainer() {
         <Container fluid className="bg-light text-dark">
           <ScenarioForm>
             <Row>
-              <Col md={9}>
-                <ModelMap devRestrictions={devRestrictions}></ModelMap>
+              <Col md={8}>
+                <ModelMap devRestrictions={devRestrictions} model={model}></ModelMap>
               </Col>
-              <Col md={3}>
+              <Col md={4}>
                 <SidePanel>
-                <Tab eventKey="potential" title="Development Potential">
+                <Tab eventKey="potential" title="Scenarios">
                     <ProtectedArea devRestrictions={devRestrictions}></ProtectedArea>
                 </Tab>
                 <Tab eventKey="chat" title="Chat">
                     <input type="textarea" placeholder='admin: sup dog?' />
                 </Tab>
+              
                 </SidePanel>
-                <Row>
-                  <div className="d-grid gap-2" >
-                      <Button variant="secondary" type="submit" disabled={!isValid && isDirty}>Run Scenario</Button>
-                  </div>
-                </Row>
+                {
+                  isValid || isDirty ? 
+                
+                  <Row>
+                      <div className="d-grid gap-2" >
+                          <Button variant="secondary" type="submit" disabled={!isValid && isDirty}>Run Scenario</Button>
+                      </div>
+                    </Row> : null
+                }
               </Col>
             </Row>
             

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Nov 07 2022                                               #
+# Last Modified: Sun Nov 13 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -97,7 +97,7 @@ class OPModelSerializer(GeoFeatureModelSerializer):
         model = OpenPlainsModel
         geo_field = 'centroid'
         id_field = False
-        fields = ['id', 'name', 'description', 'privacy', 'mapset', 'owner', 'slug', 'status', 'goals', 'counties']
+        fields = ['id', 'name', 'description', 'privacy', 'mapset', 'location', 'owner', 'slug', 'status', 'goals', 'counties']
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -49,7 +49,7 @@ import ActiniaGeoTiff from '../../../components/OpenLayers/Sources/ActiniaGeoTif
 import Reprojection from '../../../components/OpenLayers/Views/Reprojection';
 import nlcdCats from "../../../components/OpenLayers/Colors/nlcd";
 import { protectAreaStyle } from './protectAreaStyles';
-export default function ModelMap({devRestrictions}) {
+export default function ModelMap({devRestrictions, model}) {
     const county_geoids = ['37183', '37063', '37135']
     const PROJECTION = 'EPSG:3857' //'EPSG:5070'
     const EXTENT = [-8824121.708860213, 4234699.40797501,-8711169.383775985, 4334170.940395969]
@@ -59,7 +59,10 @@ export default function ModelMap({devRestrictions}) {
 
     const interactionSource = useVectorSource({wrapX: false, useSpatialIndex: false})
     const colorChoice = nlcdCats.filterWebGLColors([41,42,43,51,52,71,72,73,74])
-
+    // let countySource = useVectorTileSource({
+    //     layerName:"savana:cb_2018_us_county_500k",
+    //     baseUrl:`http://localhost:8600/geoserver/gwc/service/wmts`
+    //   })
     // Update layer source when dev potential is remove from form.
     devRestrictions.on('remove', (event) => {
         // console.log("Remove Event", event)
@@ -84,25 +87,30 @@ export default function ModelMap({devRestrictions}) {
                 <TileLayer source={osmSource} opacity={1.0}></TileLayer>
                 <VectorLayer layerName={"development_potential"}
                      source={interactionSource}
-                    style={(f => {
+                    style={((f) => {
                         const value = f.get("value") || "0.0";
                         // const value =  "0.99";
-                        return protectAreaStyle(value)
+                        return protectAreaStyle(value, f.getId())
                     })}     
                 />
-                <ActiniaGeoTiff
-                    rasterName={"nlcd_2019_cog"}
-                    locationName={"nc_research_triangle"}
-                    mapsetName={"PERMANENT"}
-                    color={'grass'}
-                    opacity={0.2}
-                />
-                <ActiniaGeoTiff
-                    rasterName={"nlcd_2019_cog"}
-                    locationName={"nc_research_triangle"}
-                    mapsetName={"PERMANENT"}
-                    color={colorChoice}
-                />
+                { model.data ? 
+                    <>
+                    <ActiniaGeoTiff
+                        rasterName={"nlcd_2019_cog"}
+                        locationName={model.data.properties.location}
+                        mapsetName={"PERMANENT"}
+                        color={'grass'}
+                        opacity={0.2}
+                    />
+                    <ActiniaGeoTiff
+                        rasterName={"nlcd_2019_cog"}
+                        locationName={model.data.properties.location}
+                        mapsetName={"PERMANENT"}
+                        color={colorChoice}
+                    /> 
+                    </>
+                    : null
+                }
                 {/* <VectorTileLayer 
                     layerName="seletedCounties" 
                     renderMode="vector"
