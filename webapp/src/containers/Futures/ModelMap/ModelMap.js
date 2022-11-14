@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Nov 07 2022
+ * Last Modified: Sun Nov 13 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -47,7 +47,8 @@ import { countyStyle } from '../countySelectStyle';
 import Collection from 'ol/Collection'
 import ActiniaGeoTiff from '../../../components/OpenLayers/Sources/ActiniaGeoTiff';
 import Reprojection from '../../../components/OpenLayers/Views/Reprojection';
-
+import nlcdCats from "../../../components/OpenLayers/Colors/nlcd";
+import { protectAreaStyle } from './protectAreaStyles';
 export default function ModelMap({devRestrictions}) {
     const county_geoids = ['37183', '37063', '37135']
     const PROJECTION = 'EPSG:3857' //'EPSG:5070'
@@ -56,8 +57,20 @@ export default function ModelMap({devRestrictions}) {
     const [center, setCenter] = useState([-8773686.675374346,4287950.809332017]);
     const [zoom, setZoom] = useState(9);
 
-    const interactionSource = useVectorSource({wrapX: false})
-    
+    const interactionSource = useVectorSource({wrapX: false, useSpatialIndex: false})
+    const colorChoice = nlcdCats.filterWebGLColors([41,42,43,51,52,71,72,73,74])
+
+    // Update layer source when dev potential is remove from form.
+    devRestrictions.on('remove', (event) => {
+        // console.log("Remove Event", event)
+        // let collection = interactionSource.getFeaturesCollection()
+        // console.log("Collection:", collection)
+        // console.log("Collection Length:", collection.getLength())
+        // let features = interactionSource.getFeatures()
+        // console.log("features:", features)
+        interactionSource.removeFeature(event.element)
+        // interactionSource.refresh({force:true})
+    })
 
     return (
         
@@ -66,16 +79,29 @@ export default function ModelMap({devRestrictions}) {
             mapClass="model-map-fullscreen" 
             center={center} 
             zoom={zoom}
-            
         >
             <Layers>
                 <TileLayer source={osmSource} opacity={1.0}></TileLayer>
-                <VectorLayer source={interactionSource}/>
+                <VectorLayer layerName={"development_potential"}
+                     source={interactionSource}
+                    style={(f => {
+                        const value = f.get("value") || "0.0";
+                        // const value =  "0.99";
+                        return protectAreaStyle(value)
+                    })}     
+                />
                 <ActiniaGeoTiff
                     rasterName={"nlcd_2019_cog"}
                     locationName={"nc_research_triangle"}
                     mapsetName={"PERMANENT"}
-                    color={"grass"}
+                    color={'grass'}
+                    opacity={0.2}
+                />
+                <ActiniaGeoTiff
+                    rasterName={"nlcd_2019_cog"}
+                    locationName={"nc_research_triangle"}
+                    mapsetName={"PERMANENT"}
+                    color={colorChoice}
                 />
                 {/* <VectorTileLayer 
                     layerName="seletedCounties" 

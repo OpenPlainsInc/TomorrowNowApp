@@ -61,7 +61,7 @@ const Game = ({params}) => {
   const [loadingAnimation, setLoadingAnimation] = useState(false)
   const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
   const [selectedBasin, setSelectedBasin] = useState(null)
-  const wms3depSource = ned3DepSource({layer: 'Height Ellipsoidal'})
+  // const wms3depSource = ned3DepSource({layer: 'Height Ellipsoidal'})
   const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
   const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
   const [osmSource, setOsmSource] = useState(osm()); 
@@ -75,13 +75,13 @@ const Game = ({params}) => {
   const [selectedHuc12Props, setSelectedHuc12Props]  = useState(null);
   // let nlcdCog = nlcdCOGSource({layer: 2019})
 
-  let nlcdRater = RasterSource({
-    sources: [wms3depSource],
-    operation: function (pixels, data) {
-      const pixel = pixels[0];
-      return pixel;
-    },
-  })
+  // let nlcdRater = RasterSource({
+  //   sources: [wms3depSource],
+  //   operation: function (pixels, data) {
+  //     const pixel = pixels[0];
+  //     return pixel;
+  //   },
+  // })
 
   let huc12Source = useVectorTileSource({
     layerName: "savana:huc_12",//"savana:counties_per_huc12",//"savana:huc_12",
@@ -330,6 +330,7 @@ const Game = ({params}) => {
                
                 let year = x.pop()
                 let nlcdGraphData = sliceIntoChunks(x, 5).map(d => {
+                  console.log("D:", d)
                   let catId = parseInt(d[0])
                   
                   let catDetails = nlcdColors.categories.filter(c => c.category === catId)[0]
@@ -484,15 +485,15 @@ const Game = ({params}) => {
                         source={pointSource}
                         zIndex={1}
                       />
-                      <ImageLayer
+                      {/* <ImageLayer
                         source={nlcdRater}
-                      />
+                      /> */}
                   </Layers>
 
                   <Overlays>
                     {/* Temporarily Broken by upgrade to ol 7.1 */}
-                    {/* <AnimatedCanvasOverlay acanvas={animatedCanvas.rain} visible={loadingAnimation}/>
-                    <AnimatedCanvasOverlay acanvas={animatedCanvas.clouds} visible={loadingAnimation}/> */}
+                    <AnimatedCanvasOverlay acanvas={animatedCanvas.rain} visible={loadingAnimation}/>
+                    <AnimatedCanvasOverlay acanvas={animatedCanvas.clouds} visible={loadingAnimation}/>
                   </Overlays>
 
                   <Events>

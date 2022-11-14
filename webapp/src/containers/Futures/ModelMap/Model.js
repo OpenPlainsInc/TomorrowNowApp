@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 18 2022
+ * Last Modified: Sun Nov 13 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -38,30 +38,41 @@ import { ProtectedArea } from './ProtectedArea';
 import Collection from 'ol/Collection'
 import { SidePanel } from './SidePanel';
 import Tab from 'react-bootstrap/Tab';
-
+import Button from 'react-bootstrap/Button';
+import ScenarioForm from './ScenarioForm'
+import { useForm, useFormState } from "react-hook-form";
 export default function ModelContainer() {
-    
+    const methods = useForm();
+    const { isValid, isDirty } = useFormState(methods);
     const devRestrictionsCollection = new Collection()
    
     const [devRestrictions, setDevRestrictions] = useState(devRestrictionsCollection);
 
     return (
         <Container fluid className="bg-light text-dark">
+          <ScenarioForm>
             <Row>
               <Col md={9}>
                 <ModelMap devRestrictions={devRestrictions}></ModelMap>
               </Col>
               <Col md={3}>
                 <SidePanel>
-                <Tab eventKey="restrictions" title="Development Restrictions">
+                <Tab eventKey="potential" title="Development Potential">
                     <ProtectedArea devRestrictions={devRestrictions}></ProtectedArea>
                 </Tab>
                 <Tab eventKey="chat" title="Chat">
                     <input type="textarea" placeholder='admin: sup dog?' />
                 </Tab>
                 </SidePanel>
+                <Row>
+                  <div className="d-grid gap-2" >
+                      <Button variant="secondary" type="submit" disabled={!isValid && isDirty}>Run Scenario</Button>
+                  </div>
+                </Row>
               </Col>
             </Row>
+            
+            </ScenarioForm>
         </Container>
     )
 }

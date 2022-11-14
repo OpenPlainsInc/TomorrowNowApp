@@ -1,7 +1,7 @@
 /*
- * Filename: SidePanel.js
+ * Filename: protectAreaStyles.js
  * Project: TomorrowNow
- * File Created: Tuesday October 18th 2022
+ * File Created: Sunday November 13th 2022
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
@@ -30,20 +30,46 @@
  * 
  */
 
-import { useState } from 'react';
-import Tabs from 'react-bootstrap/Tabs';
 
-export const SidePanel = ({children}) => {
-    const [key, setKey] = useState('potential');
-    return (
-        <Tabs
-            id="model-sidebar-tabs"
-            activeKey={key}
-            onSelect={(k) => setKey(k)}
-            className="mb-3"
-            fill
-            >
-            {children}
-        </Tabs>
-    )
+import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
+
+
+
+
+export const protectAreaStyle = (value) => {
+    const style = new Style({
+        fill: new Fill({
+          color: 'rgba(255, 255, 255, 0.85)',
+        }),
+        stroke: new Stroke({
+          color: '#000',
+          width: 2,
+        })
+      });
+
+      const glowstyle = new Style({
+        stroke: new Stroke({
+          color: 'RGB(200, 200, 200, 0.5)',
+          width: 3,
+        })
+      });
+      
+
+    // https://colorbrewer2.org/?type=diverging&scheme=BrBG&n=5
+    let colorScheme = {
+        "0.99":'rgb(166,97,26, 0.85)',
+        "0.5":'rgb(223,194,125, 0.85)',
+        "0.0": 'rgb(245,245,245, 0.85)',
+        "-0.5": 'rgb(128,205,193, 0.85)',
+        "-0.99" : 'rgb(1,133,113, 0.85)'
+    }
+
+    if (colorScheme[value]) {
+        style.setFill(new Fill({
+            color: colorScheme[value],
+          }))
+    }
+    console.log("style", style)
+    return [style, glowstyle]
+    
 }
