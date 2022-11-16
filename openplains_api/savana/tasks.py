@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Nov 10 2022                                               #
+# Last Modified: Tue Nov 15 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -47,16 +47,17 @@ def asyncResourceStatus(user_id, resource_id, message_type="resource_message"):
     data = r.json()
     print(f"asyncResourceStatus: {r.status_code}")
     print(r)
+    channel_layer = get_channel_layer()
+    resource_name = resource_id.replace('-', '_')
+    resource_group = f"savana_{resource_name}"
+    updated_status = data['status']
     if r.status_code == 200:
-        channel_layer = get_channel_layer()
-        resource_name = resource_id.replace('-', '_')
-        updated_status = data['status']
+
         resources = data['urls']['resources']
         process_log = []
         if data.get('process_log') is not None:
             process_log = data['process_log']
 
-        resource_group = f"savana_{resource_name}"
         print(f"""
         asyncResourceStatus Data ----
         Resource Group Name: {resource_group}
@@ -70,6 +71,16 @@ def asyncResourceStatus(user_id, resource_id, message_type="resource_message"):
             "resource_id": resource_id,
             "resources": resources,
             "process_log": process_log
+        }
+
+        return async_to_sync(channel_layer.group_send)(resource_group, response_message)
+
+    if r.status_code == 400:
+
+        response_message = {
+            "type": message_type,
+            "message": updated_status,
+            "resource_id": resource_id
         }
 
         return async_to_sync(channel_layer.group_send)(resource_group, response_message)

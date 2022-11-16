@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Nov 07 2022                                               #
+# Last Modified: Tue Nov 15 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -147,7 +147,12 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
                     'resources': resources,
                     'process_log': event['process_log']
                 }))
-
+        elif message == 'error':
+            await self.send(text_data=json.dumps({
+                'type': "resource_message",
+                'message': message,
+                'resource_id': resource_id,
+            }))
         else:
             # Send message to WebSocket
             await self.send(text_data=json.dumps({

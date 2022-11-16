@@ -58,6 +58,7 @@ const Game = ({params}) => {
   const {lastJsonMessage} = useActiniaAsyncProcess({resourceId, status})
   const [nlcdData, setNlcdData] = useState(null)
   const [basinElevationInfo, setBasinElevationInfo] = useState(null)
+  const [basinSlopeInfo, setBasinSlopeInfo] = useState(null)
   const [loadingAnimation, setLoadingAnimation] = useState(false)
   const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
   const [selectedBasin, setSelectedBasin] = useState(null)
@@ -286,6 +287,10 @@ const Game = ({params}) => {
   // Set source data once data is finished
   useEffect(() => {
       if (!lastJsonMessage) return;
+      if (lastJsonMessage.message === 'error') {
+        console.log("Last Message Error: ", lastJsonMessage)
+        setLoadingAnimation(false)
+      }
       if (lastJsonMessage.message !== 'finished') return;
 
       console.log("Last Message Finished: ", lastJsonMessage)
@@ -297,11 +302,11 @@ const Game = ({params}) => {
                   const chunk = arr.slice(i, i + chunkSize);
                   res.push(chunk);
               }
-              return res;
-            }
+              return res
+            }  
 
             let tmpBasinElevationInfo = lastJsonMessage.process_log
-              .filter(f => f.executable === 'r.univar')
+              .filter(f => f.executable === 'r.univar' && f.id !== "r.univar_3dep_30m")
               .map(e => {
                  let rows = e.stdout.split('\n').map(a=> a.split('|'))
                  const obj = rows[0].reduce((accumulator, element, index) => {
@@ -311,6 +316,18 @@ const Game = ({params}) => {
               })
             
             setBasinElevationInfo(tmpBasinElevationInfo)
+
+            let tmpBasinSlopeInfo = lastJsonMessage.process_log
+              .filter(f => f.executable === 'r.univar' && f.id !== "r.univar_slope")
+              .map(e => {
+                 let rows = e.stdout.split('\n').map(a=> a.split('|'))
+                 const obj = rows[0].reduce((accumulator, element, index) => {
+                  return {...accumulator, [element]: rows[1][index]};
+                 }, {});
+                 return obj
+              })
+            
+            setBasinSlopeInfo(tmpBasinSlopeInfo)
             // Cat, Label, area, cells, %
             let rawnlcdData = lastJsonMessage.process_log
               .filter(f => f.executable === 'r.stats' && f.id !== "r.stats_3dep_30m")
@@ -522,7 +539,7 @@ const Game = ({params}) => {
                 {/* <h2>{selectedHuc12Props ? selectedHuc12Props.name: ""}</h2>              */}
                   { 
                     nlcdData ? 
-                    <NLCDCard nlcdData={nlcdData} basinElevationInfo={basinElevationInfo}></NLCDCard>
+                    <NLCDCard nlcdData={nlcdData} basinElevationInfo={basinElevationInfo} basinSlopeInfo={basinSlopeInfo}></NLCDCard>
                   :  
                   <SurveyStatsCard surveyData={surveyData}></SurveyStatsCard>
                 }

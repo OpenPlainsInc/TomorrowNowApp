@@ -12,7 +12,7 @@ import { ChartsContainer } from '../../components/Grass/Charts/ChartsContainer';
 import { Charts, ChartTypes} from '../../components/Grass/Charts/ChartTypes';
 import { chartDataFormat } from '../../components/Grass/Charts/chartDataFormat';
 
-export const NLCDCard = (({nlcdData, basinElevationInfo}) => {
+export const NLCDCard = (({nlcdData, basinElevationInfo, basinSlopeInfo}) => {
 
     const nlcdTotalArea = (data) => {
         const areaList = data.filter(c=> c.year === '2019').map(c=>c.area).reduce((a,b) => parseFloat(a) + parseFloat(b))
@@ -26,8 +26,11 @@ export const NLCDCard = (({nlcdData, basinElevationInfo}) => {
                     <Card.Body>
                         <Card.Title>Upstream Land Use Characteristics</Card.Title>
                         <Card.Subtitle key="elev-total-area"><strong>Total Area: </strong> {nlcdTotalArea(nlcdData)} km<sup>2</sup></Card.Subtitle>
-                        <Card.Subtitle key={`melev`}><strong>Mean Elevation: </strong> {parseFloat(basinElevationInfo.map(e=>e.mean)).toFixed(2)}m <span>&#177;</span> {parseFloat(basinElevationInfo.map(e=>e.stddev)).toFixed(2)}</Card.Subtitle>
-                        <Card.Subtitle  key={`relev}`}><strong>Min - Max Elevation: </strong>{parseFloat(basinElevationInfo.map(e=> e.min)).toFixed(2)}m - {parseFloat(basinElevationInfo.map(e=>e.max)).toFixed(2)}m</Card.Subtitle>
+                        <Card.Subtitle key={`melev`}><strong>Mean Elevation: </strong> {parseFloat(basinElevationInfo.map(e=>e.mean)).toFixed(2)}m <span>&#177;</span> {parseFloat(basinElevationInfo.map(e=>e.stddev)).toFixed(2)}m</Card.Subtitle>
+                        <Card.Subtitle  key={`relev`}><strong>Min - Max Elevation: </strong>{parseFloat(basinElevationInfo.map(e=> e.min)).toFixed(2)}m - {parseFloat(basinElevationInfo.map(e=>e.max)).toFixed(2)}m</Card.Subtitle>
+                        <Card.Subtitle  key={`MeanSlope`}><strong>Mean Slope: </strong>{parseFloat(basinSlopeInfo.map(e=> e.mean)).toFixed(2)}<span>&deg;</span> <span>&#177;</span> {parseFloat(basinSlopeInfo.map(e=>e.stddev)).toFixed(2)}<span>&deg;</span></Card.Subtitle>
+                        <Card.Subtitle  key={`slopeMinMax`}><strong>Min - Max Slope: </strong>{parseFloat(basinSlopeInfo.map(e=> e.min)).toFixed(2)}<span>&deg;</span> - {parseFloat(basinSlopeInfo.map(e=>e.max)).toFixed(2)}<span>&deg;</span></Card.Subtitle>
+
                     </Card.Body>
                     <div style={{backgroundColor: "white"}}>
                         <ChartsContainer 

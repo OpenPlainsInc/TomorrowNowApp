@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Nov 13 2022                                               #
+# Last Modified: Tue Nov 15 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -604,6 +604,43 @@ def rDrain(request):
             ]
         }
 
+        slope = {
+            "module": "r.slope.aspect",
+            "id": f"r.slope.aspect_{huc12}",
+            "inputs": [
+                {
+                    "param": "elevation",
+                    "value": "usgs_3dep_30m"
+                },
+                {
+                    "param": "nprocs",
+                    "value": "4"
+                }
+            ],
+            "outputs": [
+                {
+                    "param": "slope",
+                    "value": "slope"
+                }
+            ]
+        }
+
+        mean_slope = {
+            "module": "r.univar",
+            "id": "r.univar_slope",
+            "flags": "t",
+            "inputs": [
+                {
+                    "param": "map",
+                    "value": "slope"
+                },
+                {
+                    "param": "separator",
+                    "value": "|"
+                }
+            ]
+        }
+
         def importCOG(cog_name, year):
             return [
                 {
@@ -951,13 +988,27 @@ def rDrain(request):
             importCOG("nlcd_2019_cog", "2019")[0],
             importCOG("nlcd_2019_cog", "2019")[1],
             # {
-            #     "module": "r.stats",
-            #     "id": "r.stats_2016",
-            #     "flags": "acpl",
+            #     "module": "r.topidx",
+            #     "id": "r.topidx_1234",
             #     "inputs": [
             #         {
             #             "param": "input",
-            #             "value": "nlcd_2016"
+            #             "value": "usgs_3dep_30m"
+            #         },
+            #         {
+            #             "param": "output",
+            #             "value": "topidx"
+            #         }
+            #     ]
+            # },
+            # {
+            #     "module": "r.stats",
+            #     "id": "r.stats_topidx",
+            #     "flags": "Anc",
+            #     "inputs": [
+            #         {
+            #             "param": "input",
+            #             "value": "topidx"
             #         },
             #         {
             #             "param": "separator",
@@ -973,39 +1024,8 @@ def rDrain(request):
             #         }
             #     ]
             # },
-            # {
-            #     "module": "r.import",
-            #     "id": "r.import_usgs30m_cog",
-            #     "flags": "",
-            #     "inputs": [
-            #         # {
-            #         #     "param": "input",
-            #         #     "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/USGS_Seamless_DEM_13.vrt"
-            #         # },
-            #         {
-            #             "param": "input",
-            #             "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/USGS_Seamless_DEM_1.vrt"
-            #         },
-            #         {
-            #             "param": "resample",
-            #             "value": "bilinear"
-            #         },
-            #         {
-            #             "param": "memory",
-            #             "value": "3000"
-            #         },
-            #         {
-            #             "param": "extent",
-            #             "value": "region"
-            #         },
-            #     ],
-            #     "outputs": [
-            #         {
-            #             "param": "output",
-            #             "value": "usgs_3dep_30m"
-            #         }
-            #     ]
-            # },
+            slope,
+            mean_slope,
             {
                 "module": "r.univar",
                 "id": "r.univar_3dep_30m",
