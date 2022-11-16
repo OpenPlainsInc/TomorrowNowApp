@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sun Nov 13 2022
+ * Last Modified: Mon Nov 14 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -39,10 +39,16 @@ import { useEffect } from 'react';
 import { LikertScaleSelect } from '../../../components/Grass/Controls/LikertScaleSelect';
 import { useWatch, useFieldArray } from "react-hook-form";
 import GeoJSON from 'ol/format/GeoJSON';
+import { BudgetChart } from './BudgetChart';
 
 
 export const ProtectedArea = ({devRestrictions}) => {
-
+    
+    const startingBudgetData = [
+        { name: 'Spent', value: 0, formated: "Spent: $0" },
+        { name: 'Avaliable', value: 1e8 / 2.0, formated: "Avaliable: $500,000,000" },
+    ]
+    const [budgetData, setBudgetData] = useState(startingBudgetData)
 
     const [data, setData] = useState([])
     const currencyFormatter = new Intl.NumberFormat('en-US', {
@@ -73,6 +79,26 @@ export const ProtectedArea = ({devRestrictions}) => {
         const formatedCost = currencyFormatter.format(estCostRaw)
         return {estCostRaw, formatedCost}
     }
+
+    const calculateBudget = (tmp) => {
+        let totalAreaKm = tmp.reduce((a, b) => {
+            console.log(a, b)
+            if (Number(a) === a && a % 1 !== 0) {
+                return parseFloat(a) + parseFloat(b.properties.area)
+            }
+            return parseFloat(a.properties.area) + parseFloat(b.properties.area)
+        }, {"properties": {"area": 0.0}})
+        console.log("New Area:", totalAreaKm)
+        let {estCostRaw, formatedCost} =  estimateLandCost(totalAreaKm)
+        console.log("New Budge:", estCostRaw, formatedCost)
+        let newBudget = [
+            { name: 'Spent', value: parseInt(estCostRaw), formated: formatedCost },
+            { name: 'Avaliable', value: parseInt(1e8 - parseFloat(estCostRaw)), formated: currencyFormatter.format(1e8 - parseFloat(estCostRaw)) }
+        ]
+        console.log("New Budge:", newBudget)
+        setBudgetData(oldeArray => [...newBudget])
+    }
+
     /**
      * Handles events where a new restriction is added to the map.
      */
@@ -96,10 +122,14 @@ export const ProtectedArea = ({devRestrictions}) => {
                 }
                 feat.properties = tract
                 console.log("New Feature:", feat)
-
+               
                 tmp.push(feat)
+               
+               
                 console.log("Adding Feature:", feat)
             })
+            console.log(tmp)
+            calculateBudget(tmp)
             
             setData(oldArray =>[...tmp])
         }
@@ -117,6 +147,7 @@ export const ProtectedArea = ({devRestrictions}) => {
         remove(index)
         let copy = [...data]
         copy.splice(index, 1)
+        calculateBudget(copy)
         setData(copy)
         devRestrictions.removeAt(index)
         devRestrictions.changed()
@@ -127,14 +158,16 @@ export const ProtectedArea = ({devRestrictions}) => {
     // devRestrictions.on('change', (element, index, target, type) => console.log(element, index, target, type))
     // devRestrictions.on('error', (element, index, target, type) => console.log(element, index, target, type))
 
-    // useEffect(()=> {
-    //     console.log("Hello", data)
-    // }, [data])
+    useEffect(()=> {
+        console.log("Hello", budgetData)
+       
+        
+       
+    }, [budgetData])
 
     useEffect(()=> {
         if (!Array.isArray(data) || !Array.isArray(devPotentialField)) return;
-        console.log("devPotentialField", devPotentialField, data)
-        if (!data.length || devPotentialField.length) return;
+        if (!data.length || !devPotentialField.length) return;
         console.log("devPotentialField", devPotentialField)
         let copy = [...data]
         let updatedValues = copy.map((f, idx) => {
@@ -150,11 +183,13 @@ export const ProtectedArea = ({devRestrictions}) => {
             <Card.Header>
                 <Card.Title>Development Potential</Card.Title>
                 {/* <Card.Text>Set an areas future development potential by drawing polygons on the map and selecting the likelihood the area will be developed in the future.</Card.Text> */}
-
+               
             </Card.Header>
            
             <Card.Body>
                 <Card.Text>Design an urban land use policy that will influence the future development potential of a designated area. Get started by drawing polygons on the map and selecting the likelihood the area will be developed in the future.</Card.Text>
+                <Card.Subtitle>Budget (500 million)</Card.Subtitle>
+                <BudgetChart data={budgetData}/>
                 <ListGroup as="ol" numbered>
                     { 
                         data.map((d, idx) => {
