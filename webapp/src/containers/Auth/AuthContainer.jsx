@@ -35,7 +35,7 @@ export const AuthContainer = ({children}) => {
                 
                 <Col/>
                 <Col>
-                    <Image fluid src="./banner_v1.png"></Image>
+                    <Image fluid src="./OP_logo_v5.png"></Image>
                     {children}
                 </Col>
                 <Col/>
