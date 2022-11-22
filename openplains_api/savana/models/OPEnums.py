@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Thu Oct 20 2022                                               #
+# Last Modified: Tue Nov 22 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -34,13 +34,41 @@ from django.utils.translation import gettext_lazy as _
 
 
 class StatusEnum(models.TextChoices):
-    ACCPECTED = "AC", "Active"
-    READY = "RD", "Ready"
-    RUNNING = "RT", "Retired"
-    INITIATING = "IN", "Initiating"
-    ERROR = "ER", "Error"
+    ACCPECTED = "AC", _("Active")
+    READY = "RD", _("Ready")
+    RUNNING = "RT", _("Retired")
+    INITIATING = "IN", _("Initiating")
+    ERROR = "ER", _("Error")
 
 
 class PrivacyEnum(models.TextChoices):
     PUBLIC = "PU", _("Public")
     PRIVATE = "PR", _("Private")
+
+
+class InteractionTypeEnum(models.TextChoices):
+    """UI Choices for Interaction"""
+    LIKERT = "LI", _("Likert")  # Likert Scale UI
+    SLIDER = "RE", _("Slider")  # Slider UI
+    RANGESLIDER = "RS", _("Range Slider")  # Range Slider UI
+    SELECT = "SL", _("Select")  # Select UI
+    SELECTMULTI = "SM", _("Select Multiple")  # Mulit Select UI
+    DATEFILTER = "DF", _("Date Filter")  # Date Filter UI
+
+
+class InteractionScaleEnum(models.TextChoices):
+    """Choices for what scale an interaction will occur"""
+    GLOBAL = "GL", _("Global")  # Zoom levels 0 -
+    REGIONAL = "RE", _("Regional")  # Zoom levels 0 -
+    CITY = "CI", _("City")  # Zoom levels 0 -
+    NEIGHBORHOOD = "NE", _("Neighborhood")  # Zoom levels 0 -
+    LOCAL = "LO", _("Local")  # Zoom levels 0 -
+    CUSTOM = "CO", _("Custom")  # Custom Scale
+
+
+class SpatialInteractionEnum(models.TextChoices):
+    """Choice for spatail interactions"""
+    POINT = "PO", _("Point")  # User sets a point
+    LINE = "LI", _("Line")  # User draws a line
+    MULTIPOLYGON = "MP", _("Multipolygon")  # User draws a polygon
+    FEATURE = "FT", _("Feature")  # User selects a feature

@@ -1,15 +1,18 @@
-FROM mundialis/actinia-core:4.2.1 as actinia
+FROM mundialis/actinia-core:4.3.1 as actinia
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
-ENV ACTINIA_CORE_VERSION=4.2.1
+ENV ACTINIA_CORE_VERSION=4.3.1
 
 # USER root
 
 # Install R libraies needed for FUTURES
+
 RUN apk add --update cmake R R-dev
 
-RUN R -e "install.packages(c('MuMIn', 'lme4', 'optparse', 'snow'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
+# When Actinia core docker updates to alpine v3.15 MuMIn should work normally again becasue
+# R will be updated to 4.2.1-r0
+RUN R -e "install.packages(c('https://cran.r-project.org/src/contrib/Archive/MuMIn/MuMIn_1.46.0.tar.gz', 'lme4', 'optparse'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 RUN pip3 install scipy
 
@@ -52,6 +55,11 @@ ARG WHEEL_NAME=actinia_tiling_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-tiling-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
+ENV PLUGIN_VERSION=1.0.0
+ARG WHEEL_NAME=actinia_parallel_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
+RUN curl -L --output /build/${WHEEL_NAME} \
+    https://github.com/mundialis/actinia-parallel-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
+
 ENV ACTINIA_API_VERSION=3.3.0
 ARG WHEEL_NAME=actinia_api-${ACTINIA_API_VERSION}-py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
@@ -76,7 +84,7 @@ RUN pip3 install -r /src/actinia_core/requirements.txt
 # COPY gcp_keys/gcp_tomorrownow_dev_key.json /home/user/gcp/gcp_tomorrownow_dev_key.json
 
 
-COPY ./actinia.cfg /etc/default/actinia
+COPY actinia.cfg /etc/default/actinia
 COPY start.sh /src/start.sh
 CMD ["/src/start.sh"]
 # USER user

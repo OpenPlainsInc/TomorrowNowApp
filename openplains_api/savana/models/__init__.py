@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Oct 17 2022                                               #
+# Last Modified: Tue Nov 22 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -34,7 +34,7 @@
 from .ProcessingResponseModel import ProcessingResponseModel
 from .TestGCSResourceModel import TestGCSResourceModel
 from .DrainRequest import DrainRequest
-from .OPEnums import StatusEnum, PrivacyEnum
+from .OPEnums import StatusEnum, PrivacyEnum, InteractionTypeEnum, InteractionScaleEnum, SpatialInteractionEnum
 from .OPGoal import Goal
 from .OPModel import OpenPlainsModel
 from .OPModelGoal import ModelGoal

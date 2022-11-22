@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Mon Mar 28 2022                                               #
+# Last Modified: Tue Nov 22 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -36,11 +36,12 @@ from django.urls import re_path, path
 # from channels.routing import ProtocolTypeRouter, URLRouter
 
 
-from . import consumers
+# from . import consumers
+from .consumers import ActiniaResourceConsumer
 
 websocket_urlpatterns = [
     # re_path(r'ws/savana/resource/(?P<resource_id>\w+)/$', consumers.ActiniaResourceConsumer.as_asgi()),
-    re_path(r'ws/savana/resource/(?P<resource_name>\w+)/$', consumers.ActiniaResourceConsumer.as_asgi()),
+    re_path(r'ws/savana/resource/(?P<resource_name>\w+)/$', ActiniaResourceConsumer.as_asgi())
     # re_path(r'ws/savana/resource/(?P<resource_id>\w+)/$', consumers.ActiniaResourceConsumer.as_asgi()),
 
     # url(r"^chat/admin/$", AdminChatConsumer.as_asgi()),

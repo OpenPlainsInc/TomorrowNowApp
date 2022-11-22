@@ -1,5 +1,5 @@
 # FROM mundialis/grass-py3-pdal:8.0.1-debian as grass
-FROM python:3
+FROM python:3.10.8-bullseye
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
@@ -42,14 +42,12 @@ ENV ACTINIA_CLI_VERSION="0.1.2"
 # RUN pip install actinia_python_client-$ACTINIA_CLI_VERSION-py3-none-any.whl
 
 # Temp work around because the lastest version with my changes isn't released yet.
-WORKDIR /tmp
-RUN wget https://github.com/mundialis/actinia-python-client/archive/refs/heads/main.zip
-RUN pip install -e .
-
+WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
-COPY . /code/
 
+COPY . /code/
+RUN pip install https://github.com/mundialis/actinia-python-client/archive/refs/heads/main.zip
 RUN pip install newrelic
 ADD newrelic.ini /code/
 ENV NEW_RELIC_CONFIG_FILE=newrelic.ini 

@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Nov 15 2022                                               #
+# Last Modified: Tue Nov 22 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -641,6 +641,39 @@ def rDrain(request):
             ]
         }
 
+        hydro_snap = {
+            "module": "r.stream.snap",
+            "id": f"r.slope.snap_{huc12}",
+            "inputs": [
+                {
+                    "param": "input",
+                    "value": "user_point"
+                },
+                {
+                    "param": "stream_rast",
+                    "value": "usgs_3dep_30m_streams"
+                },
+                {
+                    "param": "accumulation",
+                    "value": "usgs_3dep_30m_accumulation"
+                },
+                {
+                    "param": "radius",
+                    "value": "200"
+                },
+                {
+                    "param": "memory",
+                    "value": "3000"
+                }
+            ],
+            "outputs": [
+                {
+                    "param": "output",
+                    "value": "snapped_point"
+                }
+            ]
+        }
+
         def importCOG(cog_name, year):
             return [
                 {
@@ -777,6 +810,10 @@ def rDrain(request):
                     {
                         "param": "drainage",
                         "value": "usgs_3dep_30m_direction"
+                    },
+                    {
+                        "param": "accumulation",
+                        "value": "usgs_3dep_30m_accumulation" 
                     },
                     {
                         "param": "stream",
