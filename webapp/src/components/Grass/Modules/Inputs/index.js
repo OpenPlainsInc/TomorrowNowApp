@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 05 2022
+ * Last Modified: Tue Nov 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -37,7 +37,8 @@ import ModuleEnumParam from "./ModuleEnumParam"
 import ModuleNumberParam from "./ModuleNumberParam"
 import ModuleCoordsParam from "./ModuleCoordsParam"
 import ModuleRasterParam from "./ModuleRasterParam";
-
+import ModuleIntegerParam from "./ModuleIntegerParam";
+import ModuleVectorParam from "./ModuleVectorParam";
 const moduleInputs = {
 	ModuleStringParam,
 	ModuleNumberParam,
@@ -45,7 +46,9 @@ const moduleInputs = {
 	ModuleArrayParam,
 	ModuleEnumParam,
 	ModuleCoordsParam,
-	ModuleRasterParam
+	ModuleRasterParam,
+	ModuleIntegerParam,
+	ModuleVectorParam
 }
 
 export default moduleInputs

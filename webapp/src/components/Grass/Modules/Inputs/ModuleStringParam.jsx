@@ -30,6 +30,7 @@ import Form from 'react-bootstrap/Form'
 import ModuleRasterParam from './ModuleRasterParam';
 import ModuleEnumParam from './ModuleEnumParam';
 import { appendErrors } from 'react-hook-form';
+import ModuleVectorParam from './ModuleVectorParam';
 
 
 const ModuleStringParam = ({param, control}) => {
@@ -64,6 +65,10 @@ const ModuleStringParam = ({param, control}) => {
             setEnumOptions(param.schema.enum)
         }
 
+        if (param.schema.hasOwnProperty('options')) {
+            setEnumOptions(param.schema.options)
+        }
+
         
     }, [param])
   
@@ -71,11 +76,12 @@ const ModuleStringParam = ({param, control}) => {
       if (!control) return;
     //   if (!subtype && !enumOptions) return;
     //   if (enumOptions) return setSubtypeComponent(<ModuleEnumParam param={param} options={enumOptions} control={control}/>);
-      if (!subtype) return;
-      if (subtype === 'vector') return;
+      if (!subtype || param.output) return;
+      if (subtype === 'vector') return setSubtypeComponent(<ModuleVectorParam param={param}  control={control}/>);
       if (subtype === 'cell') return setSubtypeComponent(<ModuleRasterParam param={param}  control={control}/>);
       if (subtype === 'coords') return;
-     
+      if (subtype === 'grid3') return; // Need to implement strds routes
+      if (subtype === 'file') return; // Need to implement strds routes
     }, [subtype])
 
     useEffect(() => {
@@ -91,7 +97,7 @@ const ModuleStringParam = ({param, control}) => {
             <Form.Text muted>{param.description}</Form.Text>
             <Col sm={10}>
                 { 
-                    subtype || enumOptions ? 
+                    (subtype || enumOptions) && !param.output ? 
                         subtypeComponent : 
                         <Form.Control 
                             type="text" 

@@ -19,6 +19,7 @@ const ModuleRasterParam = ({param, control}) => {
     const [subtype, setSubtype] = useState(null);
     console.log("ModuleRasterParam", param.name)
     
+    //TODO: set location/mapset dynamically
     const options = useDataSource({getDataFunc: grass.routes.Layers.getRasters, params: ['nc_spm_08', 'PERMANENT']})
 
     const {
@@ -44,7 +45,14 @@ const ModuleRasterParam = ({param, control}) => {
   
     return (      
        
-            <Form.Control name={name} as="select" value={value} onChange={onChange} ref={ref}>
+            <Form.Control 
+                name={name} 
+                as="select" 
+                value={value} 
+                onChange={onChange}
+                onBlur={onBlur}
+                ref={ref}
+            >
                 <option>Select Raster</option>
 
                 {options.data ? options.data.processResults.map((c) => {

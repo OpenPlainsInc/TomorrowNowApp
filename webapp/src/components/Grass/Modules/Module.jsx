@@ -36,10 +36,13 @@ const Module = ({moduleName}) => {
   console.log("grass.routes.Modules.getModule", module)
   const filterSectionParams = (params, section) => {
     let filterdParams = params.filter(f => {
-      if (section === 'optional' && f.optional){
+      if (section === 'optional' && f.optional && !f.output){
         return f
       }
-      else if (section === 'required' && !f.optional) {
+      else if (section === 'required' && !f.optional && !f.output) {
+        return f
+      }
+      else if (section === 'output' && f.output) {
         return f
       }
       else {
@@ -65,8 +68,14 @@ const Module = ({moduleName}) => {
   useEffect(() => {
     if (!module.data || !activeSubsection) return;
       let params = module.data.parameters;
-      setModuleParams(params)
-      setSectionParams(filterSectionParams(params, activeSubsection))
+      let outputs = module.data.returns.map(p=> {
+        p.output = true
+        return p
+      })
+      let allParams = [...params, ...outputs]
+      console.log(params, outputs, allParams)
+      setModuleParams(allParams)
+      setSectionParams(filterSectionParams(allParams, activeSubsection))
   }, [module.data, activeSubsection])
 
   useEffect(() => {
@@ -78,14 +87,10 @@ const Module = ({moduleName}) => {
     <Container fluid className="bg-light text-dark">
           <Row style={{ marginBottom: "2rem" }}>
             <Card>
-              <Card.Body>
+              <Card.Header>
+
                 <Card.Title>{moduleName}</Card.Title>
                 <Card.Text>{module.data ? module.data.description : ""}</Card.Text>
-              </Card.Body>
-            </Card>
-              
-            <Card >
-              <Card.Header>
                 <Nav variant="tabs" activeKey={activeSubsection} onSelect={handleSelect}>
                   {
                     subsections.map((section, idx) => {
@@ -98,23 +103,23 @@ const Module = ({moduleName}) => {
                   }
                 </Nav>
               </Card.Header>
+              <Card.Body>
+              {/* <Row> */}
+                { module.data && sectionParams ?
+                  <ModuleForm moduleName={module.data.name} moduleParams={sectionParams}/>
+                : null}
+              {/* </Row> */}
+              
+              {
+                activeSubsection === 'manual' ?
+                  <Row>
+                    <iframe className="grass-manual" src={manualUrl(moduleName)} title={`Manual Page: ${moduleName}`}></iframe>
+                  </Row> 
+                  :<></>
+              }
+              </Card.Body>
             </Card>
-          </Row>
-
-          <Row>
-            { module.data && sectionParams ?
-              <ModuleForm moduleName={module.data.name} moduleParams={sectionParams}></ModuleForm>
-            : null}
-          </Row>
-          
-          {
-            activeSubsection === 'manual' ?
-              <Row>
-                <iframe className="grass-manual" src={manualUrl(moduleName)} title={`Manual Page: ${moduleName}`}></iframe>
-              </Row> 
-              :<Row></Row>
-          }
-       
+       </Row>
     </Container>
   )
 }

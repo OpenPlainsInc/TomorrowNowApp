@@ -14,6 +14,7 @@ import ModuleStringParam from './Inputs/ModuleStringParam'
 import ModuleBooleanParam from './Inputs/ModuleBooleanParam';
 import ModuleArrayParam from './Inputs/ModuleArrayParam';
 import ModuleNumberParam from './Inputs/ModuleNumberParam';
+import ModuleIntegerParam from "./Inputs/ModuleIntegerParam";
 
 export const ModuleForm = ({moduleName, moduleParams}) => {
     const { handleSubmit, control, reset } = useForm();
@@ -25,14 +26,17 @@ export const ModuleForm = ({moduleName, moduleParams}) => {
         let schemaType = param.schema.type
         let key = `${param.name}_${schemaType}`
         console.log("formInputFromSchema: ", schemaType)
-        if (schemaType === 'string') return <ModuleStringParam key={key} param={param} control={control} ></ModuleStringParam>;
-        if (schemaType === 'boolean') return <ModuleBooleanParam key={key} param={param} control={control}></ModuleBooleanParam>;
-        if (schemaType === 'array') return <ModuleArrayParam key={key} param={param}></ModuleArrayParam>;
-        if (schemaType === 'number') return <ModuleNumberParam key={key} param={param} control={control}></ModuleNumberParam>;
+        if (schemaType === 'string') return <ModuleStringParam key={key} param={param} control={control}/>;
+        if (schemaType === 'boolean') return <ModuleBooleanParam key={key} param={param} control={control}/>;
+        if (schemaType === 'array') return <ModuleArrayParam key={key} param={param} control={control}/>;
+        if (schemaType === 'integer') return <ModuleIntegerParam key={key} param={param} control={control}/>;
+        if (schemaType === 'number') return <ModuleNumberParam key={key} param={param} control={control}/>;
+
         return null;
     }
 
     return(
+        
         <Form ref={moduleName} onSubmit={handleSubmit(onSubmit)}>
             { 
                 moduleParams.map((p) => { 
@@ -45,5 +49,6 @@ export const ModuleForm = ({moduleName, moduleParams}) => {
             }
             <Button variant="secondary" type="submit">Run</Button>
         </Form>
+        
     )
 }
