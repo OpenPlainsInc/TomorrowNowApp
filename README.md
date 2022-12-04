@@ -33,7 +33,7 @@ Update the settings file
 
 * actinia/.sample.actinia.env -> .actinia.env
 * actinia/sample.actinia.cfg -> actinia.cfg
-* api/.sample.env -> .env
+* openplains_api/api/.sample.env -> .env
 * geoserver/.sample.env -> .env
 
 ##### TODO
