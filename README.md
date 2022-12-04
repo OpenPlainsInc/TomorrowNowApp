@@ -46,7 +46,7 @@ Update the settings file
 ### Start app
 
 ```bash
-docker compose up
+cd webapp/ && npm install && cd .. && docker compose up
 ```
 
 ### Stop app
