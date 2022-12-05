@@ -16,6 +16,7 @@ services:
     image: postgis/postgis:13-3.2-alpine
     volumes:
       - ./data/db:/var/lib/postgresql/data:Z
+      - ./data/osm-postgresql.conf:/etc/postgresql/postgresql.conf
       # - pg_tileserv_db:/var/lib/postgresql/data
     ports:
       - "5431:5432"
@@ -30,6 +31,8 @@ services:
     build:
         context: ./actinia
         dockerfile: Dockerfile
+    env_file:
+      - ./actinia/.actinia.env
    
     volumes:
       - ./actinia-core-data/grassdb:/actinia_core/grassdb:Z
@@ -186,16 +189,15 @@ services:
   #     NRIA_LICENSE_KEY: '${NRIA_LICENSE_KEY}'
   #   restart: unless-stopped
 
-  # nginx:
-  #   image: nginx:1.22.0
-  #   volumes:
-  #     - ./nginx/geoserver:/etc/nginx/conf.d:ro
-  #   logging:
-  #     driver: json-file
-  #     options:
-  #       max-size: 200m
-  #       max-file: '10'
-  #   depends_on:
-  #     - geoserver
-  #   ports:
-  #     - "80:80"
+  nginx:
+    build: ./nginx
+    logging:
+      driver: json-file
+      options:
+        max-size: 200m
+        max-file: '10'
+    depends_on:
+      - api
+      - geoserver
+    ports:
+      - 1337:80

@@ -7,5 +7,6 @@ r.basin,
 r.in.usgs,
 r.futures,
 r.sample.category,
-r.object.geometry
-
+r.object.geometry,
+r.traveltime,
+r.flowfill

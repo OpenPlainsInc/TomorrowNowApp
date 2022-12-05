@@ -1,18 +1,22 @@
-FROM mundialis/actinia-core:4.3.1 as actinia
+FROM mundialis/actinia-core:4.4.0 as actinia
 
 LABEL authors="Corey White"
 LABEL maintainer="smortopahri@gmail.com"
-ENV ACTINIA_CORE_VERSION=4.3.1
+ENV ACTINIA_CORE_VERSION=4.4.0
 
 # USER root
 
 # Install R libraies needed for FUTURES
 
-RUN apk add --update cmake R R-dev
+RUN apk add --update cmake R R-dev gsl gsl-dev jpeg-dev
 
 # When Actinia core docker updates to alpine v3.15 MuMIn should work normally again becasue
 # R will be updated to 4.2.1-r0
-RUN R -e "install.packages(c('https://cran.r-project.org/src/contrib/Archive/MuMIn/MuMIn_1.46.0.tar.gz', 'lme4', 'optparse'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages(c('https://cran.r-project.org/src/contrib/Archive/MuMIn/MuMIn_1.46.0.tar.gz'), dependencies=TRUE, repo=NULL, type='source')"
+RUN R -e "install.packages(c('lme4', 'optparse'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
+
+# RUN R -e "install.packages(c('https://cran.r-project.org/src/contrib/Archive/MuMIn/MuMIn_1.46.0.tar.gz', 'lme4', 'optparse'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
+# RUN R -e "install.packages(c('MuMIn', 'lme4', 'optparse'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 RUN pip3 install scipy
 
@@ -25,7 +29,7 @@ RUN while IFS=, read -r ADDON SERVER; do if [[ $ADDON != "#*" ]]; then unset URL
 # actinia-core and plugins installation
 WORKDIR /build
 
-ARG PLUGIN_VERSION=0.2.0
+ARG PLUGIN_VERSION=0.2.1
 ARG WHEEL_NAME=actinia_statistic_plugin-${PLUGIN_VERSION}-py2.py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia_statistic_plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
@@ -40,12 +44,12 @@ ARG WHEEL_NAME=actinia_metadata_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.w
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-metadata-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
-ARG PLUGIN_VERSION=2.4.0
+ARG PLUGIN_VERSION=2.4.1
 ARG WHEEL_NAME=actinia_module_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-module-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
-ARG PLUGIN_VERSION=0.1.0
+ARG PLUGIN_VERSION=0.1.1
 ARG WHEEL_NAME=actinia_stac_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-stac-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
@@ -60,7 +64,7 @@ ARG WHEEL_NAME=actinia_parallel_plugin.wsgi-${PLUGIN_VERSION}-py2.py3-none-any.w
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-parallel-plugin/releases/download/${PLUGIN_VERSION}/${WHEEL_NAME}
 
-ENV ACTINIA_API_VERSION=3.3.0
+ENV ACTINIA_API_VERSION=3.4.0
 ARG WHEEL_NAME=actinia_api-${ACTINIA_API_VERSION}-py3-none-any.whl
 RUN curl -L --output /build/${WHEEL_NAME} \
     https://github.com/mundialis/actinia-api/releases/download/${ACTINIA_API_VERSION}/${WHEEL_NAME}
@@ -80,8 +84,8 @@ RUN pip3 install -r /src/actinia_core/requirements.txt
 
 
 # # # Copy Google Creds
-# RUN mkdir -p /home/user/gcp/
-# COPY gcp_keys/gcp_tomorrownow_dev_key.json /home/user/gcp/gcp_tomorrownow_dev_key.json
+RUN mkdir -p /home/user/gcp/
+COPY gcp_keys/gcp_tomorrownow_dev_key.json /etc/GCS_credentials.json
 
 
 COPY actinia.cfg /etc/default/actinia
