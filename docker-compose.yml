@@ -10,6 +10,8 @@ volumes:
    geoserver-data:
    geo-db-data:
    settings:
+   flower_data:
+
 services:
   
   db:
@@ -133,6 +135,17 @@ services:
       - db
       - api
   
+  celery_flower:
+    image: mher/flower
+    command: celery flower
+    ports:
+        - 5555:5555
+    env_file:
+      - .env
+    volumes:
+      - flower_data:/data
+
+
   webapp:
     build:
       context: ./webapp
