@@ -12,7 +12,8 @@ const VectorLayer = ({ layerName, source, style, zIndex = 0, handleClickEvent=nu
     if (!source) return;
     let vectorLayer = new OLVectorLayer({
       source,
-      style
+      style,
+      updateWhileInteracting:true
     });
     
     map.addLayer(vectorLayer);
