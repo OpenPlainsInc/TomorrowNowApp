@@ -15,18 +15,30 @@ export const LayerItemCard = ({title, datatype, locationName, mapsetName}) => {
 
     return (
         
-        <Card  key={title} className="grass-layer-card" >
-            <GrassRenderImage layerType={datatype} layerName={title} locationName={locationName} mapsetName={mapsetName}></GrassRenderImage>
-            <Card.Body>
+        <Card key={title} className="grass-layer-card">
+            <Card.Header>
                 <Card.Title>{title}</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                <GrassRenderImage layerType={datatype} layerName={title} locationName={locationName} mapsetName={mapsetName}/>
+
+                {/* <Card.Title>{title}</Card.Title>
                 <Card.Text></Card.Text>
                 <LinkContainer to={`/board/location/${locationName}/mapset/${mapsetName}/raster/${title}/map`}> 
                     <Card.Link >Map</Card.Link>
                 </LinkContainer>
                 <LinkContainer to={`/board/location/${locationName}/mapset/${mapsetName}/raster/${title}`}> 
                     <Card.Link >Metadata</Card.Link>
-                </LinkContainer>             
+                </LinkContainer>              */}
             </Card.Body>
+            <Card.Footer>
+                <LinkContainer to={`/board/location/${locationName}/mapset/${mapsetName}/raster/${title}/map`}> 
+                    <Card.Link >Map</Card.Link>
+                </LinkContainer>
+                <LinkContainer to={`/board/location/${locationName}/mapset/${mapsetName}/raster/${title}`}> 
+                    <Card.Link >Metadata</Card.Link>
+                </LinkContainer>
+            </Card.Footer>
         </Card>
     )
 }

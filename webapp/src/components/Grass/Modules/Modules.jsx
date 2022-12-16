@@ -122,11 +122,11 @@ const Modules = () => {
         }
     }
 
-  
         return (
           <Container fluid className="bg-light text-dark">
-              <Row style={{ marginBottom: "2rem" }}>
-                <Card >
+        {/* //       <Row style={{ marginBottom: "2rem" }}> */}
+            <Row style={{ marginBottom: "2rem" }}>
+                <Card variant="secondary">
                     <Card.Header>
                         <Nav variant="tabs" activeKey={activeFamily.family} onSelect={handleSelect}>
                         {
@@ -143,6 +143,7 @@ const Modules = () => {
                         </Nav>
                        
                     </Card.Header>
+                    { location.state ?
                     <Card.Body>
                         <Card.Title>
                             {activeFamily.id}
@@ -150,8 +151,8 @@ const Modules = () => {
                         <Card.Text>
                             {activeFamily.description}
                         </Card.Text>
-                        { location.state ?
-                        //  <Fade in={location.state}>
+                        
+                       
                          
                             <InputGroup className="mb-3" style={{marginTop: 20}}>
                                 <InputGroup.Text id="module_search"><i className="fa-solid fa-magnifying-glass"></i></InputGroup.Text>
@@ -163,22 +164,19 @@ const Modules = () => {
                                 />
                             </InputGroup>
                        
-                        //  </Fade> 
-                         : null 
-                        }
+                      
+                        
                     </Card.Body>
+                     : null
+                    }
                 </Card>
-              </Row>
 
-              <Row>
-
-              <ModuleFamily family={family} icon={activeFamily.icon} filter={searchValue}></ModuleFamily>
-              <Outlet/>     
-                
-            </Row>
+                <ModuleFamily family={family} icon={activeFamily.icon} filter={searchValue}>  </ModuleFamily>
+                <Outlet/>
            
-            
-          </Container>
+           
+            </Row>
+        </Container>
           
         )
   }

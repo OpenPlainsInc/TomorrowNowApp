@@ -53,12 +53,12 @@ const GrassRenderImage = ({layerType, layerName, mapsetName, locationName, card=
         <>
             {
                 loading ? 
-                <Spinner as="span" animation="border" role="status" variant="secondary" className="bg-dark text-light" >
+                <Spinner as="span" animation="border" role="status" variant="secondary" className=" text-light" >
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
                 :
-                card ? <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} className="bg-dark text-light"/> :
-                <Image as="img" fluid={true} src={image ? image.imgurl : ""} className="bg-dark text-light"></Image>
+                card ? <Card.Img as="img" variant="top" src={image ? image.imgurl : ""} className=" text-light"/> :
+                <Image as="img" fluid={true} src={image ? image.imgurl : ""} className=" text-light"></Image>
             }
         </>
       )

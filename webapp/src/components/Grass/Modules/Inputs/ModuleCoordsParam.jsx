@@ -53,7 +53,7 @@ const ModuleCoordsParam = ({param , region}) => {
 
 
     const handleFeatureRemove = (e) => {
-        console.log("handleFeatureRemove", e)
+        // console.log("handleFeatureRemove", e)
         // e.target.features.map(f => f.setProperties({status: 'last'}))
     }
     pointSource.on('removefeature',handleFeatureRemove )
@@ -83,9 +83,7 @@ const ModuleCoordsParam = ({param , region}) => {
         if (newPoint.length === 1) {
             newPoint[0].setProperties({status: 'old'})
         }
-
         
-
         console.log("Map Features", features, pointFeatures)
 
         setXValue(parseFloat(x))
@@ -143,7 +141,7 @@ const ModuleCoordsParam = ({param , region}) => {
                                 <MapEvent eventName="click" eventHandler={onMapClick}></MapEvent>
                             </Events>
                             <Interactions>
-                                <Draw source={pointSource}></Draw>
+                                <Draw source={pointSource} features={pointFeatures} isActive={true}></Draw>
                             </Interactions>
                     </Map>
                 </Row>

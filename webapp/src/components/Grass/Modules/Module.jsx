@@ -84,8 +84,8 @@ const Module = ({moduleName}) => {
   }, [moduleParams, activeSubsection])
   
   return (
-    <Container fluid className="bg-light text-dark">
-          <Row style={{ marginBottom: "2rem" }}>
+    // <Container fluid className="bg-light text-dark">
+    //       <Row md={{ span: 6, offset: 3 }} style={{ marginBottom: "2rem" }}>
             <Card>
               <Card.Header>
 
@@ -106,7 +106,11 @@ const Module = ({moduleName}) => {
               <Card.Body>
               {/* <Row> */}
                 { module.data && sectionParams ?
+                <Container  className="bg-light text-dark">
+                <Row md={{ span: 6, offset: 3 }} style={{ paddingBottom: "1rem", marginBottom: "2rem", marginTop: "1rem" }}>
                   <ModuleForm moduleName={module.data.name} moduleParams={sectionParams}/>
+                  </Row>
+                  </Container>
                 : null}
               {/* </Row> */}
               
@@ -119,8 +123,8 @@ const Module = ({moduleName}) => {
               }
               </Card.Body>
             </Card>
-       </Row>
-    </Container>
+    //     </Row>
+    // </Container>
   )
 }
 
