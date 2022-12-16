@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Nov 15 2022                                               #
+# Last Modified: Tue Nov 29 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -46,7 +46,7 @@ def asyncResourceStatus(user_id, resource_id, message_type="resource_message"):
     r = requests.get(url, auth=acp.auth())
     data = r.json()
     print(f"asyncResourceStatus: {r.status_code}")
-    print(r)
+    print(data)
     channel_layer = get_channel_layer()
     resource_name = resource_id.replace('-', '_')
     resource_group = f"savana_{resource_name}"
@@ -70,7 +70,8 @@ def asyncResourceStatus(user_id, resource_id, message_type="resource_message"):
             "message": updated_status,
             "resource_id": resource_id,
             "resources": resources,
-            "process_log": process_log
+            "process_log": process_log,
+            "progress": data.get('progress')
         }
 
         return async_to_sync(channel_layer.group_send)(resource_group, response_message)
