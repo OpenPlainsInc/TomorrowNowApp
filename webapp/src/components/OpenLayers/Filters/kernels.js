@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Apr 05 2022
+ * Last Modified: Mon Nov 07 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -59,6 +59,7 @@ const kernels = {
     shadow: [1, 2, 1, 0, 1, 0, -1, -2, -1],
     emboss: [-2, 1, 0, -1, 1, 1, 0, 1, 2],
     edge: [0, 1, 0, 1, -4, 1, 0, 1, 0],
+    ridge: [-1, -1, -1, -1, 4, -1, -1, -1, -1]
   };
 
   export default kernels
