@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Oct 21 2022
+ * Last Modified: Wed Nov 30 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -127,7 +127,7 @@ const ModelForm = ({children}) => {
             if (res.ok) {
                 let data = await res.json();
                 console.log("response:", data)
-                return navigate(`/futures/${data.id}`, {replace: true})
+                return navigate(`/futures/${data.slug}`, {replace: true})
             }
                           
           } catch (e) {

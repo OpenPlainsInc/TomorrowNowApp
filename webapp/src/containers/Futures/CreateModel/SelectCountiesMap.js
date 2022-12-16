@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Sep 26 2022
+ * Last Modified: Wed Nov 30 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -83,7 +83,7 @@ import {countiesStyleWithLabel, countySelectionStyle} from '../countySelectStyle
 import CountyInfoCard from './CountyInfoCard';
 import { useFormContext } from "react-hook-form";
 const SelectCountiesMap = ({data=null}) => {
-
+    const SELECTION_LIMIT = 15;
     const [center, setCenter] = useState([-95.54, 38.03]);
     const [zoom, setZoom] = useState(4.25);
     const [projection, setProjection] = useState('EPSG:4326');
@@ -225,14 +225,14 @@ const SelectCountiesMap = ({data=null}) => {
                 
                    selectedCounties ?  
                    
-                        (Object.keys(selectedCounties).length > 0 && Object.keys(selectedCounties).length <=5) ? 
+                        (Object.keys(selectedCounties).length > 0 && Object.keys(selectedCounties).length <= SELECTION_LIMIT) ? 
                             <div className="d-grid gap-2" style={{paddingTop: 20}}>
                                 {/* <Button>Continue</Button> */}
                             </div> 
                             : 
-                        Object.keys(selectedCounties).length > 5 ?
+                        Object.keys(selectedCounties).length > SELECTION_LIMIT ?
                             <Alert variant='warning'>
-                                {`Please remove ${Object.keys(selectedCounties).length - 5} ${isCountiesPlural(Object.keys(selectedCounties).length)} to continue.`}
+                                {`Please remove ${Object.keys(selectedCounties).length - SELECTION_LIMIT} ${isCountiesPlural(Object.keys(selectedCounties).length)} to continue.`}
                             </Alert> : 
                         null : 
                     null   

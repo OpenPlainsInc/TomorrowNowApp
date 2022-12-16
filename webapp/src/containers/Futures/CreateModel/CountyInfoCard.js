@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Fri Sep 23 2022
+ * Last Modified: Tue Nov 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -61,7 +61,7 @@ const CountyInfoCard = ({county, removeCountyHandler=null}) => {
             
             <Card.Text><strong>Area Land:</strong> {alandKm2} km<sup>2</sup></Card.Text>
             <Card.Text><strong>Area Water:</strong> {awaterKm2} km<sup>2</sup></Card.Text>
-            <Card.Text><small>Data Provided from U.S. Census: {county.layer} layer</small></Card.Text>
+            {/* <Card.Text><small>Data Provided from U.S. Census: {county.layer} layer</small></Card.Text> */}
             <Button variant="danger" onClick={(e) => {removeCountyHandler(county.geoid)}}>Remove</Button>
             
         </Card.Body>

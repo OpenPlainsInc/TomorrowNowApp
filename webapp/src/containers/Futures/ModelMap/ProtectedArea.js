@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Mon Nov 14 2022
+ * Last Modified: Tue Nov 22 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -46,7 +46,7 @@ export const ProtectedArea = ({devRestrictions}) => {
     
     const startingBudgetData = [
         { name: 'Spent', value: 0, formated: "Spent: $0" },
-        { name: 'Avaliable', value: 1e8 / 2.0, formated: "Avaliable: $500,000,000" },
+        { name: 'Available', value: 1e8 / 2.0, formated: "Available: $500,000,000" },
     ]
     const [budgetData, setBudgetData] = useState(startingBudgetData)
 
@@ -93,7 +93,7 @@ export const ProtectedArea = ({devRestrictions}) => {
         console.log("New Budge:", estCostRaw, formatedCost)
         let newBudget = [
             { name: 'Spent', value: parseInt(estCostRaw), formated: formatedCost },
-            { name: 'Avaliable', value: parseInt(1e8 - parseFloat(estCostRaw)), formated: currencyFormatter.format(1e8 - parseFloat(estCostRaw)) }
+            { name: 'Available', value: parseInt(1e8 - parseFloat(estCostRaw)), formated: currencyFormatter.format(1e8 - parseFloat(estCostRaw)) }
         ]
         console.log("New Budge:", newBudget)
         setBudgetData(oldeArray => [...newBudget])
