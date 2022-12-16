@@ -19,6 +19,7 @@ import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
+import ProgressBar from 'react-bootstrap/ProgressBar';
 import GeoJSON from 'ol/format/GeoJSON';
 // import utils from "../../components/OpenLayers/Colors/utils";
 import Events from '../../components/OpenLayers/Events/Events';
@@ -44,6 +45,7 @@ import { NLCDCard } from './NLCDCard';
 import { SurveyStatsCard } from './SurveyStatsCard';
 import NLCDTemporalMask from './NLCDTemporalMask';
 import { RasterSource } from '../../components/OpenLayers/Sources/RasterSource';
+
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
 
@@ -62,6 +64,7 @@ const Game = ({params}) => {
   const [loadingAnimation, setLoadingAnimation] = useState(false)
   const [pointSource, setPointSouce] = useState(VectorSource({noWrap: true}))
   const [selectedBasin, setSelectedBasin] = useState(null)
+  const [progressBar, setProgressBar] = useState(null)
   // const wms3depSource = ned3DepSource({layer: 'Height Ellipsoidal'})
   const [surveySource, setSurveySource] = useState(survey(loadSurveyData))
   const [isSurveyDataLoaded, setIsSurveyDataLoaded] = useState(false)
@@ -290,9 +293,17 @@ const Game = ({params}) => {
       if (lastJsonMessage.message === 'error') {
         console.log("Last Message Error: ", lastJsonMessage)
         setLoadingAnimation(false)
+        setProgressBar(null)
+      }
+      if (lastJsonMessage.message === 'running') {
+        let {step, num_of_steps} = lastJsonMessage.progress
+        setProgressBar(lastJsonMessage.progress)
+        if (step === num_of_steps) {
+          setProgressBar(null)
+        }
       }
       if (lastJsonMessage.message !== 'finished') return;
-
+      setProgressBar(lastJsonMessage.progress)
       console.log("Last Message Finished: ", lastJsonMessage)
           
           if (lastJsonMessage.process_log) {
@@ -536,13 +547,16 @@ const Game = ({params}) => {
              
             <Col md={4} >   
               <Row className="bg-alert text-dark">
-                {/* <h2>{selectedHuc12Props ? selectedHuc12Props.name: ""}</h2>              */}
-                  { 
-                    nlcdData ? 
-                    <NLCDCard nlcdData={nlcdData} basinElevationInfo={basinElevationInfo} basinSlopeInfo={basinSlopeInfo}></NLCDCard>
-                  :  
+                { nlcdData ? 
+                  <NLCDCard nlcdData={nlcdData} basinElevationInfo={basinElevationInfo} basinSlopeInfo={basinSlopeInfo}></NLCDCard>
+                  :
+                  <>
+                  { lastJsonMessage?.message === 'running'  ? <ProgressBar animated min={0} now={progressBar?.step} max={progressBar?.num_of_steps}/> : null}
                   <SurveyStatsCard surveyData={surveyData}></SurveyStatsCard>
+                  </>
                 }
+                   
+                  
                 {selectedHuc12Props ? 
                   <NLCDTemporalMask 
                     watershed={selectedHuc12Props}
