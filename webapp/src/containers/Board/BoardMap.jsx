@@ -1,5 +1,6 @@
 import React, { useEffect, useState} from "react"
 import Container from "react-bootstrap/Container"
+import Card from "react-bootstrap/Card";
 import {useParams} from "react-router-dom";
 import Map from "../../components/OpenLayers/Map"
 import Layers from "../../components/OpenLayers/Layers/Layers"
@@ -17,7 +18,8 @@ import utils from "../../components/OpenLayers/Colors/utils";
 import {TileDebug} from 'ol/source';
 import ActiniaGeoTiff from "../../components/OpenLayers/Sources/ActiniaGeoTiff";
 import grassSchemes from "../../components/OpenLayers/Colors/grass";
-
+import Breadcrumb from "react-bootstrap/Breadcrumb"
+import {LinkContainer} from 'react-router-bootstrap'
 
 const BoardMap = (props) => {
     let params = useParams();
@@ -69,7 +71,23 @@ const BoardMap = (props) => {
     // GRASS Projection 3358
     return (
             <Container className="vh-100 d-flex flex-column">
-                <h1>{params.rasterId}</h1>
+                <Breadcrumb style={{paddingTop: 20}}>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>Board</Breadcrumb.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>{params.locationId}</Breadcrumb.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>{params.mapsetId}</Breadcrumb.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/board">
+                        <Breadcrumb.Item>{params.rasterId}</Breadcrumb.Item>
+                    </LinkContainer>
+                </Breadcrumb>
+                <Card>
+                <Card.Header><h3>{params.rasterId}</h3></Card.Header>
+                <Card.Body>
                 <Row>
                     <Col>
                 <Map  center={fromLonLat(center)} zoom={zoom}>
@@ -113,7 +131,8 @@ const BoardMap = (props) => {
                
                 <Col>
                 <Form style={{marginTop: 50}}>
-                <Form.Control as="select" value={colorPal} onChange={updateColor}>
+                <Form.Label>Color Palette</Form.Label>
+                <Form.Control style={{marginBottom: 10}} as="select" value={colorPal} onChange={updateColor}>
                     {utils.defautColormaps.map((c, idx) =>{
                             return(
                             <option key={idx} value={c}>
@@ -213,6 +232,8 @@ const BoardMap = (props) => {
                 </Form>
                 </Col>
                 </Row>
+                </Card.Body>
+                </Card>
             </Container>
         
     )
