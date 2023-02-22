@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Wed Feb 22 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -33,19 +33,40 @@
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import { LinkContainer } from 'react-router-bootstrap';
+import GrassRenderImage from "../../components/Grass/Utils/GrassRenderImage";
+
 const DataWelcomeCard = () => {
+    const LOCATION = "futures_triangle_nc"
+    const MAPSET = "PERMANENT" //"futures_test"
+    const RASTER =  "elevation" //"suitability"
+    const DATATYPE = "raster"
+   
     return (
         <Card>
-            <Card.Header as="h2">Understand the Data</Card.Header>
+            <Card.Header as="h2">Explore Data</Card.Header>
+            {/* <GrassRenderImage style={{ height: '18rem' }}
+                card={true} 
+                layerType={DATATYPE}
+                layerName={RASTER}
+                locationName={LOCATION}
+                mapsetName={MAPSET}/> */}
+            
             <Card.Body>
-                <Card.Title>Explore Data</Card.Title>
-                <Card.Text>
-                    Learn about the data used in the FUTURES model.
-                </Card.Text>
-                <LinkContainer to="/board/location/futures_triangle_nc/mapset/PERMANENT">
-                    <Button variant="secondary">Learn</Button>
-                </LinkContainer>
+                
+                
+                <Card.Img style={{ height: '25rem', marginTop: '-4rem'}} src="./futures_tilt.png"></Card.Img>
+                
+                
             </Card.Body>
+            <Card.Footer>
+                {/* <Card.Title>Explore Data</Card.Title> */}
+                 <Card.Text>
+                    Learn about the data used in the FUTURES model.
+                    </Card.Text>
+            <LinkContainer to="/board/location/futures_triangle_nc/mapset/PERMANENT">
+                    <Button variant="secondary">Learn More</Button>
+                </LinkContainer>
+            </Card.Footer>
         </Card>
     )
 }

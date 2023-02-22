@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Wed Feb 22 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -39,16 +39,16 @@ const StartNewModel = () => {
 
     return (
         <Card>
-            <Card.Header as="h1">FUTURES</Card.Header>
+            <Card.Header as="h2">Get Started</Card.Header>
             
             <Card.Body>
                 {/* <Card.Img variant="top" src="" className="fa-solid fa-tree-city fa-5x" /> */}
-                <Card.Title>Get Started</Card.Title>
+                {/* <Card.Title>Get Started</Card.Title> */}
                 <Card.Text>
-                    Ready to co-develop policies that will shape the future impact of urban development in your community? Click the start button to create a new model.
+                    Ready to <strong>co-develop policies</strong> that will shape the <strong>future</strong> impact of <strong>urban development</strong> in your community? Click the <strong>Create Model</strong> button to get started today.
                 </Card.Text>
                 <LinkContainer to="/futures/create">
-                    <Button variant="secondary">Start</Button>
+                    <Button variant="secondary">Create Model</Button>
                 </LinkContainer>
             </Card.Body>
         </Card>

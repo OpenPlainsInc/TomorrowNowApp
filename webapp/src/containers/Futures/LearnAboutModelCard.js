@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu Sep 22 2022
+ * Last Modified: Wed Feb 22 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -34,15 +34,23 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
 const LearnAboutModelCard = () => {
+    const CGA_FUTURES_RUL = "https://cnr.ncsu.edu/geospatial/research/futures/"
     return (
         <Card>
-            <Card.Header as="h2">Learn about FUTURES</Card.Header>
+            <Card.Header as="h2">FUTURES</Card.Header>
             <Card.Body>
-                <Card.Title>Should I trust it?</Card.Title>
+                <Card.Title>What is FUTURES?</Card.Title>
                 <Card.Text>
-                    Learn about how FUTURES works 
+                    FUTURES is the <strong>FUTure Urban-Regional Environment Simulation</strong> and 
+                    was developed by the Landscape Dynamics Group led by Director 
+                    Ross Meentemeyer at the Center for Geospatial Analytics at
+                     North Carolina State University. The simulation was designed 
+                     specifically to address the <strong>regional-scale</strong> ecological and 
+                     environmental impacts of <strong>urbanization</strong> and is one of the few 
+                     land change models developed to explicitly capture the <strong>spatial 
+                     structure</strong> of development.
                 </Card.Text>
-                <Button variant="secondary">Explore</Button>
+                <Button variant="secondary" href={CGA_FUTURES_RUL} target="_blank">Learn More</Button>
             </Card.Body>
         </Card>
     )

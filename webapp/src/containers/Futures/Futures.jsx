@@ -32,18 +32,22 @@ export default function Futures() {
         <Container fluid className="bg-light text-dark" style={{paddingTop: 20, height: '100vh'}}>
           <Row>
             <Col md={4}>
-              <StartNewModel/>
+              {/* <StartNewModel/> */}
+              {/* <div style={{paddingTop: 20}}> */}
+                <LearnAboutModelCard/>
+              {/* </div> */}
               <div style={{paddingTop: 20}}>
                 <DataWelcomeCard/>
               </div>
-              <div style={{paddingTop: 20}}>
-                <LearnAboutModelCard/>
-              </div>
+              
             </Col>
             <Col md={8}>
+              <StartNewModel/>
               {
-                models?.data ? 
+                models?.data ?
+                <div style={{paddingTop: 20}}>
                   <FindModelMapCard data={models.data}/>
+                </div> 
                 : null
               }
               
