@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Oct 18 2022
+ * Last Modified: Tue Feb 28 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -36,12 +36,15 @@ import ZoomSliderControl from "./ZoomSliderControl";
 import ScaleLineControl from "./ScaleLineControl";
 import RotateControl from "./RotateControl";
 import EditMapControl from "./EditMapControl";
-
+import LayerSwitcherControl from "./LayerSwitcherControl";
+import LegendControl from "./LegendControl";
 export default Controls
 export {
 	FullScreenControl,
     ZoomSliderControl,
     ScaleLineControl,
     RotateControl,
-    EditMapControl
+    EditMapControl,
+    LayerSwitcherControl,
+    LegendControl
 }
