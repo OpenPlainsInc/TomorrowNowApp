@@ -1,5 +1,6 @@
 # TomorrowNowAPP
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7702537.svg)](https://doi.org/10.5281/zenodo.7702537)
 [![react-savana-tests](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/node.js.yml/badge.svg)](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/node.js.yml)
 [![django-savana-tests](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/django.yml/badge.svg)](https://github.com/tomorrownow/TomorrowNowApp/actions/workflows/django.yml)
 
