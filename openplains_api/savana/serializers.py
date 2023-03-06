@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Sun Nov 13 2022                                               #
+# Last Modified: Wed Nov 30 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -113,11 +113,13 @@ class StringListField(serializers.ListField):
 
 
 class CreateModelSerializer(serializers.Serializer):
-    modelName = status = serializers.CharField(max_length=100)
+    # slug = serializers.CharField(max_length=250)
+    modelName = serializers.CharField(max_length=100)
     modelDescription = serializers.CharField(max_length=250)  # The model name
     status = serializers.ChoiceField(choices=(StatusEnum.choices), default=StatusEnum.INITIATING)
+    # privacy = serializers.CharField(source='get_privacy_display')
     goals = serializers.JSONField()
-    counties = StringListField(min_length=1, max_length=5, allow_empty=False)
+    counties = StringListField(min_length=1, max_length=15, allow_empty=False)
 
     def create(self, validated_data):
         print("creating new model")

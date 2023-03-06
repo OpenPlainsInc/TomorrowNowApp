@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Apr 06 2022
+ * Last Modified: Mon Feb 13 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -75,7 +75,7 @@ import wmsUtils from './wmsUtils';
 
 
 
-const nhdPlusSource = (params) => {
+const useNhdPlusSource = (params) => {
     // https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer?f=pjson
     let defaults = {
         'layerName':'WBDHU12',
@@ -104,8 +104,9 @@ const nhdPlusSource = (params) => {
             params: updatedParams,
             serverType: 'mapserver',
             // Countries have transparency, so do not fade tiles:
-            transition: 0
-            // attributions: 
+            transition: 0,
+            attributions: 'Tiles © <a href="https://hydro.nationalmap.gov/arcgis/' +
+            'rest/services/NHDPlus_HR/MapServer/WMSServer">National Map</a>',
           })
 
         // const imageLayer = new ImageLayer({
@@ -122,4 +123,4 @@ const nhdPlusSource = (params) => {
 }
 
 
-export default nhdPlusSource
+export default useNhdPlusSource

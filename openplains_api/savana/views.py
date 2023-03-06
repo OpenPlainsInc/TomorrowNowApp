@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Nov 22 2022                                               #
+# Last Modified: Thu Mar 02 2023                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -503,7 +503,8 @@ def rDrain(request):
         # url = f"{acp.baseUrl()}/locations/CONUS/mapsets/{mapset_name}/processing_async"
 
         # Use if running ad-hoc analysis using ephemeral database
-        url = f"{acp.baseUrl()}/locations/CONUS/processing_async_export"
+        # url = f"{acp.baseUrl()}/locations/CONUS/processing_async_export"
+        url = f"{acp.baseUrl()}/locations/CONUS/processing_async_export_gcs"
 
         print(f"Actinia Request Url: {url}")
         # body_unicode = request.body.decode('utf-8')
@@ -619,7 +620,27 @@ def rDrain(request):
             ],
             "outputs": [
                 {
+                    # "export": {
+                    #     "type": "raster",
+                    #     "format": "COG"
+                    # },
                     "param": "slope",
+                    "value": "slope"
+                }
+            ]
+        }
+
+        exporter = {
+            "id": "exporter_1",
+            "module": "exporter",
+            "comment": "Export the slope, aspect and flow accumulation maps (note: exporter is only used when using ephemeral processing endpoint)",
+            "outputs": [
+                {
+                    "export": {
+                        "type": "raster",
+                        "format": "COG"
+                    },
+                    "param": "map",
                     "value": "slope"
                 }
             ]
@@ -776,8 +797,8 @@ def rDrain(request):
                     # },
                     {
                         "param": "input",
-                        "value": "/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/SpatialData/LC20_Elev_220_cog.tif"
-                        # "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/USGS_Seamless_DEM_1.vrt"
+                        # "value": "/vsicurl/https://storage.googleapis.com/tomorrownow-actinia-dev/SpatialData/LC20_Elev_220_cog.tif"
+                        "value": "/vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/USGS_Seamless_DEM_1.vrt"
                     },
                     {
                         "param": "resample",
@@ -813,7 +834,7 @@ def rDrain(request):
                     },
                     {
                         "param": "accumulation",
-                        "value": "usgs_3dep_30m_accumulation" 
+                        "value": "usgs_3dep_30m_accumulation"
                     },
                     {
                         "param": "stream",
@@ -1118,6 +1139,7 @@ def rDrain(request):
                     }
                 ]
             },
+            exporter,
             {
                 "id": "r.mask_1804289383",
                 "flags": "r",

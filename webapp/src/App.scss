@@ -65,6 +65,12 @@ $theme-colors: (
 $white: $savan-white;
 $body-bg: $savan-white;
 
+$assetPath: ".";
+
+// .op_wallpaper-beige {
+//     background-image: url(#{$assetPath}/Wallpaper-Beige.png);
+// }
+
 
 body { padding-top: 50px; }
 // #index {background-color: $savan-tan}

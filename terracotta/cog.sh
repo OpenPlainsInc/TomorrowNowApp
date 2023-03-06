@@ -27,7 +27,7 @@
 #     -co COPY_SRC_OVERVIEWS=YES \
 #     -co BIGTIFF=YES
 
-terracotta optimize-rasters *.tif -o optimized/
-terracotta ingest optimized/S2A_{date}_{}_{tile}_{band}.tif -o actinia.sqlite
+# terracotta optimize-rasters *.tif -o optimized/
+# terracotta ingest optimized/S2A_{date}_{}_{tile}_{band}.tif -o actinia.sqlite
 
-https://trac.osgeo.org/gdal/wiki/CloudOptimizedGeoTIFF
+# https://trac.osgeo.org/gdal/wiki/CloudOptimizedGeoTIFF

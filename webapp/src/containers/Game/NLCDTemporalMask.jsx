@@ -17,7 +17,7 @@ import {getVectorContext} from 'ol/render';
 import {  Fill, Style, Stroke } from "ol/style";
 import { watershedSelectionSource } from './watershedSelectionSource';
 const NLCDTemporalMask = ({watershed, center=[]}) => {
-    console.log(watershed)
+    // console.log(watershed)
     const [osmSource, setOsmSource] = useState(osm()); 
     const [feature, setFeature] = useState(null);
     // let geojson = new GeoJSON().writeFeature(feature, {

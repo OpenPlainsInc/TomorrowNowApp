@@ -45,6 +45,7 @@ import { NLCDCard } from './NLCDCard';
 import { SurveyStatsCard } from './SurveyStatsCard';
 import NLCDTemporalMask from './NLCDTemporalMask';
 import { RasterSource } from '../../components/OpenLayers/Sources/RasterSource';
+import useNhdPlusSource from '../../components/OpenLayers/Sources/nhdPlus';
 
 // Locally calculate Upstream Contributing Area
 // https://openlayers.org/en/latest/examples/region-growing.html
@@ -85,6 +86,22 @@ const Game = ({params}) => {
   //     const pixel = pixels[0];
   //     return pixel;
   //   },
+  // })
+
+  // let nhdPlusStream = useNhdPlusSource({
+    // layerName: "", LAYERS: '0',
+    // layerName: "Basins", LAYERS: '1',
+    // layerName: "HUC12", LAYERS: '0',
+    // layerName: "Lakes", LAYERS: '3'
+    // layerName: "NHDArea", LAYERS: '4',
+    // layerName: "", LAYERS: '5',
+    // layerName: "", LAYERS: '6',
+    // layerName: "Flow Direction", LAYERS: '7'
+    // layerName: "", LAYERS: '8',
+    // layerName: "Streams", LAYERS: '9',
+    // layerName: "", LAYERS: '10',
+    // layerName: "", LAYERS: '11',
+    // layerName: "Stream Gauges", LAYERS: '12',
   // })
 
   let huc12Source = useVectorTileSource({
@@ -415,6 +432,7 @@ const Game = ({params}) => {
                      
 
                       <TileLayer source={osmSource} opacity={0.5}></TileLayer>
+                      {/* <TileLayer source={nhdPlusStream}></TileLayer> */}
                       {/* <VectorTileLayer 
                         layerName="streams"
                         zIndex={1}

@@ -1,11 +1,11 @@
 ###############################################################################
-# Filename: OPScenario.py                                                      #
+# Filename: OPOutcomes.py                                                      #
 # Project: TomorrowNow                                                         #
-# File Created: Tuesday October 18th 2022                                      #
+# File Created: Thursday November 17th 2022                                    #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Nov 22 2022                                               #
+# Last Modified: Mon Mar 06 2023                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -29,13 +29,3 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 #                                                                              #
 ###############################################################################
-
-# from django.contrib.gis.db import models
-
-
-# class Scenario(models.Model):
-#     modelId = models.ForeignKey("savana.OpenPlainsModel", editable=True, on_delete=models.CASCADE, null=False, related_name='counties')
-#     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='opmodel')
-#     # root =
-#     # params =
-#     # geoms =

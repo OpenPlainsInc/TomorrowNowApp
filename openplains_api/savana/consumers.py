@@ -5,7 +5,7 @@
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
-# Last Modified: Tue Nov 15 2022                                               #
+# Last Modified: Tue Nov 29 2022                                               #
 # Modified By: Corey White                                                     #
 # -----                                                                        #
 # License: GPLv3                                                               #
@@ -111,7 +111,10 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
         elif message in ['running']:
             await self.send(text_data=json.dumps({
                 'message': message,
-                'resource_id': resource_id
+                'resource_id': resource_id,
+                'resources': event['resources'],
+                'process_log': event['process_log'],
+                'progress': event['progress']
             }))
             tasks.asyncResourceStatus.delay(user_id, resource_id, "resource_message")
 
@@ -119,9 +122,18 @@ class ActiniaResourceConsumer(AsyncWebsocketConsumer):
             resources = event['resources']
             resource_owner = acp.currentUser()
             print("Resource Owner: ", resource_owner)
-            if (len(resources) > 0):
+            if (len(resources) > 0 and "GoogleAccessId" not in resources[0].split('/')[-1]):
                 file_name = resources[0].split('/')[-1]
                 resource_location = os.path.join('/actinia_core', 'resources', resource_owner, resource_id, file_name)
+                if "GoogleAccessId" in file_name:
+                    resource_location = os.path.join(
+                        '/vsigs',
+                        'https://storage.cloud.google.com',
+                        'tomorrownow-actinia-dev',
+                        resource_owner,
+                        resource_id,
+                        file_name
+                    )
                 print("Resource Location: ", resource_location)
                 # resource_location = os.path.join('/vsicurl/', resources[0])
                 rst = GDALRaster(resource_location, write=False)

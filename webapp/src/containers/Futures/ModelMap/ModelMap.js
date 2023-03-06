@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Sun Nov 13 2022
+ * Last Modified: Fri Mar 03 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -32,7 +32,7 @@
 import './model-map.scss'
 import {useState, useEffect} from 'react'
 import Map from '../../../components/OpenLayers/Map';
-import Controls, {ZoomSliderControl, ScaleLineControl} from '../../../components/OpenLayers/Controls';
+import Controls, {ZoomSliderControl, ScaleLineControl, LayerSwitcherControl, LegendControl} from '../../../components/OpenLayers/Controls';
 import Layers from '../../../components/OpenLayers/Layers/Layers';
 import TileLayer from "../../../components/OpenLayers/Layers/TileLayer"
 
@@ -42,8 +42,10 @@ import { Draw, Interactions } from '../../../components/OpenLayers/Interactions'
 import { useVectorSource } from '../../../components/OpenLayers/Sources/VectorSource';
 import VectorLayer from '../../../components/OpenLayers/Layers/VectorLayer';
 import { useVectorTileSource } from '../../../components/OpenLayers/Sources';
+// import { useCountyVectorTiles } from '../../../components/OpenLayers/Sources/VectorTileSource';
+
 import { VectorTileLayer } from '../../../components/OpenLayers/Layers/VectorTileLayer';
-import { countyStyle } from '../countySelectStyle';
+import { countyStyle, countiesStyleWithLabel } from '../countySelectStyle';
 import Collection from 'ol/Collection'
 import ActiniaGeoTiff from '../../../components/OpenLayers/Sources/ActiniaGeoTiff';
 import Reprojection from '../../../components/OpenLayers/Views/Reprojection';
@@ -53,16 +55,17 @@ export default function ModelMap({devRestrictions, model}) {
     const county_geoids = ['37183', '37063', '37135']
     const PROJECTION = 'EPSG:3857' //'EPSG:5070'
     const EXTENT = [-8824121.708860213, 4234699.40797501,-8711169.383775985, 4334170.940395969]
-    const [osmSource, setOsmSource] = useState(osm()); 
-    const [center, setCenter] = useState([-8773686.675374346,4287950.809332017]);
-    const [zoom, setZoom] = useState(9);
+    const [osmSource] = useState(osm()); 
+    const [center] = useState([-8773686.675374346,4287950.809332017]);
+    const [zoom] = useState(9);
 
     const interactionSource = useVectorSource({wrapX: false, useSpatialIndex: false})
-    const colorChoice = nlcdCats.filterWebGLColors([41,42,43,51,52,71,72,73,74])
-    // let countySource = useVectorTileSource({
-    //     layerName:"savana:cb_2018_us_county_500k",
-    //     baseUrl:`http://localhost:8600/geoserver/gwc/service/wmts`
-    //   })
+    // const colorChoice = nlcdCats.filterWebGLColors([41,42,43,51,52,71,72,73,74])
+    const colorChoice = nlcdCats.developWebGLColors([41,42,43,51,52,71,72,73,74])
+    let countySource = useVectorTileSource({
+        layerName:"savana:cb_2018_us_county_500k",
+        baseUrl:`http://localhost:8600/geoserver/gwc/service/wmts`
+      })
     // Update layer source when dev potential is remove from form.
     devRestrictions.on('remove', (event) => {
         // console.log("Remove Event", event)
@@ -85,42 +88,91 @@ export default function ModelMap({devRestrictions, model}) {
         >
             <Layers>
                 <TileLayer source={osmSource} opacity={1.0}></TileLayer>
-                <VectorLayer layerName={"development_potential"}
-                     source={interactionSource}
-                    style={((f) => {
-                        const value = f.get("value") || "0.0";
-                        // const value =  "0.99";
-                        return protectAreaStyle(value, f.getId())
-                    })}     
-                />
+               
                 { model.data ? 
                     <>
-                    <ActiniaGeoTiff
+                    {/* <ActiniaGeoTiff
                         rasterName={"nlcd_2019_cog"}
                         locationName={model.data.properties.location}
                         mapsetName={"PERMANENT"}
                         color={'grass'}
+                        opacity={1}
+                    /> */}
+                 
+{/* https://storage.googleapis.com/tomorrownow-actinia-dev/SpatialData/climate/flood/CONUS_FDP_100m_cog.tif */}
+                    {/* <ActiniaGeoTiff
+                        rasterName={"nlcd_2019_cog"}
+                        locationName={model.data.properties.location}
+                        mapsetName={"PERMANENT"}
+                        color={ [
+                            "case",
+                            ['==', ['band', 1], 1], //Developed Orange
+                            "rgba(153,142,195,1.0)", 
+                            ['==', ['band', 1], -1], // Undeveloped Purple
+                            'rgba(153,142,195,1.0)',
+                            'rgba(0,0,0,0.0)'
+                            ]}
+                        opacity={0.5}
+                    />  */}
+                    {/* <ActiniaGeoTiff
+                        rasterName={"final"}
+                        locationName={model.data.properties.location}
+                        mapsetName={"PERMANENT"}
+                        color={ [
+                            "case",
+                            ['==', ['band', 1], -1], //Developed Orange
+                            // "#f1a340", 
+                            'rgba(153,142,195,1.0)',
+                            ['==', ['band', 1], 0], // Undeveloped Purple
+                            'rgba(153,142,195,0.0)',
+                            'rgba(0,0,0,0.0)'
+                            ]}
+                        opacity={0.75}
+                    />  */}
+
+                    {/* <ActiniaGeoTiff
+                        rasterName={"depth"}
+                        locationName={model.data.properties.location}
+                        mapsetName={"simwe"}
+                        color={'grass'}
                         opacity={0.2}
-                    />
+                    /> */}
+                     
                     <ActiniaGeoTiff
                         rasterName={"nlcd_2019_cog"}
                         locationName={model.data.properties.location}
                         mapsetName={"PERMANENT"}
                         color={colorChoice}
                     /> 
+                   
+
+                {/* <VectorTileLayer 
+                    layerName="counties" 
+                    renderMode="vector"
+                    source={countySource} 
+                    style={countiesStyleWithLabel}
+                    declutter={true}
+                    // style={(feature) => {
+                    //     console.log(feature.getStyleFunction())
+                    //     let geoids = model.data.properties.counties.map(c=>c.county.geoid)
+                    //     if (geoids.includes(feature.getProperties().geoid.toString())) {
+                    //         return countyStyle
+                    //     }
+                    //     }}
+                    /> */}
+                 
                     </>
                     : null
                 }
-                {/* <VectorTileLayer 
-                    layerName="seletedCounties" 
-                    renderMode="vector"
-                    source={countySource} 
-                    style={(feature) => {
-                        if (feature.getProperties().geoid in [county_geoids]) {
-                            return countyStyle;
-                        }
-                        }}
-                    /> */}
+                <VectorLayer layerName={"development_potential"}
+                     source={interactionSource}
+                     zIndex={99}
+                    style={((f) => {
+                        const value = f.get("value") || "0.0";
+                        // const value =  "0.99";
+                        return protectAreaStyle(value, f.getId())
+                    })}     
+                />
             </Layers>
 
             <Interactions>
@@ -138,8 +190,11 @@ export default function ModelMap({devRestrictions, model}) {
                 {/* <ScenarioControls>
                     <ScenarioControl/>
                 </ScenarioControls> */}
+                {/* <LayerSwitcherControl/> */}
+                {/* <LegendControl></LegendControl> */}
             </Controls>
             
+            {/* <Reprojection epsg='3857'></Reprojection>  */}
             <Reprojection epsg='5070'></Reprojection> 
         </Map>
 

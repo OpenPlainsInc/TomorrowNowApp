@@ -11,7 +11,7 @@ import OLMVT from 'ol/format/MVT';
 import OLWMTS from 'ol/tilegrid/WMTS'
 import Projection from "ol/proj/Projection";
 import { useState, useEffect } from "react";
-
+import OLFeature from "ol/Feature";
 
 export const useVectorTileSource = ({layerName, baseUrl}) => {
   const [vectorSource, setVectorSource] = useState(null)
@@ -66,4 +66,25 @@ export const useVectorTileSource = ({layerName, baseUrl}) => {
     setVectorSource(constructSource(baseUrl)) 
   }, [layerName, baseUrl])
   return vectorSource
+}
+
+export const useVectorTileSource2 = (props) => {
+  const [vectorSource, setVectorSource] = useState(null)
+  const url = 'http://localhost:8600/geoserver/savana/gwc/service/tms/1.0.0/' + 
+              'savana%3Acb_2018_us_county_500k@EPSG%3A3857@pbf/{z}/{x}/{-y}.pbf'
+  useEffect(()=> {
+    let source = new OLVectorTile({
+      url: url,
+      projection: 'EPSG:3857',
+      format: new OLMVT({
+        // layerName: "counties"
+        // featureClass: OLFeature
+      }),
+      wrapX: false
+    });
+    setVectorSource(source) 
+  }, [url])
+
+  return vectorSource
+
 }

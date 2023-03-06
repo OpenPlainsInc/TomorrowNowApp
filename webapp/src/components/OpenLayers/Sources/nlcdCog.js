@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 12 2022
+ * Last Modified: Tue Sep 20 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -50,51 +50,50 @@ export const getColorMap = async ({layer = 2019}) => {
 
 
 export const nlcdCOGTileGridSource = ({layer = 2019}) => {
-    const tileFormat = 'png'
-    const sourceCog = `https%3A%2F%2Fstorage.googleapis.com%2Ftomorrownow-actinia-dev%2Fnlcd%2Fnlcd_${layer}_cog.tif`
-    const tileJsonUrl = `http://localhost:7000/cog/tilejson.json?tile_format=${tileFormat}&tile_scale=1&TileMatrixSetId=WebMercatorQuad&url=${sourceCog}&bidx=1&resampling=nearest&return_mask=true`
+    // const tileFormat = 'png'
+    // const sourceCog = `https%3A%2F%2Fstorage.googleapis.com%2Ftomorrownow-actinia-dev%2Fnlcd%2Fnlcd_${layer}_cog.tif`
+    // const tileJsonUrl = `http://localhost:7000/cog/tilejson.json?tile_format=${tileFormat}&tile_scale=1&TileMatrixSetId=WebMercatorQuad&url=${sourceCog}&bidx=1&resampling=nearest&return_mask=true`
     
-    let tileJson = new TileJSON({
-        url: tileJsonUrl,
-        crossOrigin: 'anonymous',
-        interpolate: false,
-        tileSize: [128,128],
-        transition: 0
-    })
-    
-
-    console.log("nlcdCOGTileGridSource", tileJson)
-    return tileJson
-
-    // const projection = new Projection({
-    //     code: 'EPSG:4326',
-    //     units: 'degrees',
-    //     axisOrientation: 'neu'
-    //     });
-
-    // const source = new GeoTIFF({
-    //     sources: [
-    //       {
-    //         url: 'https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2016_cog.tif',
-            // url: 'https://storage.googleapis.com/storage/v1/b/tomorrownow-actinia-dev/o/nlcd%2Fnlcd_2019_cog.tif?alt=media',
-        //     bands: [1]
-        //   }
-        // ],
-        // sourceOptions: {
-        //     forceXHR: false,
-        //     headers: {
-        //         'Content-Type': 'image/tiff; application=geotiff; profile=cloud-optimized',
-        //     }
-        // },
-        // normalize: false,
-        // opaque: false,
-        // interpolate: false,
-        // wrapX: true,
-        // projection
+    // let tileJson = new TileJSON({
+    //     url: tileJsonUrl,
+    //     crossOrigin: 'anonymous',
+    //     interpolate: false,
+    //     tileSize: [512,512],
+    //     transition: 0
     // })
+    
 
-    // console.log("GeoTiffSource", source)
+    // console.log("nlcdCOGTileGridSource", tileJson)
+    // return tileJson
 
-    // return source
+    const projection = new Projection({
+        code: 'EPSG:5070',
+        units: 'metre',
+        // axisOrientation: 'neu'
+        });
+
+    const source = new GeoTIFF({
+        sources: [
+          {
+            // url: 'https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_2016_cog.tif',
+            url: `https://storage.googleapis.com/tomorrownow-actinia-dev/nlcd/nlcd_${layer}_cog.tif`
+          }
+        ],
+        sourceOptions: {
+            forceXHR: false,
+            headers: {
+                'Content-Type': 'image/tiff; application=geotiff; profile=cloud-optimized',
+            }
+        },
+        normalize: false,
+        opaque: false,
+        interpolate: false,
+        wrapX: true,
+        projection
+    })
+
+    console.log("GeoTiffSource", source)
+
+    return source
 
 }

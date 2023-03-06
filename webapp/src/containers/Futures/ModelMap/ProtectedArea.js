@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Tue Nov 22 2022
+ * Last Modified: Mon Feb 13 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -35,7 +35,7 @@ import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { useEffect } from 'react';
+import { useEffect, useCallback} from 'react';
 import { LikertScaleSelect } from '../../../components/Grass/Controls/LikertScaleSelect';
 import { useWatch, useFieldArray } from "react-hook-form";
 import GeoJSON from 'ol/format/GeoJSON';
@@ -43,7 +43,10 @@ import { BudgetChart } from './BudgetChart';
 
 
 export const ProtectedArea = ({devRestrictions}) => {
-    
+    const [currencyFormatter, setCurrencyFormatter] = useState(new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }))
     const startingBudgetData = [
         { name: 'Spent', value: 0, formated: "Spent: $0" },
         { name: 'Available', value: 1e8 / 2.0, formated: "Available: $500,000,000" },
@@ -51,10 +54,12 @@ export const ProtectedArea = ({devRestrictions}) => {
     const [budgetData, setBudgetData] = useState(startingBudgetData)
 
     const [data, setData] = useState([])
-    const currencyFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    })
+    // const currencyFormatter = useCallback(() => { 
+    //     return new Intl.NumberFormat('en-US', {
+    //         style: 'currency',
+    //         currency: 'USD'
+    //     })
+    // }, [])
    
     const { fields, append, remove, prepend } = useFieldArray({
         name: "development_potential"
@@ -72,15 +77,15 @@ export const ProtectedArea = ({devRestrictions}) => {
         {value: "0.99", text: "Greatly increase likelihood of development"}
     ]
 
-    const estimateLandCost = (km2) => {
+    const estimateLandCost = useCallback((km2) => {
         const AVG_COST_PER_ACRE = 124862.00;
         const km2ToAcreConstant = 247.105;
         const estCostRaw = (km2 * km2ToAcreConstant * AVG_COST_PER_ACRE).toFixed(2)
         const formatedCost = currencyFormatter.format(estCostRaw)
         return {estCostRaw, formatedCost}
-    }
+    }, [currencyFormatter])
 
-    const calculateBudget = (tmp) => {
+    const calculateBudget = useCallback((tmp) => {
         let totalAreaKm = tmp.reduce((a, b) => {
             console.log(a, b)
             if (Number(a) === a && a % 1 !== 0) {
@@ -97,7 +102,7 @@ export const ProtectedArea = ({devRestrictions}) => {
         ]
         console.log("New Budge:", newBudget)
         setBudgetData(oldeArray => [...newBudget])
-    }
+    }, [estimateLandCost, currencyFormatter])
 
     /**
      * Handles events where a new restriction is added to the map.
@@ -138,7 +143,7 @@ export const ProtectedArea = ({devRestrictions}) => {
         return () => {
             devRestrictions.un('add', addRestriction)
         }
-    }, [devRestrictions])
+    }, [devRestrictions, calculateBudget])
 
     const removeItem = (e, index) => {
         e.preventDefault()
@@ -157,13 +162,6 @@ export const ProtectedArea = ({devRestrictions}) => {
     // devRestrictions.on('remove', (element, index, target, type) => console.log(element, index, target, type))
     // devRestrictions.on('change', (element, index, target, type) => console.log(element, index, target, type))
     // devRestrictions.on('error', (element, index, target, type) => console.log(element, index, target, type))
-
-    useEffect(()=> {
-        console.log("Hello", budgetData)
-       
-        
-       
-    }, [budgetData])
 
     useEffect(()=> {
         if (!Array.isArray(data) || !Array.isArray(devPotentialField)) return;

@@ -1,7 +1,7 @@
 ###############################################################################
-# Filename: OPScenario.py                                                      #
+# Filename: OPInteraction.py                                                   #
 # Project: TomorrowNow                                                         #
-# File Created: Tuesday October 18th 2022                                      #
+# File Created: Thursday November 17th 2022                                    #
 # Author: Corey White (smortopahri@gmail.com)                                  #
 # Maintainer: Corey White                                                      #
 # -----                                                                        #
@@ -30,12 +30,34 @@
 #                                                                              #
 ###############################################################################
 
-# from django.contrib.gis.db import models
+# from django.conf import settings
+# from django.db import models
+# from django.urls import reverse
+# from django.template.defaultfilters import slugify
+# from django.contrib.gis.db.models.aggregates import Union
+# from django.contrib.gis.db.models.functions import Centroid, AsGeoJSON
+# from world.models.County import County  # new
+# from .OPEnums import PrivacyEnum, StatusEnum, InteractionTypeEnum, SpatialInteractionEnum, InteractionScaleEnum
+# from .OPModelGoal import ModelGoal
+# from .OpenModelExtent import ModelExtent
+# from savana.utils import actinia as acp
 
 
-# class Scenario(models.Model):
-#     modelId = models.ForeignKey("savana.OpenPlainsModel", editable=True, on_delete=models.CASCADE, null=False, related_name='counties')
-#     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='opmodel')
-#     # root =
-#     # params =
-#     # geoms =
+# class OPInteraction(models.Model):
+#     """
+#     A base model that stores model interactions.
+#     """
+
+#     name = models.CharField(max_length=250)  # The model name
+#     description = models.CharField(max_length=250)  # The model description
+#     status = models.CharField(max_length=2, choices=(StatusEnum.choices), default=StatusEnum.INITIATING)
+#     privacy = models.CharField(max_length=2, choices=(PrivacyEnum.choices), default=PrivacyEnum.PRIVATE)
+#     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='opmodel')
+#     slug = models.SlugField(null=False, unique=True)  # new
+#     interaction_type = models.CharField(max_length=2, choices=(InteractionTypeEnum.choices), default=None)
+#     spatial_interaction = models.CharField(max_length=2, choices=(SpatialInteractionEnum.choices), default=None)
+#     interaction_scale = models.CharField(max_length=2, choices=(InteractionScaleEnum.choices), default=None)
+#     process_id = models.CharField(max_length=250, default=None)
+
+#     def __str__(self):
+#         return self.name

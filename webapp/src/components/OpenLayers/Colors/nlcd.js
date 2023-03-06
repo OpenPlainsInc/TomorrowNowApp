@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Thu May 12 2022
+ * Last Modified: Fri Mar 03 2023
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -56,7 +56,7 @@ const webGLColors =  [
     "#b3aea3",
     ['==', ['band', 1], 32],
     "#fafafa",
-    ['==', ['band', 'Layer_1'], 41],
+    ['==', ['band', 1], 41],
     'rgba(104, 171, 95, 1)',
     ['==', ['band', 1], 42],
     "#1c6330",
@@ -90,7 +90,7 @@ const webGLColors =  [
     "#b5d4e6",
     ['==', ['band', 1], 95],
     "#70a3ba",
-    'rgba(200,20,20,0.4)'
+    'rgba(0,0,0,0.0)'
 ]
 class NLCD {
     constructor(...categories) {
@@ -110,6 +110,69 @@ class NLCD {
         return tmpSet
     }
 
+    filterWebGLColors(highlight=undefined, family=false) {
+        let colors = [ "case"]
+        let aggType = {
+            catagory: 'category',
+            color: 'category_color'
+        }
+        if (family) {
+            aggType.catagory = 'family';
+            aggType.color = 'family_color';
+        }
+
+        this.categories.forEach(cat => {
+            let rgba = cat[aggType.color] //cat.hexToRgbA(family, 1.0)
+            let selection_row = ['==', ['band', 1], cat[aggType.catagory]];
+            colors.push(selection_row)
+            // console.log("highlight",highlight )
+            if (Array.isArray(highlight) && !highlight.includes(cat[aggType.catagory])) {
+                // rgba = cat.hexToRgbA(family, 0.8)
+                rgba = 'rgba(0,0,0,0.0)'
+            }
+            let color_row = rgba
+            colors.push(color_row) 
+        })
+        // Add default color as transparent
+        colors.push('rgba(0,0,0,0.0)') 
+        return colors
+    }
+
+
+    developWebGLColors(highlight=undefined, family=false) {
+        let colors = [ "case"]
+        let aggType = {
+            catagory: 'category',
+            color: 'category_color'
+        }
+        if (family) {
+            aggType.catagory = 'family';
+            aggType.color = 'family_color';
+        }
+
+        // $savan-primary: #657e96;
+        // // $primary-light:
+        // // $primary-dark:
+        // $savan-secondary: #d07944;
+
+
+        this.categories.forEach(cat => {
+            let rgba = '#d07944' //cat.hexToRgbA(family, 1.0)
+            let selection_row = ['==', ['band', 1], cat[aggType.catagory]];
+            colors.push(selection_row)
+            // console.log("highlight",highlight )
+            if (Array.isArray(highlight) && !highlight.includes(cat[aggType.catagory])) {
+                // rgba = cat.hexToRgbA(family, 0.8)
+                rgba = '#657e96' //'rgba(0,0,0,0.0)'
+            }
+            let color_row = rgba
+            colors.push(color_row) 
+        })
+        // Add default color as transparent
+        colors.push('rgba(0,0,0,0.0)') 
+        return colors
+    }
+
 }
 
 class NLCDCategory {
@@ -121,6 +184,21 @@ class NLCDCategory {
         this.category_label = category_label;
         this.category_color = category_color;
         this.description = description
+    }
+
+    hexToRgbA(family=false, opacity=1){
+        let hex = family ? this.family_color : this.category_color;
+        var c;
+        if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+            c= hex.substring(1).split('');
+            if(c.length === 3){
+                c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c= '0x'+c.join('');
+            return `rgba('${[(c>>16)&255, (c>>8)&255, c&255].join(',')},${opacity})`
+            // return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',' + opacity + ')';
+        }
+        throw new Error('Bad Hex');
     }
 }
 

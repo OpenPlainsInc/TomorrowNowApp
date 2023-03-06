@@ -5,7 +5,7 @@
  * Author: Corey White (smortopahri@gmail.com)
  * Maintainer: Corey White
  * -----
- * Last Modified: Wed Oct 19 2022
+ * Last Modified: Wed Nov 30 2022
  * Modified By: Corey White
  * -----
  * License: GPLv3
@@ -40,6 +40,7 @@ import { useModel } from '../useModel'
 export default function ModelDetailsContainer({ children }) {
     let {modelId} = useParams();
     // console.log(location, modelId)
+    // const {lastJsonMessage} = useActiniaAsyncProcess({resourceId, status})
 
     let {data, errors, isloading} = useModel({modelId})
     console.log(data, errors, isloading)
